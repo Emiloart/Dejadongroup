@@ -9,10 +9,10 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        warm: "#fffaf2",
-        orangeAction: "#f97316",
-        agriculture: "#2f7d32",
-        ink: "#1f1f1f"
+        warm: "#FAF5EC",
+        orangeAction: "#E2691B",
+        agriculture: "#4F7A3D",
+        ink: "#241F19"
       },
       borderRadius: {
         card: "8px"

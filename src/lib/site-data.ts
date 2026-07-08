@@ -27,6 +27,26 @@ export const partnerProgramSections = [
   "Login"
 ];
 
+export const homeBannerSlides = [
+  "De Jadon Group Banner Canvas",
+  "Agriculture Banner Canvas",
+  "Agro-Real Estate Banner Canvas",
+  "Partner Program Banner Canvas"
+];
+
+export const homeFaqSections = [
+  "Agriculture FAQ",
+  "Agro-Real Estate FAQ",
+  "Partner Program FAQ",
+  "Contact FAQ"
+];
+
+export const updateSections = [
+  "Agriculture Update Slot",
+  "Agro-Real Estate Update Slot",
+  "Partner Program Update Slot"
+];
+
 export const businesses: Business[] = [
   {
     slug: "agriculture",

@@ -14,6 +14,10 @@ export function generateStaticParams() {
   return validDashboardRoles.map((role) => ({ role }));
 }
 
+function cardId(title: string) {
+  return title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
 export default function DashboardPage({ params }: DashboardPageProps) {
   if (!validDashboardRoles.includes(params.role)) {
     notFound();
@@ -25,7 +29,7 @@ export default function DashboardPage({ params }: DashboardPageProps) {
     <DashboardLayout role={params.role}>
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {cards.map((card) => (
-          <DashboardCard key={card.title} card={card} />
+          <DashboardCard key={card.title} card={card} id={cardId(card.title)} />
         ))}
       </div>
     </DashboardLayout>
