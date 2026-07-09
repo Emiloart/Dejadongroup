@@ -1,4 +1,6 @@
-import { ImageCanvas } from "@/components/image-canvas";
+import { ButtonLink } from "@/components/button-link";
+import { ContentSlot } from "@/components/content-slot";
+import { PageHero } from "@/components/page-hero";
 import { PageSection } from "@/components/page-section";
 import { SectionGrid } from "@/components/section-grid";
 import { SectionHeader } from "@/components/section-header";
@@ -15,12 +17,26 @@ export default function AgroRealEstatePage() {
   return (
     <SiteLayout>
       <PageSection>
-        <div className="grid gap-10 lg:grid-cols-[0.9fr_1fr]">
-          <SectionHeader title={business.name} />
-          <ImageCanvas label={business.imageCanvas} />
-        </div>
+        <PageHero
+          title={business.name}
+          eyebrow="Businesses"
+          canvasLabel={business.imageCanvas}
+          actions={
+            <>
+              <ButtonLink href="/businesses/agro-real-estate/investment-plans">Investment Plans</ButtonLink>
+              <ButtonLink href="/contact" variant="outline">
+                Contact
+              </ButtonLink>
+            </>
+          }
+        >
+          <ContentSlot label="Agro-Real Estate Overview Slot" />
+        </PageHero>
       </PageSection>
       <PageSection tinted>
+        <div className="mb-8">
+          <SectionHeader title="Agro-Real Estate Sections" />
+        </div>
         <SectionGrid sections={business.sections} />
       </PageSection>
     </SiteLayout>

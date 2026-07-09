@@ -1,8 +1,9 @@
 import { notFound } from "next/navigation";
 import { ContentSlot } from "@/components/content-slot";
 import { ImageCanvas } from "@/components/image-canvas";
+import { InfoCard } from "@/components/info-card";
+import { PageHero } from "@/components/page-hero";
 import { PageSection } from "@/components/page-section";
-import { SectionHeader } from "@/components/section-header";
 import { SiteLayout } from "@/components/site-layout";
 import { getSectionByPath } from "@/lib/site-data";
 
@@ -35,10 +36,13 @@ export default function AgroRealEstateSectionPage({ params }: AgroRealEstateSect
   return (
     <SiteLayout>
       <PageSection>
-        <div className="grid gap-10 lg:grid-cols-[0.9fr_1fr]">
-          <SectionHeader title={match.section.name} eyebrow="Agro-Real Estate" />
-          <ImageCanvas label={`Agro-Real Estate ${match.section.name} Image Canvas`} />
-        </div>
+        <PageHero
+          title={match.section.name}
+          eyebrow="Agro-Real Estate"
+          canvasLabel={`Agro-Real Estate ${match.section.name} Image Canvas`}
+        >
+          <ContentSlot label={`${match.section.name} Overview Slot`} />
+        </PageHero>
       </PageSection>
       <PageSection tinted>
         {isGallery ? (
@@ -48,7 +52,10 @@ export default function AgroRealEstateSectionPage({ params }: AgroRealEstateSect
             <ImageCanvas label="Agro-Real Estate Gallery Canvas" compact />
           </div>
         ) : (
-          <ContentSlot label={`${match.section.name} Section Slot`} />
+          <div className="grid gap-4 md:grid-cols-2">
+            <InfoCard title={`${match.section.name} Details`} slotLabel={`${match.section.name} Details Slot`} />
+            <InfoCard title={`${match.section.name} Inquiry`} slotLabel={`${match.section.name} Inquiry Slot`} href="/contact" />
+          </div>
         )}
       </PageSection>
     </SiteLayout>

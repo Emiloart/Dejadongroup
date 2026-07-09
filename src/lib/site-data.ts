@@ -1,4 +1,4 @@
-import type { Business, DashboardRole, DashboardSection, NavItem } from "@/types/site";
+import type { Business, DashboardRole, DashboardSection, HeroSlide, NavItem } from "@/types/site";
 
 export const mainNavigation: NavItem[] = [
   { label: "Home", href: "/" },
@@ -27,11 +27,48 @@ export const partnerProgramSections = [
   "Login"
 ];
 
-export const homeBannerSlides = [
-  "De Jadon Group Banner Canvas",
-  "Agriculture Banner Canvas",
-  "Agro-Real Estate Banner Canvas",
-  "Partner Program Banner Canvas"
+export const homeHeroSlides: HeroSlide[] = [
+  {
+    eyebrow: "De Jadon Group",
+    title: "De Jadon Group",
+    slotLabel: "De Jadon Group Intro Slot",
+    canvasLabel: "De Jadon Group Hero Canvas",
+    primaryLabel: "Explore Businesses",
+    primaryHref: "/businesses",
+    secondaryLabel: "Contact",
+    secondaryHref: "/contact"
+  },
+  {
+    eyebrow: "Agriculture",
+    title: "Agriculture",
+    slotLabel: "Agriculture Hero Slot",
+    canvasLabel: "Agriculture Hero Canvas",
+    primaryLabel: "View Agriculture",
+    primaryHref: "/businesses/agriculture",
+    secondaryLabel: "View Products",
+    secondaryHref: "/businesses/agriculture/products",
+    accent: "green"
+  },
+  {
+    eyebrow: "Agro-Real Estate",
+    title: "Agro-Real Estate",
+    slotLabel: "Agro-Real Estate Hero Slot",
+    canvasLabel: "Agro-Real Estate Hero Canvas",
+    primaryLabel: "Investment Plans",
+    primaryHref: "/businesses/agro-real-estate/investment-plans",
+    secondaryLabel: "Contact",
+    secondaryHref: "/contact"
+  },
+  {
+    eyebrow: "Partner Program",
+    title: "Partner Program",
+    slotLabel: "Partner Program Hero Slot",
+    canvasLabel: "Partner Program Hero Canvas",
+    primaryLabel: "Open Partner Program",
+    primaryHref: "/partner-program",
+    secondaryLabel: "Login",
+    secondaryHref: "/login"
+  }
 ];
 
 export const homeFaqSections = [

@@ -1,5 +1,8 @@
+import { ContentSlot } from "@/components/content-slot";
+import { ImageCanvas } from "@/components/image-canvas";
+import { InfoCard } from "@/components/info-card";
+import { PageHero } from "@/components/page-hero";
 import { PageSection } from "@/components/page-section";
-import { SectionHeader } from "@/components/section-header";
 import { SiteLayout } from "@/components/site-layout";
 
 const inquiryOptions = ["Agriculture", "Agro-Real Estate", "Partner Program"];
@@ -8,9 +11,23 @@ export default function ContactPage() {
   return (
     <SiteLayout>
       <PageSection>
-        <div className="grid gap-10 lg:grid-cols-[0.8fr_1fr]">
-          <SectionHeader title="Contact" />
-          <form className="rounded-card border border-stone-200 bg-white p-6 shadow-sm">
+        <PageHero title="Contact" eyebrow="De Jadon Group" canvasLabel="Contact Image Canvas">
+          <ContentSlot label="Contact Intro Slot" />
+        </PageHero>
+      </PageSection>
+      <PageSection tinted>
+        <div className="grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
+          <div className="grid gap-4">
+            {inquiryOptions.map((option) => (
+              <InfoCard key={option} title={option} slotLabel={`${option} Contact Slot`} />
+            ))}
+            <ImageCanvas label="Map / Location Image Canvas" compact />
+          </div>
+          <form className="rounded-card border border-orangeAction/20 bg-white p-5 shadow-sm sm:p-6">
+            <div className="mb-6">
+              <p className="text-xs font-bold uppercase tracking-[0.14em] text-orangeAction">Inquiry Form</p>
+              <h2 className="mt-2 text-2xl font-semibold text-ink">Contact</h2>
+            </div>
             <div className="grid gap-4">
               <label className="grid gap-2 text-sm font-semibold text-stone-700">
                 Name

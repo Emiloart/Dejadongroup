@@ -24,6 +24,18 @@ export type Business = {
   sections: BusinessSection[];
 };
 
+export type HeroSlide = {
+  eyebrow: string;
+  title: string;
+  slotLabel: string;
+  canvasLabel: string;
+  primaryLabel: string;
+  primaryHref: string;
+  secondaryLabel: string;
+  secondaryHref: string;
+  accent?: Accent;
+};
+
 export type DashboardCard = {
   title: string;
   group: string;

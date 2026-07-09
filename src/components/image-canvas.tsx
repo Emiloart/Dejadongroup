@@ -17,7 +17,7 @@ export function ImageCanvas({ label, accent = "orange", compact = false, classNa
   return (
     <div
       className={`image-canvas-pattern flex items-center justify-center rounded-card border-2 border-dashed ${accentClass} ${
-        compact ? "min-h-36" : "min-h-72"
+        compact ? "min-h-28" : "min-h-56"
       } ${className}`}
     >
       <div className="flex flex-col items-center gap-3 px-6 text-center">
