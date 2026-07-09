@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { ArrowLeft, LayoutDashboard } from "lucide-react";
-import { dashboardCards, dashboardLabels, validDashboardRoles } from "@/lib/site-data";
+import { dashboardLabels, dashboardSections, validDashboardRoles } from "@/lib/site-data";
 import type { DashboardRole } from "@/types/site";
 
 type DashboardLayoutProps = {
@@ -14,11 +14,11 @@ function cardId(title: string) {
 }
 
 export function DashboardLayout({ role, children }: DashboardLayoutProps) {
-  const cards = dashboardCards[role];
+  const sections = dashboardSections[role];
 
   return (
     <div className="min-h-screen bg-warm text-ink lg:flex">
-      <aside className="bg-ink px-5 py-5 text-white lg:sticky lg:top-0 lg:h-screen lg:w-72 lg:flex-shrink-0 lg:overflow-y-auto">
+      <aside className="bg-ink px-5 py-5 text-white lg:sticky lg:top-0 lg:h-screen lg:w-80 lg:flex-shrink-0 lg:overflow-y-auto">
         <Link href="/" className="flex items-center gap-3">
           <span className="flex h-10 w-10 items-center justify-center rounded-card bg-orangeAction text-sm font-bold text-white">
             DJ
@@ -29,7 +29,7 @@ export function DashboardLayout({ role, children }: DashboardLayoutProps) {
           </span>
         </Link>
 
-        <div className="mt-6 grid grid-cols-3 gap-1 rounded-card bg-white/10 p-1">
+        <div className="mt-6 grid grid-cols-2 gap-1 rounded-card bg-white/10 p-1">
           {validDashboardRoles.map((dashboardRole) => (
             <Link
               key={dashboardRole}
@@ -45,15 +45,22 @@ export function DashboardLayout({ role, children }: DashboardLayoutProps) {
 
         <nav aria-label={`${dashboardLabels[role]} navigation`} className="mt-6">
           <p className="mb-3 px-2 text-xs font-bold uppercase tracking-[0.12em] text-stone-400">{dashboardLabels[role]}</p>
-          <div className="flex gap-2 overflow-x-auto pb-2 lg:grid lg:gap-1 lg:overflow-visible lg:pb-0">
-            {cards.map((card) => (
-              <a
-                key={card.title}
-                href={`#${cardId(card.title)}`}
-                className="whitespace-nowrap rounded-card px-3 py-2 text-sm font-semibold text-stone-300 hover:bg-white/10 hover:text-white lg:whitespace-normal"
-              >
-                {card.title}
-              </a>
+          <div className="grid gap-4">
+            {sections.map((section) => (
+              <div key={section.label}>
+                <p className="mb-2 px-2 text-[11px] font-bold uppercase tracking-[0.12em] text-orange-200">{section.label}</p>
+                <div className="flex gap-2 overflow-x-auto pb-2 lg:grid lg:gap-1 lg:overflow-visible lg:pb-0">
+                  {section.items.map((card) => (
+                    <a
+                      key={card.title}
+                      href={`#${cardId(card.title)}`}
+                      className="whitespace-nowrap rounded-card px-3 py-2 text-sm font-semibold text-stone-300 hover:bg-white/10 hover:text-white lg:whitespace-normal"
+                    >
+                      {card.title}
+                    </a>
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         </nav>
@@ -80,7 +87,7 @@ export function DashboardLayout({ role, children }: DashboardLayoutProps) {
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-2">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full border border-dashed border-orangeAction/35 bg-warm text-xs font-bold text-orangeAction">
+              <div className="image-canvas-pattern flex h-10 w-10 items-center justify-center rounded-full border border-dashed border-orangeAction/35 text-xs font-bold text-orangeAction">
                 IMG
               </div>
               <Link className="rounded-card border border-stone-200 px-4 py-2 text-sm font-semibold hover:bg-warm" href="/login">

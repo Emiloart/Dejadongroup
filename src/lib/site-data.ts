@@ -1,4 +1,4 @@
-import type { Business, DashboardCard, DashboardRole, NavItem } from "@/types/site";
+import type { Business, DashboardRole, DashboardSection, NavItem } from "@/types/site";
 
 export const mainNavigation: NavItem[] = [
   { label: "Home", href: "/" },
@@ -93,60 +93,94 @@ export const businesses: Business[] = [
   }
 ];
 
-export const dashboardCards: Record<DashboardRole, DashboardCard[]> = {
+export const dashboardSections: Record<DashboardRole, DashboardSection[]> = {
   partner: [
-    { title: "Profile" },
-    { title: "Partner ID" },
-    { title: "Partner Tier" },
-    { title: "Referral Link" },
-    { title: "QR Code Canvas", canvas: true },
-    { title: "Referral Tree", canvas: true },
-    { title: "Team" },
-    { title: "Earnings" },
-    { title: "Wallet" },
-    { title: "Withdrawals" },
-    { title: "Products" },
-    { title: "Marketing Materials" },
-    { title: "Notifications" },
-    { title: "Settings" }
+    {
+      label: "Account",
+      items: [
+        { title: "Profile", group: "Account", fields: ["Full Name", "Passport", "ID", "Address", "Bank Details"] },
+        { title: "Partner ID", group: "Account", fields: ["Partner ID", "Referral Code"], canvas: true },
+        { title: "Partner Tier", group: "Account", fields: ["Current Tier", "Tier Status"] }
+      ]
+    },
+    {
+      label: "Growth",
+      items: [
+        { title: "Referral Link", group: "Growth", fields: ["Referral Link", "QR Code"], canvas: true },
+        { title: "Referral Tree", group: "Growth", fields: ["Direct Referrals", "Downline"], canvas: true, wide: true },
+        { title: "Team", group: "Growth", fields: ["Team Members", "Team Activity"] }
+      ]
+    },
+    {
+      label: "Earnings",
+      items: [
+        { title: "Earnings", group: "Earnings", fields: ["Commission", "Bonuses"] },
+        { title: "Wallet", group: "Earnings", fields: ["Wallet Balance", "Wallet Activity"] },
+        { title: "Withdrawals", group: "Earnings", fields: ["Withdrawal Requests", "Withdrawal History"] }
+      ]
+    },
+    {
+      label: "Resources",
+      items: [
+        { title: "Products", group: "Resources", fields: ["Live Fish", "Dried/Packaged Fish", "Palm", "Pepper"] },
+        { title: "Marketing Materials", group: "Resources", fields: ["Banner", "Flyer", "Brochure"], canvas: true },
+        { title: "Notifications", group: "Resources", fields: ["Notifications"] },
+        { title: "Settings", group: "Resources", fields: ["Password", "Account Preferences"] }
+      ]
+    }
   ],
   client: [
-    { title: "Profile" },
-    { title: "Client ID" },
-    { title: "Agro-Real Estate" },
-    { title: "Land Records" },
-    { title: "Managed Cultivation" },
-    { title: "Investment Plans" },
-    { title: "Farm Stage" },
-    { title: "Photos", canvas: true },
-    { title: "Reports" },
-    { title: "Yield History" },
-    { title: "Notifications" },
-    { title: "Settings" }
-  ],
-  admin: [
-    { title: "Businesses" },
-    { title: "Agriculture Content" },
-    { title: "Agro-Real Estate Content" },
-    { title: "Products" },
-    { title: "Investment Plans" },
-    { title: "Partner Tiers" },
-    { title: "Partners" },
-    { title: "Clients" },
-    { title: "Requests" },
-    { title: "Gallery", canvas: true },
-    { title: "Contact Messages" },
-    { title: "Announcements" }
+    {
+      label: "Account",
+      items: [
+        { title: "Profile", group: "Account", fields: ["Full Name", "Email", "Phone", "Address"] },
+        { title: "Client ID", group: "Account", fields: ["Client ID", "Account Type"] }
+      ]
+    },
+    {
+      label: "Agro-Real Estate",
+      items: [
+        {
+          title: "Agro-Real Estate",
+          group: "Agro-Real Estate",
+          fields: ["Buy Cultivated Farmland", "Buy Land & Managed Cultivation"],
+          wide: true
+        },
+        { title: "Land Records", group: "Agro-Real Estate", fields: ["Land Records", "Documents"] },
+        { title: "Managed Cultivation", group: "Agro-Real Estate", fields: ["Cultivation", "Management"] },
+        { title: "Investment Plans", group: "Agro-Real Estate", fields: ["Investment Plans"] }
+      ]
+    },
+    {
+      label: "Farm Updates",
+      items: [
+        { title: "Farm Stage", group: "Farm Updates", fields: ["Farm Stage", "Current Activity"] },
+        { title: "Photos", group: "Farm Updates", fields: ["Farm Photos"], canvas: true },
+        { title: "Reports", group: "Farm Updates", fields: ["Progress Reports"], wide: true },
+        { title: "Yield History", group: "Farm Updates", fields: ["Yield History"] }
+      ]
+    },
+    {
+      label: "Settings",
+      items: [
+        { title: "Notifications", group: "Settings", fields: ["Notifications"] },
+        { title: "Settings", group: "Settings", fields: ["Password", "Account Preferences"] }
+      ]
+    }
   ]
 };
 
 export const dashboardLabels: Record<DashboardRole, string> = {
   partner: "Partner Dashboard",
-  client: "Client Dashboard",
-  admin: "Admin Dashboard"
+  client: "Client Dashboard"
 };
 
-export const validDashboardRoles = Object.keys(dashboardCards) as DashboardRole[];
+export const dashboardHighlights: Record<DashboardRole, string[]> = {
+  partner: ["Partner ID", "Partner Tier", "Referral Link", "Wallet"],
+  client: ["Client ID", "Land Records", "Managed Cultivation", "Reports"]
+};
+
+export const validDashboardRoles = Object.keys(dashboardSections) as DashboardRole[];
 
 export function getBusinessBySlug(slug: string) {
   return businesses.find((business) => business.slug === slug);

@@ -42,10 +42,9 @@ export default function LoginPage() {
                 Password
                 <input className="min-h-11 rounded-card border border-stone-200 px-3 outline-none focus:border-orangeAction" type="password" />
               </label>
-              <div className="grid gap-3 pt-2 sm:grid-cols-3">
+              <div className="grid gap-3 pt-2 sm:grid-cols-2">
                 <DemoButton dashboardRole="partner">Open Partner Dashboard</DemoButton>
                 <DemoButton dashboardRole="client">Open Client Dashboard</DemoButton>
-                <DemoButton dashboardRole="admin">Open Admin Dashboard</DemoButton>
               </div>
             </div>
           </form>

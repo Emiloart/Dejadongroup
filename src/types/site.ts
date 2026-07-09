@@ -1,6 +1,6 @@
 export type BusinessSlug = "agriculture" | "agro-real-estate";
 
-export type DashboardRole = "partner" | "client" | "admin";
+export type DashboardRole = "partner" | "client";
 
 export type Accent = "orange" | "green";
 
@@ -26,5 +26,13 @@ export type Business = {
 
 export type DashboardCard = {
   title: string;
+  group: string;
   canvas?: boolean;
+  fields?: string[];
+  wide?: boolean;
+};
+
+export type DashboardSection = {
+  label: string;
+  items: DashboardCard[];
 };
