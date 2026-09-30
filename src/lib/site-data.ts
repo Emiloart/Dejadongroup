@@ -64,7 +64,8 @@ export const partnerProgramSections = [
 export const homeHeroSlides: HeroSlide[] = [
   {
     eyebrow: "De Jadon Group",
-    title: "De Jadon Group",
+    title: "Welcome to De Jadon Group",
+    description: "A Nigerian investment and wealth-creation company focused on creating practical opportunities for individuals, families, businesses and organizations to build and preserve wealth.",
     slotLabel: "De Jadon Group Intro Slot",
     canvasLabel: "De Jadon Group Hero Canvas",
     primaryLabel: "Explore Businesses",
@@ -75,6 +76,7 @@ export const homeHeroSlides: HeroSlide[] = [
   {
     eyebrow: "Agriculture",
     title: "Agriculture",
+    description: "Our agriculture business is focused on producing food, creating value, and developing sustainable opportunities from land. Our operations include crop farming, poultry farming, fish farming and maggot farming.",
     slotLabel: "Agriculture Hero Slot",
     canvasLabel: "Agriculture Hero Canvas",
     primaryLabel: "View Agriculture",
@@ -86,6 +88,7 @@ export const homeHeroSlides: HeroSlide[] = [
   {
     eyebrow: "Agro-Real Estate",
     title: "Agro-Real Estate",
+    description: "Our agro-real estate business combines land investment and agricultural development, creating opportunities for individuals and investors to own and participate in productive agricultural assets.",
     slotLabel: "Agro-Real Estate Hero Slot",
     canvasLabel: "Agro-Real Estate Hero Canvas",
     primaryLabel: "Investment Plans",
@@ -96,6 +99,7 @@ export const homeHeroSlides: HeroSlide[] = [
   {
     eyebrow: "Partner Program",
     title: "Partner Program",
+    description: "Introduce De Jadon Group to prospective customers and earn a 10% commission when a referred prospect becomes a paying client.",
     slotLabel: "Partner Program Hero Slot",
     canvasLabel: "Partner Program Hero Canvas",
     primaryLabel: "Open Partner Program",
