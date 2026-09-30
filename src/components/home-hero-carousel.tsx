@@ -49,9 +49,11 @@ export function HomeHeroCarousel({ slides }: HomeHeroCarouselProps) {
                   <h1 className="mt-3 text-4xl font-semibold leading-tight text-ink sm:text-5xl">{slide.title}</h1>
                   <div className={`mt-5 h-1 w-16 rounded-full ${line}`} />
                   {slide.description ? <p className="mt-6 max-w-xl leading-7 text-stone-700">{slide.description}</p> : null}
-                  <div className="mt-4">
-                    <ContentSlot label={slide.slotLabel} accent={accent} />
-                  </div>
+                  {!slide.description ? (
+                    <div className="mt-4">
+                      <ContentSlot label={slide.slotLabel} accent={accent} />
+                    </div>
+                  ) : null}
                   <div className="mt-7 flex flex-col gap-3 sm:flex-row">
                     <Link
                       href={slide.primaryHref}
