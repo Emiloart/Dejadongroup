@@ -9,12 +9,46 @@ export const mainNavigation: NavItem[] = [
   { label: "Login", href: "/login" }
 ];
 
-export const agricultureProducts = [
-  "Live Fish",
-  "Dried/Packaged Fish",
-  "Palm",
-  "Pepper",
-  "Other Farm Harvests"
+export const agricultureProducts = ["Fish Heads", "Cutlets", "Fish Tail"];
+
+export const agricultureProductDetails = [
+  { name: "Fish Heads", description: "", packaging: "" },
+  { name: "Cutlets", description: "", packaging: "" },
+  { name: "Fish Tail", description: "", packaging: "" }
+];
+
+export const agricultureFaqs = [
+  { question: "Where is the land located?", answer: "The land is located at City of Kings Estate Achalla and at Alaoma Agro Estate Nawgu, Dunukofia L.G.A." },
+  { question: "Is the road to the land motorable?", answer: "Yes, it is slightly motorable." },
+  { question: "Can I pay in installments?", answer: "Yes, we have up to six months installmental payment plan." },
+  { question: "How can one know that we are genuine?", answer: "We are a registered company." },
+  { question: "When did your company start?", answer: "The company started in October 2024." },
+  { question: "Where is the office located?", answer: "Our office is located at Ebube Dike Shopping Mall, Umuodu Road, Nodu Okpuno, Awka." },
+  { question: "Is the property genuine?", answer: "Yes, it is 100% genuine." }
+];
+
+export const agroRealEstateFaqs = [
+  { question: "Is there access road to the land?", answer: "Yes, there is access to the land." },
+  { question: "Is the land in a swampy area?", answer: "No, it is a dry table land." },
+  { question: "Who manages the plantation?", answer: "The company manages the plantation for the customers." },
+  { question: "What documents does the company give?", answer: "The company gives two documents: Deed of Assignment and Registered Survey Plan." },
+  { question: "What is the expected annual cashflow from the land?", answer: "The expected annual cashflow from the land is five hundred thousand naira minimum yearly." },
+  { question: "Can I build on the land?", answer: "No, you cannot build on the land currently." },
+  { question: "Can I plant any other thing on the land other than palm?", answer: "No, you cannot plant any other crop on the land." }
+];
+
+export const agroRealEstateServices = [
+  { name: "Agricultural Land Sales", description: "The sales of land for agricultural purposes and investment opportunities.", audience: "Individuals who are interested in agriculture." },
+  { name: "Agricultural Consultancy / Advice", description: "", audience: "Individuals who want to venture into agriculture and are not really clear on what they want to venture into." },
+  { name: "Farm Development", description: "", audience: "" }
+];
+
+export const agroRealEstateBuyingProcess = [
+  "Customer goes for inspection.",
+  "Customer fills the land subscription form with the required customer information.",
+  "Customer makes payment to the company bank account.",
+  "After payment is confirmed, the customer receives land allocation.",
+  "The customer is handed the land documents as proof of transfer of ownership."
 ];
 
 export const partnerProgramSections = [
@@ -159,7 +193,7 @@ export const dashboardSections: Record<DashboardRole, DashboardSection[]> = {
     {
       label: "Resources",
       items: [
-        { title: "Products", group: "Resources", fields: ["Live Fish", "Dried/Packaged Fish", "Palm", "Pepper"] },
+        { title: "Products", group: "Resources", fields: ["Fish Heads", "Cutlets", "Fish Tail"] },
         { title: "Marketing Materials", group: "Resources", fields: ["Banner", "Flyer", "Brochure"], canvas: true },
         { title: "Notifications", group: "Resources", fields: ["Notifications"] },
         { title: "Settings", group: "Resources", fields: ["Password", "Account Preferences"] }
