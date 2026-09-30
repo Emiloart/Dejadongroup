@@ -22,7 +22,7 @@ export default function HomePage() {
         <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
           <SectionHeader title="About De Jadon Group" eyebrow="About" />
           <div className="grid gap-4 sm:grid-cols-2">
-            <ContentSlot label="About De Jadon Group Content Slot" />
+            <p className="leading-7 text-stone-700">De Jadon Group is a Nigerian investment and wealth-creation company focused on creating practical opportunities for individuals, families, businesses and organizations to build and preserve wealth.</p>
             <ImageCanvas label="About Image Canvas" compact />
           </div>
         </div>
@@ -51,7 +51,7 @@ export default function HomePage() {
               <SectionHeader title="Partner Program" eyebrow="Growth" />
             </div>
             <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-center">
-              <ContentSlot label="Partner Program Homepage Slot" />
+              <p className="leading-7 text-stone-700">The Partner Program allows individuals to introduce De Jadon Group to prospective customers and earn a 10% commission when a referred prospect becomes a paying client.</p>
               <div className="flex flex-col gap-3 sm:flex-row md:flex-col">
                 <ButtonLink href="/partner-program">Open Partner Program</ButtonLink>
                 <ButtonLink href="/login" variant="outline">
@@ -71,7 +71,7 @@ export default function HomePage() {
               <SectionHeader title="CEO" />
             </div>
             <div className="mt-6">
-              <ContentSlot label="CEO Profile Slot" />
+              <div className="space-y-3 text-stone-700"><h3 className="text-xl font-semibold text-ink">Ifeanyi Luke Ananwude</h3><p>Managing Director and founder of De Jadon Group.</p><p className="leading-7">He is passionate about creating sustainable value through Agro Real Estate, Agriculture and business innovation, guided by integrity, excellence and a customer-first approach.</p></div>
             </div>
           </div>
           <ImageCanvas label="CEO Image Canvas" />
@@ -114,7 +114,7 @@ export default function HomePage() {
                   <p className="text-xs font-bold uppercase tracking-[0.12em] text-orangeAction">Featured Update</p>
                   <h2 className="mt-3 text-2xl font-semibold text-ink">News & Updates</h2>
                   <div className="mt-5">
-                    <ContentSlot label="Featured Update Slot" />
+                    <p className="text-sm leading-6 text-stone-700">No company update has been supplied yet.</p>
                   </div>
                 </div>
                 <ImageCanvas label="Featured Update Image Canvas" compact className="min-h-40" />
