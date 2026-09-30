@@ -27,6 +27,7 @@ export type Business = {
 export type HeroSlide = {
   eyebrow: string;
   title: string;
+  description?: string;
   slotLabel: string;
   canvasLabel: string;
   primaryLabel: string;
