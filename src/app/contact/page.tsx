@@ -12,14 +12,16 @@ export default function ContactPage() {
     <SiteLayout>
       <PageSection>
         <PageHero title="Contact" eyebrow="De Jadon Group" canvasLabel="Contact Image Canvas">
-          <ContentSlot label="Contact Intro Slot" />
+          <p className="max-w-2xl leading-7 text-stone-700">Get in touch with De Jadon Group for enquiries about Agriculture, Agro-Real Estate, the Partner Program, or general company information.</p>
         </PageHero>
       </PageSection>
       <PageSection tinted>
         <div className="grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
           <div className="grid gap-4">
             {inquiryOptions.map((option) => (
-              <InfoCard key={option} title={option} slotLabel={`${option} Contact Slot`} />
+              <InfoCard key={option} title={option}>
+                <p className="leading-6 text-stone-700">Contact: 08070458759</p>
+              </InfoCard>
             ))}
             <ImageCanvas label="Map / Location Image Canvas" compact />
           </div>
