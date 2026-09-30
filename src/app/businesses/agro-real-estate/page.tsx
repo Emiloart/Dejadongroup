@@ -30,7 +30,11 @@ export default function AgroRealEstatePage() {
             </>
           }
         >
-          <ContentSlot label="Agro-Real Estate Overview Slot" />
+          <div className="max-w-3xl space-y-4 text-stone-700">
+            <p className="leading-7">Agro Real Estate is the combination of Agriculture and real estate, where land is acquired, developed, managed or sold specifically for agricultural purposes and related investments.</p>
+            <p className="leading-7">The business was created to make life easier by providing opportunities in real estate, agriculture, food production and investment. Our ideal customers are individuals who have interest in land ownership, agriculture and long-term investment opportunities.</p>
+            <p className="leading-7">De Jadon Group can be explained as a simple journey of interest to choice to payment to documentation to participation to value.</p>
+          </div>
         </PageHero>
       </PageSection>
       <PageSection tinted>
