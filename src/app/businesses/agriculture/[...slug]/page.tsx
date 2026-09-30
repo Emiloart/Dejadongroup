@@ -6,7 +6,7 @@ import { PageHero } from "@/components/page-hero";
 import { PageSection } from "@/components/page-section";
 import { SectionGrid } from "@/components/section-grid";
 import { SiteLayout } from "@/components/site-layout";
-import { agricultureFaqs, agricultureProducts, getBusinessBySlug, getSectionByPath } from "@/lib/site-data";
+import { agricultureProducts, getBusinessBySlug, getSectionByPath } from "@/lib/site-data";
 
 type AgricultureSectionPageProps = { params: { slug: string[] } };
 
@@ -33,7 +33,6 @@ export default function AgricultureSectionPage({ params }: AgricultureSectionPag
   const isLivestock = path === "/businesses/agriculture/livestock";
   const isGallery = path === "/businesses/agriculture/gallery";
   const isCropFarming = path === "/businesses/agriculture/crop-farming";
-  const isOverview = path === "/businesses/agriculture";
   const isDetailOnly = !isProducts && !isLivestock && !isGallery && !isCropFarming;
 
   return (
