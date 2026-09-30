@@ -23,6 +23,14 @@ export default function ContactPage() {
                 <p className="leading-6 text-stone-700">Contact: 08070458759</p>
               </InfoCard>
             ))}
+            <InfoCard title="Contact Details">
+              <div className="space-y-2 text-sm leading-6 text-stone-700">
+                <p><strong>Phone:</strong> 08070458759</p>
+                <p><strong>Email:</strong> dejadongroup@gmail.com</p>
+                <p><strong>Office:</strong> Shop C15 Ebube Dike Shopping Mall, Umuodu Road, Good Will Junction, Nodu, Okpuno, Awka, Anambra State.</p>
+                <p><strong>Working Hours:</strong> 8:30am – 5:00pm</p>
+              </div>
+            </InfoCard>
             <ImageCanvas label="Map / Location Image Canvas" compact />
           </div>
           <form className="rounded-card border border-orangeAction/20 bg-white p-5 shadow-sm sm:p-6">
