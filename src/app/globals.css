@@ -15,6 +15,9 @@ body {
   background: #FAF5EC;
   color: #241F19;
   font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  line-height: 1.6;
 }
 
 a {
@@ -26,8 +29,30 @@ h2,
 h3,
 h4 {
   font-family: Georgia, "Times New Roman", serif;
+  text-wrap: balance;
 }
 
-.image-canvas-pattern {
-  background: repeating-linear-gradient(45deg, #F5EFE3, #F5EFE3 10px, #FAF5EC 10px, #FAF5EC 20px);
+::selection {
+  background: #E2691B;
+  color: #FFFFFF;
+}
+
+:focus-visible {
+  outline: 2px solid #4F7A3D;
+  outline-offset: 4px;
+}
+
+[id] {
+  scroll-margin-top: 7rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

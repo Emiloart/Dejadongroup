@@ -6,17 +6,21 @@ type SectionHeaderProps = {
   eyebrow?: string;
   children?: ReactNode;
   accent?: Accent;
+  as?: "h1" | "h2";
 };
 
-export function SectionHeader({ title, eyebrow, children, accent = "orange" }: SectionHeaderProps) {
-  const lineColor = accent === "green" ? "bg-agriculture" : "bg-orangeAction";
+export function SectionHeader({ title, eyebrow, children, accent = "orange", as: Heading = "h2" }: SectionHeaderProps) {
+  const headingSize = Heading === "h1" ? "text-4xl sm:text-5xl lg:text-6xl" : "text-3xl sm:text-4xl";
 
   return (
     <div className="max-w-3xl">
-      {eyebrow ? <p className="mb-3 text-sm font-semibold uppercase tracking-[0.16em] text-stone-500">{eyebrow}</p> : null}
-      <h1 className="text-3xl font-semibold tracking-normal text-ink sm:text-4xl">{title}</h1>
-      <div className={`mt-5 h-1 w-16 rounded-full ${lineColor}`} />
-      {children ? <div className="mt-6 text-base leading-7 text-stone-700">{children}</div> : null}
+      {eyebrow ? (
+        <p className={`mb-4 text-xs font-semibold uppercase tracking-[0.16em] ${accent === "green" ? "text-agriculture" : "text-stone-500"}`}>
+          {eyebrow}
+        </p>
+      ) : null}
+      <Heading className={`font-medium leading-[1.12] tracking-tight text-ink ${headingSize}`}>{title}</Heading>
+      {children ? <div className="mt-5 max-w-xl text-base leading-8 text-stone-600">{children}</div> : null}
     </div>
   );
 }

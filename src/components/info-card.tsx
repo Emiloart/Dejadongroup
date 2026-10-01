@@ -16,37 +16,24 @@ type InfoCardProps = {
 };
 
 export function InfoCard({ title, label, slotLabel, canvasLabel, href, accent = "orange", children }: InfoCardProps) {
-  const tone =
-    accent === "green"
-      ? "border-agriculture/20 hover:border-agriculture/45"
-      : "border-orangeAction/20 hover:border-orangeAction/45";
-  const line = accent === "green" ? "bg-agriculture" : "bg-orangeAction";
+  const linkTone = accent === "green" ? "hover:text-agriculture" : "hover:text-orangeAction";
 
   return (
-    <article className={`group rounded-card border ${tone} bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-md`}>
-      <div className={`mb-4 h-1 w-12 rounded-full ${line} transition group-hover:w-20`} />
-      {label ? <p className="mb-3 text-xs font-bold uppercase tracking-[0.12em] text-stone-500">{label}</p> : null}
-      <div className="flex items-start justify-between gap-4">
-        <h2 className="text-lg font-semibold text-ink">{title}</h2>
+    <article className="min-w-0 border-t border-stone-200/80 pt-6">
+      {canvasLabel ? <ImageCanvas label={canvasLabel} accent={accent} compact className="mb-5" /> : null}
+      {label ? <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">{label}</p> : null}
+      <h3 className="text-xl font-medium leading-snug text-ink">
         {href ? (
-          <Link
-            href={href}
-            aria-label={`Open ${title}`}
-            className="rounded-card border border-orangeAction/25 p-2 text-orangeAction hover:bg-orange-50"
-          >
-            <ArrowRight aria-hidden="true" className="h-4 w-4" />
+          <Link href={href} className={`flex min-h-11 items-center justify-between gap-4 transition-colors ${linkTone}`}>
+            <span>{title}</span>
+            <ArrowRight aria-hidden="true" className="h-4 w-4 shrink-0" />
           </Link>
-        ) : null}
-      </div>
-      {children ? <div className="mt-4">{children}</div> : null}
+        ) : title}
+      </h3>
+      {children ? <div className="mt-3 text-sm leading-7 text-stone-600">{children}</div> : null}
       {slotLabel ? (
-        <div className="mt-4">
+        <div className="mt-3">
           <ContentSlot label={slotLabel} accent={accent} />
-        </div>
-      ) : null}
-      {canvasLabel ? (
-        <div className="mt-4">
-          <ImageCanvas label={canvasLabel} accent={accent} compact />
         </div>
       ) : null}
     </article>

@@ -6,26 +6,22 @@ import type { Accent } from "@/types/site";
 type PageHeroProps = {
   title: string;
   eyebrow?: string;
-  canvasLabel: string;
+  canvasLabel?: string;
   accent?: Accent;
   children?: ReactNode;
   actions?: ReactNode;
 };
 
 export function PageHero({ title, eyebrow, canvasLabel, accent = "orange", children, actions }: PageHeroProps) {
-  const borderClass = accent === "green" ? "border-agriculture/20" : "border-orangeAction/20";
-
   return (
-    <div className={`rounded-card border ${borderClass} bg-white p-4 shadow-sm sm:p-6 lg:p-8`}>
-      <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-        <div>
-          <SectionHeader title={title} eyebrow={eyebrow} accent={accent}>
-            {children}
-          </SectionHeader>
-          {actions ? <div className="mt-8 flex flex-wrap gap-3">{actions}</div> : null}
-        </div>
-        <ImageCanvas label={canvasLabel} accent={accent} />
+    <div className={canvasLabel ? "grid gap-10 lg:grid-cols-[1fr_0.9fr] lg:items-center lg:gap-20" : "max-w-3xl"}>
+      <div>
+        <SectionHeader title={title} eyebrow={eyebrow} accent={accent} as="h1">
+          {children}
+        </SectionHeader>
+        {actions ? <div className="mt-8 flex flex-wrap items-center gap-3 sm:gap-5">{actions}</div> : null}
       </div>
+      {canvasLabel ? <ImageCanvas label={canvasLabel} accent={accent} /> : null}
     </div>
   );
 }

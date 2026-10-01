@@ -8,29 +8,23 @@ type SectionGridProps = {
 };
 
 export function SectionGrid({ sections, accent = "orange" }: SectionGridProps) {
-  const line = accent === "green" ? "bg-agriculture" : "bg-orangeAction";
-  const border = accent === "green" ? "hover:border-agriculture/40" : "hover:border-orangeAction/40";
+  const linkTone = accent === "green" ? "hover:text-agriculture" : "hover:text-orangeAction";
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid gap-x-10 gap-y-3 sm:grid-cols-2 lg:grid-cols-3">
       {sections.map((section) => (
         <Link
           key={section.href}
           href={section.href}
-          className={`group rounded-card border border-stone-200 bg-white p-5 text-base font-semibold text-ink shadow-sm transition hover:-translate-y-1 hover:shadow-md ${border}`}
+          className={`border-t border-stone-200 py-6 text-base font-medium text-ink transition-colors ${linkTone}`}
         >
-          <span className={`mb-4 block h-1 w-10 rounded-full ${line} transition group-hover:w-16`} />
           <span className="flex items-center justify-between gap-4">
             <span>{section.name}</span>
-            <ArrowRight aria-hidden="true" className="h-4 w-4 text-orangeAction" />
+            <ArrowRight aria-hidden="true" className="h-4 w-4 shrink-0" />
           </span>
           {section.sections?.length ? (
-            <span className="mt-4 flex flex-wrap gap-2">
-              {section.sections.map((child) => (
-                <span key={child.href} className="rounded-full border border-stone-200 px-2 py-1 text-xs text-stone-500">
-                  {child.name}
-                </span>
-              ))}
+            <span className="mt-3 block text-sm font-normal leading-6 text-stone-500">
+              {section.sections.map((child) => child.name).join(" · ")}
             </span>
           ) : null}
         </Link>

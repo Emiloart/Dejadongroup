@@ -109,18 +109,6 @@ export default function AgricultureSectionPage({ params }: AgricultureSectionPag
         </PageSection>
       ) : null}
 
-      {isOverview ? (
-        <PageSection>
-          <div className="grid gap-4 lg:grid-cols-2">
-            {agricultureFaqs.map((faq) => (
-              <article key={faq.question} className="rounded-card border border-stone-200 bg-white p-5 shadow-sm">
-                <h2 className="font-semibold text-ink">{faq.question}</h2>
-                <p className="mt-3 leading-6 text-stone-700">{faq.answer}</p>
-              </article>
-            ))}
-          </div>
-        </PageSection>
-      ) : null}
     </SiteLayout>
   );
 }

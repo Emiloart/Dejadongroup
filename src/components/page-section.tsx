@@ -9,7 +9,7 @@ type PageSectionProps = {
 export function PageSection({ children, tinted = false, className = "" }: PageSectionProps) {
   return (
     <section className={tinted ? "bg-white" : "bg-warm"}>
-      <div className={`mx-auto max-w-7xl px-5 py-12 sm:px-6 lg:px-8 lg:py-20 ${className}`}>{children}</div>
+      <div className={`mx-auto max-w-7xl px-5 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-24 ${className}`}>{children}</div>
     </section>
   );
 }
