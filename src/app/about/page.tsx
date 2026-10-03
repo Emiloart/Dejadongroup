@@ -1,5 +1,4 @@
 import { ButtonLink } from "@/components/button-link";
-import { ImageCanvas } from "@/components/image-canvas";
 import { PageHero } from "@/components/page-hero";
 import { PageSection } from "@/components/page-section";
 import { SectionHeader } from "@/components/section-header";
@@ -42,10 +41,9 @@ export default function AboutPage() {
         <PageHero
           title="About De Jadon Group"
           eyebrow="About"
-          canvasLabel="About Image Canvas"
           actions={
             <>
-              <ButtonLink href="/businesses">Businesses</ButtonLink>
+              <ButtonLink href="/businesses">Explore our businesses</ButtonLink>
               <ButtonLink href="/contact" variant="outline">Contact</ButtonLink>
             </>
           }
@@ -55,10 +53,10 @@ export default function AboutPage() {
       </PageSection>
 
       <PageSection tinted>
-        <div className="grid gap-5 md:grid-cols-2">
+        <div className="grid gap-x-12 gap-y-10 lg:grid-cols-3">
           {aboutSections.slice(1).map((section) => (
-            <article key={section.title} className="rounded-card border border-stone-200 bg-white p-6 shadow-sm">
-              <h2 className="text-xl font-semibold text-ink">{section.title}</h2>
+            <article key={section.title} className="border-t border-ink/10 pt-6">
+              <h2 className="text-2xl font-medium text-ink">{section.title}</h2>
               <p className="mt-4 leading-7 text-stone-700">{section.body}</p>
             </article>
           ))}
@@ -66,30 +64,38 @@ export default function AboutPage() {
       </PageSection>
 
       <PageSection>
-        <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
-          <SectionHeader title="Core Values" />
-          <div className="flex flex-wrap gap-3">
-            {values.map((value) => (
-              <span key={value} className="rounded-full border border-orangeAction/20 bg-orange-50 px-4 py-2 text-sm font-semibold text-ink">
-                {value}
-              </span>
-            ))}
+        <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+          <SectionHeader title="Our areas of work" />
+          <div className="grid gap-x-8 gap-y-8 sm:grid-cols-2">
+            <div className="border-t border-ink/10 pt-5"><h3 className="text-xl text-ink">Agriculture</h3><p className="mt-3 text-sm leading-7 text-stone-600">Managed agricultural opportunities and food production, with a focus on palm plantation development.</p></div>
+            <div className="border-t border-ink/10 pt-5"><h3 className="text-xl text-ink">Real estate</h3><p className="mt-3 text-sm leading-7 text-stone-600">Agricultural land and other property opportunities for individuals and organizations.</p></div>
+            <div className="border-t border-ink/10 pt-5"><h3 className="text-xl text-ink">Flexisave</h3><p className="mt-3 text-sm leading-7 text-stone-600">A structured savings solution designed to support disciplined financial planning and personal goals.</p></div>
           </div>
         </div>
       </PageSection>
 
+      <PageSection>
+        <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+          <SectionHeader title="Core Values" />
+          <ul className="grid gap-x-8 sm:grid-cols-2">
+            {values.map((value) => (
+              <li key={value} className="border-b border-ink/10 py-4 text-base font-medium text-ink">
+                {value}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </PageSection>
+
       <PageSection tinted>
-        <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
-          <div>
-            <SectionHeader title="Founder & Managing Director" />
-            <div className="mt-6 space-y-4 text-stone-700">
-              <h2 className="text-2xl font-semibold text-ink">Ifeanyi Luke Ananwude</h2>
+        <div className="grid gap-10 border-t border-ink/10 pt-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+          <SectionHeader title="Our leadership" eyebrow="Founder & Managing Director" />
+          <div className="space-y-4 text-stone-700">
+              <h3 className="text-3xl font-medium text-ink">Ifeanyi Luke Ananwude</h3>
               <p className="leading-7">
                 Ananwude Ifeany Luke is an entrepreneur, farmer, and the founder of De Jadon Group. He is passionate about creating sustainable value through Agro Real Estate, Agriculture and business innovation. Guided by integrity, excellence and a customer-first approach, he is committed to building trusted brands, empowering communities and delivering lasting value that positively impacts lives.
               </p>
-            </div>
           </div>
-          <ImageCanvas label="CEO Image Canvas" />
         </div>
       </PageSection>
     </SiteLayout>

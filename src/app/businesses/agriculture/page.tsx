@@ -1,5 +1,4 @@
 import { ButtonLink } from "@/components/button-link";
-import { ContentSlot } from "@/components/content-slot";
 import { InfoCard } from "@/components/info-card";
 import { PageHero } from "@/components/page-hero";
 import { PageSection } from "@/components/page-section";
@@ -21,7 +20,6 @@ export default function AgriculturePage() {
         <PageHero
           title={agriculture.name}
           eyebrow="Businesses"
-          canvasLabel={agriculture.imageCanvas}
           accent="green"
           actions={
             <>
@@ -32,39 +30,48 @@ export default function AgriculturePage() {
             </>
           }
         >
-          <p className="max-w-2xl leading-7 text-stone-700">We are involved in agricultural activities aimed at producing food and other agricultural products. This includes crop farming and livestock/fish farming. De Jadon Group is not just about farming; it is about connecting land ownership, investment and food supply into one business model. The services currently provided include real estate services, agricultural services, food packages and investment opportunities.</p>
+          <p>We are involved in agricultural activities aimed at producing food and other agricultural products. This includes crop farming and livestock/fish farming. De Jadon Group is not just about farming; it is about connecting land ownership, investment and food supply into one business model. The services currently provided include real estate services, agricultural services, food packages and investment opportunities.</p>
         </PageHero>
       </PageSection>
       <PageSection tinted>
-        <div className="mb-8">
-          <SectionHeader title="Agriculture Sections" accent="green" />
+        <div className="mb-10">
+          <SectionHeader title="Explore agriculture" accent="green" />
         </div>
-        <SectionGrid sections={agriculture.sections} accent="green" />
+        <SectionGrid sections={agriculture.sections.filter((section) => section.href !== agriculture.href)} accent="green" />
       </PageSection>
       <PageSection>
-        <div className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
-          <SectionHeader title="Products" accent="green" />
-          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-10 border-t border-ink/10 pt-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+          <div>
+            <SectionHeader title="From our farms" eyebrow="Products" accent="green" />
+            <div className="mt-6">
+              <ButtonLink href="/businesses/agriculture/products" variant="outline">View all products</ButtonLink>
+            </div>
+          </div>
+          <div className="grid gap-x-8 gap-y-5 sm:grid-cols-2">
             {agricultureProducts.map((product) => (
               <InfoCard
                 key={product}
                 title={product}
-                canvasLabel={`${product} Image Canvas`}
-                href="/businesses/agriculture/products"
                 accent="green"
               />
             ))}
           </div>
         </div>
       </PageSection>
-      <PageSection>
-        <div className="grid gap-4 lg:grid-cols-2">
-          {agricultureFaqs.map((faq) => (
-            <article key={faq.question} className="rounded-card border border-stone-200 bg-white p-5 shadow-sm">
-              <h2 className="font-semibold text-ink">{faq.question}</h2>
-              <p className="mt-3 leading-6 text-stone-700">{faq.answer}</p>
-            </article>
-          ))}
+      <PageSection tinted>
+        <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+          <SectionHeader title="Frequently asked questions" eyebrow="Good to know" accent="green" />
+          <div className="divide-y divide-ink/10 border-y border-ink/10">
+            {agricultureFaqs.map((faq) => (
+              <details key={faq.question} className="group py-5">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-6 text-base font-semibold text-ink [&::-webkit-details-marker]:hidden">
+                  {faq.question}
+                  <span aria-hidden="true" className="text-xl font-normal text-agriculture transition-transform group-open:rotate-45">+</span>
+                </summary>
+                <p className="max-w-2xl pb-1 pt-4 leading-7 text-stone-600">{faq.answer}</p>
+              </details>
+            ))}
+          </div>
         </div>
       </PageSection>
     </SiteLayout>

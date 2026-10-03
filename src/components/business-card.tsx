@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import type { Business } from "@/types/site";
-import { ImageCanvas } from "@/components/image-canvas";
 
 type BusinessCardProps = {
   business: Business;
@@ -11,9 +10,8 @@ export function BusinessCard({ business }: BusinessCardProps) {
   const linkTone = business.accent === "green" ? "hover:text-agriculture" : "hover:text-orangeAction";
 
   return (
-    <article className="min-w-0">
-      <ImageCanvas label={business.imageCanvas} accent={business.accent} compact />
-      <div className="mt-5">
+    <article className="min-w-0 border-t border-ink/15 pt-6">
+      <div>
         <h3 className="text-2xl font-medium text-ink">
           <Link href={business.href} className={`flex min-h-11 items-center justify-between gap-4 transition-colors ${linkTone}`}>
             <span>{business.name}</span>

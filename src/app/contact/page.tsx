@@ -1,72 +1,70 @@
-import { ContentSlot } from "@/components/content-slot";
-import { ImageCanvas } from "@/components/image-canvas";
-import { InfoCard } from "@/components/info-card";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import { ButtonLink } from "@/components/button-link";
 import { PageHero } from "@/components/page-hero";
 import { PageSection } from "@/components/page-section";
+import { SectionHeader } from "@/components/section-header";
 import { SiteLayout } from "@/components/site-layout";
 
 const inquiryOptions = ["Agriculture", "Agro-Real Estate", "Partner Program"];
+const emailAddress = "dejadongroup@gmail.com";
 
 export default function ContactPage() {
   return (
     <SiteLayout>
       <PageSection>
-        <PageHero title="Contact" eyebrow="De Jadon Group" canvasLabel="Contact Image Canvas">
-          <p className="max-w-2xl leading-7 text-stone-700">Get in touch with De Jadon Group for enquiries about Agriculture, Agro-Real Estate, the Partner Program, or general company information.</p>
+        <PageHero
+          title="Let’s talk"
+          eyebrow="Contact De Jadon Group"
+          actions={
+            <>
+              <ButtonLink href={`mailto:${emailAddress}`}>Send an email</ButtonLink>
+              <ButtonLink href="tel:+2348070458759" variant="outline">Call us</ButtonLink>
+            </>
+          }
+        >
+          <p>Get in touch with De Jadon Group for enquiries about Agriculture, Agro-Real Estate, the Partner Program, or general company information.</p>
         </PageHero>
       </PageSection>
       <PageSection tinted>
-        <div className="grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
-          <div className="grid gap-4">
-            {inquiryOptions.map((option) => (
-              <InfoCard key={option} title={option}>
-                <p className="leading-6 text-stone-700">Contact: 08070458759</p>
-              </InfoCard>
-            ))}
-            <InfoCard title="Contact Details">
-              <div className="space-y-2 text-sm leading-6 text-stone-700">
-                <p><strong>Phone:</strong> 08070458759</p>
-                <p><strong>Email:</strong> dejadongroup@gmail.com</p>
-                <p><strong>Office:</strong> Shop C15 Ebube Dike Shopping Mall, Umuodu Road, Good Will Junction, Nodu, Okpuno, Awka, Anambra State.</p>
-                <p><strong>Working Hours:</strong> 8:30am – 5:00pm</p>
-              </div>
-            </InfoCard>
-            <ImageCanvas label="Map / Location Image Canvas" compact />
+        <div className="grid gap-14 lg:grid-cols-[1fr_1fr] lg:gap-24">
+          <div>
+            <SectionHeader title="How can we help?" />
+            <p className="mt-5 max-w-md leading-7 text-stone-600">Choose an area to start an email inquiry with our team.</p>
+            <div className="mt-8 divide-y divide-ink/10 border-y border-ink/10">
+              {inquiryOptions.map((option) => (
+                <Link
+                  key={option}
+                  href={`mailto:${emailAddress}?subject=${encodeURIComponent(`${option} inquiry`)}`}
+                  className="group flex items-center justify-between gap-6 py-6 text-xl font-medium text-ink transition-colors hover:text-orangeAction"
+                >
+                  {option}
+                  <ArrowRight aria-hidden="true" className="h-5 w-5 shrink-0 text-orangeAction transition-transform group-hover:translate-x-1" />
+                </Link>
+              ))}
+            </div>
           </div>
-          <form className="rounded-card border border-orangeAction/20 bg-white p-5 shadow-sm sm:p-6">
-            <div className="mb-6">
-              <p className="text-xs font-bold uppercase tracking-[0.14em] text-orangeAction">Inquiry Form</p>
-              <h2 className="mt-2 text-2xl font-semibold text-ink">Contact</h2>
-            </div>
-            <div className="grid gap-4">
-              <label className="grid gap-2 text-sm font-semibold text-stone-700">
-                Name
-                <input className="min-h-11 rounded-card border border-stone-200 px-3 outline-none focus:border-orangeAction" />
-              </label>
-              <label className="grid gap-2 text-sm font-semibold text-stone-700">
-                Email
-                <input className="min-h-11 rounded-card border border-stone-200 px-3 outline-none focus:border-orangeAction" type="email" />
-              </label>
-              <label className="grid gap-2 text-sm font-semibold text-stone-700">
-                Inquiry
-                <select className="min-h-11 rounded-card border border-stone-200 px-3 outline-none focus:border-orangeAction" defaultValue="">
-                  <option value="" disabled>
-                    Select Inquiry
-                  </option>
-                  {inquiryOptions.map((option) => (
-                    <option key={option}>{option}</option>
-                  ))}
-                </select>
-              </label>
-              <label className="grid gap-2 text-sm font-semibold text-stone-700">
-                Message
-                <textarea className="min-h-36 rounded-card border border-stone-200 px-3 py-3 outline-none focus:border-orangeAction" />
-              </label>
-              <button className="min-h-11 rounded-card bg-orangeAction px-5 py-3 text-sm font-semibold text-white hover:bg-orange-600" type="button">
-                Submit
-              </button>
-            </div>
-          </form>
+          <div>
+            <SectionHeader title="Contact details" />
+            <dl className="mt-8 space-y-7 text-base leading-7">
+              <div>
+                <dt className="mb-1 text-xs font-semibold uppercase tracking-[0.16em] text-stone-500">Phone</dt>
+                <dd><a className="text-lg text-ink underline decoration-ink/20 underline-offset-4 hover:text-orangeAction" href="tel:+2348070458759">08070458759</a></dd>
+              </div>
+              <div>
+                <dt className="mb-1 text-xs font-semibold uppercase tracking-[0.16em] text-stone-500">Email</dt>
+                <dd><a className="break-words text-lg text-ink underline decoration-ink/20 underline-offset-4 hover:text-orangeAction" href={`mailto:${emailAddress}`}>{emailAddress}</a></dd>
+              </div>
+              <div>
+                <dt className="mb-1 text-xs font-semibold uppercase tracking-[0.16em] text-stone-500">Office</dt>
+                <dd className="max-w-md text-stone-700">Shop C15 Ebube Dike Shopping Mall, Umuodu Road, Good Will Junction, Nodu, Okpuno, Awka, Anambra State.</dd>
+              </div>
+              <div>
+                <dt className="mb-1 text-xs font-semibold uppercase tracking-[0.16em] text-stone-500">Working hours</dt>
+                <dd className="text-stone-700">8:30am – 5:00pm</dd>
+              </div>
+            </dl>
+          </div>
         </div>
       </PageSection>
     </SiteLayout>

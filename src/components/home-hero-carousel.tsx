@@ -1,114 +1,48 @@
 "use client";
 
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { ContentSlot } from "@/components/content-slot";
-import { ImageCanvas } from "@/components/image-canvas";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import { useState } from "react";
+import { ButtonLink } from "@/components/button-link";
 import type { HeroSlide } from "@/types/site";
 
-type HomeHeroCarouselProps = {
-  slides: HeroSlide[];
-};
-
-export function HomeHeroCarousel({ slides }: HomeHeroCarouselProps) {
+export function HomeHeroCarousel({ slides }: { slides: HeroSlide[] }) {
   const [activeSlide, setActiveSlide] = useState(0);
-
-  useEffect(() => {
-    const timer = window.setInterval(() => {
-      setActiveSlide((current) => (current === slides.length - 1 ? 0 : current + 1));
-    }, 7000);
-
-    return () => window.clearInterval(timer);
-  }, [slides.length]);
-
-  function showPrevious() {
-    setActiveSlide((current) => (current === 0 ? slides.length - 1 : current - 1));
-  }
-
-  function showNext() {
-    setActiveSlide((current) => (current === slides.length - 1 ? 0 : current + 1));
-  }
+  const slide = slides[activeSlide] ?? slides[0];
+  if (!slide) return null;
 
   return (
-    <section className="relative overflow-hidden rounded-card border border-orangeAction/20 bg-white shadow-sm">
-      <div className="absolute inset-x-0 top-0 z-10 h-1 bg-orangeAction" />
-      <div
-        className="flex transition-transform duration-500 ease-out"
-        style={{ transform: `translateX(-${activeSlide * 100}%)` }}
-      >
-        {slides.map((slide) => {
-          const accent = slide.accent ?? "orange";
-          const line = accent === "green" ? "bg-agriculture" : "bg-orangeAction";
-
-          return (
-            <article key={slide.title} className="min-w-full px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
-              <div className="grid gap-6 lg:grid-cols-[0.88fr_1.12fr] lg:items-center">
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-[0.16em] text-stone-500">{slide.eyebrow}</p>
-                  <h1 className="mt-3 text-4xl font-semibold leading-tight text-ink sm:text-5xl">{slide.title}</h1>
-                  <div className={`mt-5 h-1 w-16 rounded-full ${line}`} />
-                  {slide.description ? <p className="mt-6 max-w-xl leading-7 text-stone-700">{slide.description}</p> : null}
-                  {!slide.description ? (
-                    <div className="mt-4">
-                      <ContentSlot label={slide.slotLabel} accent={accent} />
-                    </div>
-                  ) : null}
-                  <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-                    <Link
-                      href={slide.primaryHref}
-                      className="inline-flex min-h-11 items-center justify-center rounded-card bg-orangeAction px-5 py-3 text-sm font-semibold text-white hover:bg-orange-700"
-                    >
-                      {slide.primaryLabel}
-                    </Link>
-                    <Link
-                      href={slide.secondaryHref}
-                      className="inline-flex min-h-11 items-center justify-center rounded-card border border-orangeAction px-5 py-3 text-sm font-semibold text-orangeAction hover:bg-orange-50"
-                    >
-                      {slide.secondaryLabel}
-                    </Link>
-                  </div>
-                </div>
-                <ImageCanvas label={slide.canvasLabel} accent={accent} className="min-h-48 sm:min-h-56 lg:min-h-64" />
-              </div>
-            </article>
-          );
-        })}
-      </div>
-
-      <div className="flex flex-col gap-3 border-t border-stone-100 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
-        <div className="flex items-center gap-2">
-          {slides.map((slide, index) => (
-            <button
-              key={slide.title}
-              type="button"
-              aria-label={`Show ${slide.title}`}
-              className={`h-2.5 rounded-full transition-all ${
-                activeSlide === index ? "w-9 bg-orangeAction" : "w-2.5 bg-orangeAction/25 hover:bg-orangeAction/50"
-              }`}
-              onClick={() => setActiveSlide(index)}
-            />
-          ))}
+    <section aria-label="Discover De Jadon Group" aria-roledescription="carousel">
+      <div className="grid gap-10 lg:min-h-[380px] lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-16">
+        <div>
+          <p className={`text-xs font-semibold uppercase tracking-[0.2em] ${slide.accent === "green" ? "text-agriculture" : "text-orangeAction"}`}>{slide.eyebrow}</p>
+          <div aria-live="polite" aria-atomic="true">
+            <h1 className="mt-5 max-w-2xl text-4xl font-normal leading-[1.08] tracking-tight text-ink sm:text-5xl lg:text-6xl">{slide.title}</h1>
+            {slide.description ? <p className="mt-6 max-w-xl text-base leading-8 text-stone-600 sm:text-lg">{slide.description}</p> : null}
+          </div>
+          <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
+            <ButtonLink href={slide.primaryHref}>{slide.primaryLabel}</ButtonLink>
+            <ButtonLink href={slide.secondaryHref} variant="outline">{slide.secondaryLabel}</ButtonLink>
+          </div>
         </div>
-        <div className="flex gap-2">
-          <button
-            type="button"
-            aria-label="Previous hero slide"
-            className="rounded-card border border-orangeAction/25 p-2 text-orangeAction hover:bg-orange-50"
-            onClick={showPrevious}
-          >
-            <ChevronLeft aria-hidden="true" className="h-5 w-5" />
-          </button>
-          <button
-            type="button"
-            aria-label="Next hero slide"
-            className="rounded-card border border-orangeAction/25 p-2 text-orangeAction hover:bg-orange-50"
-            onClick={showNext}
-          >
-            <ChevronRight aria-hidden="true" className="h-5 w-5" />
-          </button>
-        </div>
+        <p className="hidden max-w-sm border-l border-orangeAction/30 pl-8 font-serif text-3xl leading-snug text-ink/70 lg:block">
+          Your future is an investment. Let’s build it together.
+        </p>
       </div>
+      {slides.length > 1 ? (
+        <div className="mt-8 flex items-center justify-between gap-4 border-t border-ink/10 pt-4 lg:mt-10">
+          <div className="flex flex-wrap gap-1">
+            {slides.map((item, index) => (
+              <button key={item.title} type="button" aria-label={`Show ${item.title}`} aria-pressed={activeSlide === index} className={`flex h-11 w-11 items-center justify-center text-xs tabular-nums transition-colors ${activeSlide === index ? "text-orangeAction" : "text-stone-500 hover:text-ink"}`} onClick={() => setActiveSlide(index)}>
+                <span className={`border-b pb-1 ${activeSlide === index ? "border-orangeAction" : "border-transparent"}`}>{String(index + 1).padStart(2, "0")}</span>
+              </button>
+            ))}
+          </div>
+          <div className="flex shrink-0 items-center gap-2">
+            <button type="button" aria-label="Previous hero slide" className="flex h-11 w-11 items-center justify-center rounded-full text-ink transition-colors hover:bg-ink/5" onClick={() => setActiveSlide((activeSlide + slides.length - 1) % slides.length)}><ArrowLeft aria-hidden="true" className="h-5 w-5" /></button>
+            <button type="button" aria-label="Next hero slide" className="flex h-11 w-11 items-center justify-center rounded-full text-ink transition-colors hover:bg-ink/5" onClick={() => setActiveSlide((activeSlide + 1) % slides.length)}><ArrowRight aria-hidden="true" className="h-5 w-5" /></button>
+          </div>
+        </div>
+      ) : null}
     </section>
   );
 }

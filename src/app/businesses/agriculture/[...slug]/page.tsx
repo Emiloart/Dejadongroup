@@ -1,114 +1,96 @@
 import { notFound } from "next/navigation";
-import { ContentSlot } from "@/components/content-slot";
-import { ImageCanvas } from "@/components/image-canvas";
-import { InfoCard } from "@/components/info-card";
+import { ButtonLink } from "@/components/button-link";
 import { PageHero } from "@/components/page-hero";
 import { PageSection } from "@/components/page-section";
 import { SectionGrid } from "@/components/section-grid";
+import { SectionHeader } from "@/components/section-header";
 import { SiteLayout } from "@/components/site-layout";
-import { agricultureProducts, getBusinessBySlug, getSectionByPath } from "@/lib/site-data";
+import { agricultureProducts, getSectionByPath } from "@/lib/site-data";
+
+const cropDescriptions = [
+  { name: "Palm", description: "The oil palm is a tropical tree. Its outer flesh contains palm oil, while the seed can be processed to produce palm kernel oil." },
+  { name: "Pepper", description: "Pepper grows as a bushy plant with a soft green stem that becomes stronger as it matures." },
+  { name: "Cassava", description: "Cassava is a perennial shrub commonly grown as an annual or biennial crop." }
+];
+
+const livestockDescriptions: Record<string, string> = {
+  poultry: "Poultry birds provide meat, eggs, manure and other valuable products.",
+  fishery: "Fish farming is part of De Jadon Group's agriculture operations.",
+  bsf: "Black Soldier Fly is a non-pest insect containing significant amounts of protein and fat."
+};
 
 type AgricultureSectionPageProps = { params: { slug: string[] } };
 
 export function generateStaticParams() {
   return [
-    { slug: ["crop-farming"] },
-    { slug: ["livestock"] },
-    { slug: ["livestock", "poultry"] },
-    { slug: ["livestock", "fishery"] },
-    { slug: ["livestock", "bsf"] },
-    { slug: ["products"] },
-    { slug: ["gallery"] }
+    { slug: ["crop-farming"] }, { slug: ["livestock"] },
+    { slug: ["livestock", "poultry"] }, { slug: ["livestock", "fishery"] },
+    { slug: ["livestock", "bsf"] }, { slug: ["products"] }, { slug: ["gallery"] }
   ];
 }
 
 export default function AgricultureSectionPage({ params }: AgricultureSectionPageProps) {
-  const path = "/businesses/agriculture/" + params.slug.join("/");
+  const path = `/businesses/agriculture/${params.slug.join("/")}`;
   const match = getSectionByPath(path);
-  const agriculture = getBusinessBySlug("agriculture");
+  if (!match || match.business.slug !== "agriculture") notFound();
 
-  if (!match || !agriculture || match.business.slug !== "agriculture") notFound();
-
-  const isProducts = path === "/businesses/agriculture/products";
-  const isLivestock = path === "/businesses/agriculture/livestock";
-  const isGallery = path === "/businesses/agriculture/gallery";
-  const isCropFarming = path === "/businesses/agriculture/crop-farming";
-  const isDetailOnly = !isProducts && !isLivestock && !isGallery && !isCropFarming;
+  const category = params.slug[0];
+  const detail = params.slug[1];
+  const intro = category === "crop-farming"
+    ? "Explore the crops cultivated as part of De Jadon Group's agriculture work."
+    : category === "livestock" && detail
+      ? livestockDescriptions[detail]
+      : category === "livestock"
+        ? "Our agriculture operations include poultry, fishery and Black Soldier Fly."
+        : category === "products"
+          ? "Our agricultural products include fresh and dried fish. Product sales are being prepared for a separate marketplace."
+          : "Images of our agriculture work will be added when available.";
 
   return (
     <SiteLayout>
       <PageSection>
-        <PageHero
-          title={match.section.name}
-          eyebrow="Agriculture"
-          canvasLabel={"Agriculture " + match.section.name + " Image Canvas"}
-          accent="green"
-        >
-          <ContentSlot label={match.section.name + " Overview Slot"} accent="green" />
+        <PageHero title={match.section.name} eyebrow="Agriculture" accent="green" actions={<ButtonLink href="/businesses/agriculture" variant="outline">Back to agriculture</ButtonLink>}>
+          <p>{intro}</p>
         </PageHero>
       </PageSection>
-
-      {isCropFarming ? (
+      {category === "crop-farming" ? (
         <PageSection tinted>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <InfoCard title="Palm" accent="green">
-              <p className="leading-6 text-stone-700">The oil palm is a tropical tree widely cultivated in Nigeria and other parts of the world. The outer fleshy portion contains palm oil while the hard seed contains the palm kernel, which can be processed to produce palm kernel oil.</p>
-            </InfoCard>
-            <InfoCard title="Pepper" accent="green">
-              <p className="leading-6 text-stone-700">Pepper is generally a small to medium-sized bushy plant with a relatively soft green stem that becomes stronger as the plant matures.</p>
-            </InfoCard>
-            <InfoCard title="Cassava" accent="green">
-              <p className="leading-6 text-stone-700">Cassava is a perennial shrub commonly cultivated as an annual or biennial crop. It has an upright, branching stem and can grow to approximately 1–3 metres depending on variety and growing conditions.</p>
-            </InfoCard>
+          <div className="grid gap-10 lg:grid-cols-[0.7fr_1.3fr] lg:gap-16">
+            <SectionHeader title="Crops" accent="green" />
+            <div className="grid gap-8 sm:grid-cols-2">
+              {cropDescriptions.map((crop) => (
+                <article key={crop.name} className="border-t border-ink/10 pt-5">
+                  <h2 className="text-xl text-ink">{crop.name}</h2>
+                  <p className="mt-3 text-sm leading-7 text-stone-600">{crop.description}</p>
+                </article>
+              ))}
+            </div>
           </div>
         </PageSection>
       ) : null}
-
-      {isLivestock ? (
+      {category === "livestock" && !detail ? (
         <PageSection tinted>
-          <div className="grid gap-4 md:grid-cols-3">
-            <InfoCard title="Poultry" canvasLabel="Poultry Image Canvas" accent="green">
-              <p className="leading-6 text-stone-700">Poultry birds provide meat, eggs, manure and other valuable products.</p>
-            </InfoCard>
-            <InfoCard title="Fishery" canvasLabel="Fishery Image Canvas" accent="green">
-              <p className="leading-6 text-stone-700">A fish is an aquatic vertebrate animal that lives primarily in water.</p>
-            </InfoCard>
-            <InfoCard title="Black Soldier Fly (BSF)" canvasLabel="BSF Image Canvas" accent="green">
-              <p className="leading-6 text-stone-700">Black Soldier Fly is a non-pest insect found in many warm regions of the world. It is usually dark grey to black and contains significant amounts of protein and fat.</p>
-            </InfoCard>
+          <SectionHeader title="Explore livestock" accent="green" />
+          <div className="mt-8"><SectionGrid sections={match.section.sections ?? []} accent="green" /></div>
+        </PageSection>
+      ) : null}
+      {category === "products" ? (
+        <PageSection tinted>
+          <SectionHeader title="Available products" accent="green" />
+          <ul className="mt-8 grid gap-x-10 sm:grid-cols-3">
+            {agricultureProducts.map((product) => <li key={product} className="border-t border-ink/10 py-5 text-lg text-ink">{product}</li>)}
+          </ul>
+          <ButtonLink href="/contact" variant="outline">Ask about products</ButtonLink>
+        </PageSection>
+      ) : null}
+      {category === "gallery" || detail ? (
+        <PageSection tinted>
+          <div className="flex flex-wrap items-center justify-between gap-6 border-t border-ink/10 pt-8">
+            <p className="max-w-xl text-stone-600">For more information about {match.section.name.toLowerCase()}, contact our team.</p>
+            <ButtonLink href="/contact">Contact us</ButtonLink>
           </div>
         </PageSection>
       ) : null}
-
-      {isProducts ? (
-        <PageSection tinted>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {agricultureProducts.map((product) => (
-              <InfoCard key={product} title={product} canvasLabel={product + " Image Canvas"} accent="green" />
-            ))}
-          </div>
-        </PageSection>
-      ) : null}
-
-      {isGallery ? (
-        <PageSection tinted>
-          <div className="grid gap-4 md:grid-cols-3">
-            <ImageCanvas label="Agriculture Gallery Canvas" accent="green" compact />
-            <ImageCanvas label="Agriculture Gallery Canvas" accent="green" compact />
-            <ImageCanvas label="Agriculture Gallery Canvas" accent="green" compact />
-          </div>
-        </PageSection>
-      ) : null}
-
-      {isDetailOnly ? (
-        <PageSection tinted>
-          <div className="grid gap-4 md:grid-cols-2">
-            <InfoCard title={match.section.name + " Detail"} slotLabel={match.section.name + " Detail Slot"} accent="green" />
-            <InfoCard title={match.section.name + " Gallery"} canvasLabel={match.section.name + " Gallery Canvas"} accent="green" />
-          </div>
-        </PageSection>
-      ) : null}
-
     </SiteLayout>
   );
 }
