@@ -7,18 +7,13 @@ type DashboardCardProps = {
 
 export function DashboardCard({ card, id }: DashboardCardProps) {
   return (
-    <article
-      id={id}
-      className={`scroll-mt-24 border-t border-stone-200 py-6 ${
-        card.wide ? "lg:col-span-2" : ""
-      }`}
-    >
-      <h3 className="text-lg font-semibold text-ink">{card.title}</h3>
-      {card.fields ? (
-        <dl className="mt-4 divide-y divide-stone-200/60">
+    <article id={id} className="scroll-mt-8 border-t border-ink/10 py-6 sm:grid sm:grid-cols-[170px_minmax(0,1fr)] sm:gap-6 lg:grid-cols-[185px_minmax(0,1fr)] lg:gap-8">
+      <h3 className="text-lg font-medium leading-7 text-ink">{card.title}</h3>
+      {card.fields?.length ? (
+        <dl className="mt-4 grid gap-x-8 gap-y-3 sm:mt-0 md:grid-cols-2">
           {card.fields.map((field) => (
-            <div key={field} className="flex items-baseline justify-between gap-6 py-3 text-sm">
-              <dt className="text-stone-600">{field}</dt>
+            <div key={field} className="flex min-w-0 items-start justify-between gap-4 text-sm leading-6">
+              <dt className="min-w-0 text-stone-600">{field}</dt>
               <dd className="shrink-0 text-stone-400">
                 <span aria-hidden="true">—</span>
                 <span className="sr-only">Not available</span>
@@ -26,10 +21,7 @@ export function DashboardCard({ card, id }: DashboardCardProps) {
             </div>
           ))}
         </dl>
-      ) : null}
-      {!card.fields ? (
-        <p className="mt-4 text-sm text-stone-500">No details available.</p>
-      ) : null}
+      ) : <p className="mt-3 text-sm text-stone-500 sm:mt-0">No details available.</p>}
     </article>
   );
 }
