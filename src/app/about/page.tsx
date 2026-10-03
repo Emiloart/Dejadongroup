@@ -48,7 +48,10 @@ export default function AboutPage() {
             </>
           }
         >
-          <p className="max-w-2xl text-base leading-7 text-stone-700">{aboutSections[0].body}</p>
+          <div className="space-y-4">
+            <p>{aboutSections[0].body}</p>
+            <p>De Jadon Group was created to address the difficulty of accessing credible investment opportunities, owning appreciating assets and building sustainable additional sources of income in Nigeria.</p>
+          </div>
         </PageHero>
       </PageSection>
 
