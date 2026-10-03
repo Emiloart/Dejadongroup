@@ -46,6 +46,21 @@ h4 {
   scroll-margin-top: 7rem;
 }
 
+@keyframes hero-slide-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-slide-enter {
+  animation: hero-slide-enter 450ms ease-out both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
