@@ -30,6 +30,17 @@ export default function DashboardPage({ params }: DashboardPageProps) {
         <p className="mt-4 text-sm leading-7 text-stone-600">{dashboardIntroductions[params.role]}</p>
       </div>
 
+      <nav aria-label="Jump to dashboard sections" className="mt-8 border-y border-ink/10 py-3 lg:hidden">
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-stone-600">On this page</p>
+        <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1">
+          {sections.map((section) => (
+            <a key={section.label} href={"#section-" + sectionId(section.label)} className="inline-flex min-h-11 items-center border-b border-orangeAction/60 text-sm font-semibold text-ink hover:border-orangeAction hover:text-orange-700">
+              {section.label}
+            </a>
+          ))}
+        </div>
+      </nav>
+
       <p className="mt-10 text-xs font-semibold uppercase tracking-[0.16em] text-stone-500">Quick access</p>
       <nav aria-label="Quick access" className="mt-3 grid gap-0 border-y border-ink/10 sm:grid-cols-3">
         {highlights.map((highlight) => (
