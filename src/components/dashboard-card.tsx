@@ -1,27 +1,26 @@
-import type { DashboardCard as DashboardCardType } from "@/types/site";
+import Link from "next/link";
+import { ArrowUpRight } from "lucide-react";
+import type { DashboardFeature } from "@/lib/dashboard-data";
 
 type DashboardCardProps = {
-  card: DashboardCardType;
+  card: DashboardFeature;
   id?: string;
 };
 
 export function DashboardCard({ card, id }: DashboardCardProps) {
   return (
-    <article id={id} className="scroll-mt-8 border-t border-ink/10 py-6 sm:grid sm:grid-cols-[170px_minmax(0,1fr)] sm:gap-6 lg:grid-cols-[185px_minmax(0,1fr)] lg:gap-8">
-      <h3 className="text-lg font-medium leading-7 text-ink">{card.title}</h3>
-      {card.fields?.length ? (
-        <dl className="mt-4 grid gap-x-8 gap-y-3 sm:mt-0 md:grid-cols-2">
-          {card.fields.map((field) => (
-            <div key={field} className="flex min-w-0 items-start justify-between gap-4 text-sm leading-6">
-              <dt className="min-w-0 text-stone-600">{field}</dt>
-              <dd className="shrink-0 text-stone-400">
-                <span aria-hidden="true">—</span>
-                <span className="sr-only">Not available</span>
-              </dd>
-            </div>
-          ))}
-        </dl>
-      ) : <p className="mt-3 text-sm text-stone-500 sm:mt-0">No details available.</p>}
+    <article id={id} className="scroll-mt-28 border-t border-ink/10 py-5 sm:flex sm:items-start sm:justify-between sm:gap-8">
+      <div className="min-w-0">
+        <h3 className="text-base font-semibold leading-7 text-ink">{card.title}</h3>
+        <p className="mt-1 max-w-2xl text-sm leading-6 text-stone-600">{card.description}</p>
+      </div>
+      {card.href && card.action ? (
+        <Link href={card.href} className="mt-3 inline-flex shrink-0 items-center gap-1 text-sm font-semibold text-orangeAction hover:text-orange-700 sm:mt-1">
+          {card.action} <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
+        </Link>
+      ) : (
+        <span className="mt-3 inline-block shrink-0 text-xs font-medium text-stone-500 sm:mt-2">Awaiting connection</span>
+      )}
     </article>
   );
 }
