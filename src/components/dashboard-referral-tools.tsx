@@ -81,7 +81,7 @@ export function DashboardReferralTools({ role }: { role: DashboardRole }) {
       </div>
 
       {referralUrl ? (
-        <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_220px] lg:gap-12">
+        <div className="mt-8 grid max-w-5xl gap-8 lg:grid-cols-[minmax(0,1fr)_208px] lg:items-start lg:gap-10">
           <div className="min-w-0">
             <label htmlFor="referral-url" className="text-sm font-semibold text-ink">Your referral link</label>
             <div className="mt-2 flex min-w-0 items-center gap-2 rounded-card border border-ink/15 bg-white px-3">
@@ -99,13 +99,16 @@ export function DashboardReferralTools({ role }: { role: DashboardRole }) {
               ) : null}
             </div>
             {message ? <p role="status" className={`mt-3 inline-flex items-center gap-2 text-sm ${hasError ? "text-red-700" : "text-agriculture"}`}>{hasError ? null : <Check aria-hidden="true" className="h-4 w-4" />}{message}</p> : null}
-            <p className="mt-6 max-w-xl text-xs leading-5 text-stone-500">This preview link opens the website with your username in the URL. Referral attribution, sign-ups, and commissions are not recorded yet.</p>
+            <p className="mt-6 max-w-xl border-t border-ink/10 pt-4 text-xs leading-5 text-stone-500">This preview link opens the website with your username in the URL. Referral attribution, sign-ups, and commissions are not recorded yet.</p>
           </div>
           <div className="flex items-start justify-center lg:justify-end">
             {qrDataUrl ? (
-              <div className="border border-ink/10 bg-white p-3">
-                <Image src={qrDataUrl} alt={"QR code for @" + username + " referral link"} width={176} height={176} unoptimized className="h-44 w-44" />
-              </div>
+              <figure className="text-center">
+                <div className="border border-ink/10 bg-white p-3">
+                  <Image src={qrDataUrl} alt={"QR code for @" + username + " referral link"} width={176} height={176} unoptimized className="h-44 w-44" />
+                </div>
+                <figcaption className="mt-2 text-xs text-stone-500">Scan to open your link</figcaption>
+              </figure>
             ) : <p className="text-sm text-stone-500">Generating QR code…</p>}
           </div>
         </div>

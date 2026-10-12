@@ -89,29 +89,36 @@ export function DashboardProfileEditor({ role }: { role: DashboardRole }) {
   const usernameLocked = Boolean(profile.username);
 
   return (
-    <section aria-labelledby="profile-heading" className="mt-10 border-t border-ink/10 pt-8">
-      <div className="max-w-2xl">
-        <h2 id="profile-heading" className="text-2xl font-medium text-ink">Personal details</h2>
-        <p className="mt-2 text-sm leading-6 text-stone-600">These details are saved only in this browser for the dashboard preview.</p>
-      </div>
-
-      <div className="mt-8 grid gap-10 xl:grid-cols-[minmax(0,1fr)_260px] xl:gap-12">
-        <form onSubmit={onSave} className="min-w-0">
-          <div className="flex flex-wrap items-center gap-5 border-b border-ink/10 pb-7">
-            <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full bg-orangeAction/10 text-xl font-semibold text-orangeAction">
-              {draft.photoDataUrl ? <Image src={draft.photoDataUrl} alt="Your profile photo" width={80} height={80} unoptimized className="h-full w-full object-cover" /> : initials}
-            </div>
-            <div>
-              <label htmlFor="profile-photo" className="inline-flex min-h-11 cursor-pointer items-center gap-2 text-sm font-semibold text-orangeAction hover:text-orange-700">
-                <Camera aria-hidden="true" className="h-4 w-4" /> {draft.photoDataUrl ? "Change photo" : "Add a photo"}
-              </label>
-              <input id="profile-photo" type="file" accept="image/jpeg,image/png,image/webp" onChange={onPhotoChange} className="sr-only" />
-              <p className="text-xs text-stone-500">JPG, PNG, or WebP · under 1 MB</p>
-              {draft.photoDataUrl ? <button type="button" onClick={() => setDraft((current) => current ? { ...current, photoDataUrl: "" } : current)} className="mt-1 text-xs font-medium text-stone-600 underline hover:text-orangeAction">Remove photo</button> : null}
-            </div>
+    <section aria-labelledby="profile-heading" className="mt-8 border-t border-ink/10">
+      <div className="flex flex-wrap items-center justify-between gap-5 border-b border-ink/10 py-6">
+        <div className="flex min-w-0 items-center gap-4">
+          <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full bg-orangeAction/10 text-xl font-semibold text-orangeAction">
+            {draft.photoDataUrl ? <Image src={draft.photoDataUrl} alt="Your profile photo" width={80} height={80} unoptimized className="h-full w-full object-cover" /> : initials}
           </div>
+          <div className="min-w-0">
+            <p className="truncate text-lg font-semibold text-ink">{profile.fullName || "Your name"}</p>
+            <p className="text-sm text-stone-600">{profile.username ? "@" + profile.username : "Choose a username"}</p>
+            <label htmlFor="profile-photo" className="mt-1 inline-flex min-h-9 cursor-pointer items-center gap-2 text-sm font-semibold text-orangeAction hover:text-orange-700">
+              <Camera aria-hidden="true" className="h-4 w-4" /> {draft.photoDataUrl ? "Change photo" : "Add a photo"}
+            </label>
+            <input id="profile-photo" type="file" accept="image/jpeg,image/png,image/webp" onChange={onPhotoChange} className="sr-only" />
+            {draft.photoDataUrl ? <button type="button" onClick={() => setDraft((current) => current ? { ...current, photoDataUrl: "" } : current)} className="ml-3 text-xs font-medium text-stone-600 underline hover:text-orangeAction">Remove</button> : null}
+          </div>
+        </div>
+        <dl className="min-w-0 border-t border-ink/10 pt-4 sm:border-t-0 sm:border-l sm:py-2 sm:pl-5">
+          <dt className="text-xs font-semibold uppercase tracking-[0.12em] text-stone-500">User ID</dt>
+          <dd className="mt-1 break-all font-mono text-sm text-ink">{profile.id}</dd>
+          <dd className="mt-1 text-xs text-stone-500">Browser preview ID</dd>
+        </dl>
+      </div>
+      <p className="mt-3 text-xs text-stone-500">Photo: JPG, PNG, or WebP · under 1 MB</p>
 
-          <div className="mt-7 grid gap-5 sm:grid-cols-2">
+      <div className="mt-8 max-w-2xl">
+        <h2 id="profile-heading" className="text-2xl font-medium text-ink">Edit personal details</h2>
+        <p className="mt-2 text-sm leading-6 text-stone-600">Changes are saved in this browser only.</p>
+      </div>
+      <form onSubmit={onSave} className="mt-6 max-w-4xl">
+          <div className="grid gap-5 sm:grid-cols-2">
             <label className="block text-sm font-semibold text-ink">Full name
               <input required maxLength={80} autoComplete="name" value={draft.fullName} onChange={(event) => update("fullName", event.target.value)} className={inputClass} placeholder="Your full name" />
             </label>
@@ -127,23 +134,13 @@ export function DashboardProfileEditor({ role }: { role: DashboardRole }) {
             </label>
           </div>
           {error ? <p role="alert" className="mt-5 text-sm text-red-700">{error}</p> : null}
-          {message ? <p role="status" className="mt-5 inline-flex items-center gap-2 text-sm text-agriculture"><Check aria-hidden="true" className="h-4 w-4" />{message}</p> : null}
-          <button type="submit" className="mt-7 inline-flex min-h-11 items-center gap-2 rounded-card bg-orangeAction px-5 py-2 text-sm font-semibold text-white hover:bg-orange-700">
-            <Save aria-hidden="true" className="h-4 w-4" /> Save profile
-          </button>
-        </form>
-
-        <aside aria-label="Profile summary" className="h-fit border-t border-ink/10 pt-5">
-          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-orangeAction">Profile summary</p>
-          <p className="mt-4 text-lg font-semibold text-ink">{profile.fullName || "Your name"}</p>
-          <p className="mt-1 text-sm text-stone-600">{profile.username ? "@" + profile.username : "Choose a username"}</p>
-          <dl className="mt-6 border-t border-ink/10 pt-4">
-            <dt className="text-xs font-semibold uppercase tracking-[0.12em] text-stone-500">User ID</dt>
-            <dd className="mt-2 break-all font-mono text-sm text-ink">{profile.id}</dd>
-          </dl>
-          <p className="mt-5 text-xs leading-5 text-stone-500">This ID is generated for your browser preview and is not a verified account number.</p>
-        </aside>
-      </div>
+          <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-3 border-t border-ink/10 pt-5">
+            <button type="submit" className="inline-flex min-h-11 items-center gap-2 rounded-card bg-orangeAction px-5 py-2 text-sm font-semibold text-white hover:bg-orange-700">
+              <Save aria-hidden="true" className="h-4 w-4" /> Save profile
+            </button>
+            {message ? <p role="status" className="inline-flex items-center gap-2 text-sm text-agriculture"><Check aria-hidden="true" className="h-4 w-4" />{message}</p> : null}
+          </div>
+      </form>
     </section>
   );
 }
