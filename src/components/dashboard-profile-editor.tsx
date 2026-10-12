@@ -3,24 +3,24 @@
 import Image from "next/image";
 import { Camera, Check, Save } from "lucide-react";
 import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
-import { initializePreviewProfile, savePreviewProfile, type PreviewProfile } from "@/lib/preview-profile";
+import { getCurrentPreviewAccount, updatePreviewAccount, type PreviewAccount } from "@/lib/preview-account";
 import type { DashboardRole } from "@/types/site";
 
 const inputClass = "mt-2 w-full rounded-card border border-ink/15 bg-white px-3 py-3 text-sm text-ink outline-none transition-colors focus:border-orangeAction disabled:bg-stone-100 disabled:text-stone-500";
 
 export function DashboardProfileEditor({ role }: { role: DashboardRole }) {
-  const [profile, setProfile] = useState<PreviewProfile | null>(null);
-  const [draft, setDraft] = useState<PreviewProfile | null>(null);
+  const [profile, setProfile] = useState<PreviewAccount | null>(null);
+  const [draft, setDraft] = useState<PreviewAccount | null>(null);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
   useEffect(() => {
     try {
-      const saved = initializePreviewProfile(role);
-      setProfile(saved);
-      setDraft(saved);
+      const account = getCurrentPreviewAccount(role);
+      setProfile(account);
+      setDraft(account);
     } catch {
-      setError("Browser storage is unavailable. Enable it to save this preview profile.");
+      setError("Account details are unavailable in this browser.");
     }
   }, [role]);
 
@@ -56,7 +56,7 @@ export function DashboardProfileEditor({ role }: { role: DashboardRole }) {
 
   function onSave(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!draft) return;
+    if (!draft || !profile) return;
     const next = {
       ...draft,
       fullName: draft.fullName.trim(),
@@ -65,14 +65,14 @@ export function DashboardProfileEditor({ role }: { role: DashboardRole }) {
       phone: draft.phone.trim()
     };
     try {
-      const result = savePreviewProfile(next);
+      const result = updatePreviewAccount(profile.id, next);
       if (!result.ok) {
         setError(result.message);
         setMessage("");
         return;
       }
-      setProfile(next);
-      setDraft(next);
+      setProfile(result.account);
+      setDraft(result.account);
       setError("");
       setMessage("Profile saved in this browser.");
       window.dispatchEvent(new CustomEvent("dejadon:profile-updated", { detail: { role } }));
@@ -82,7 +82,7 @@ export function DashboardProfileEditor({ role }: { role: DashboardRole }) {
   }
 
   if (!draft || !profile) {
-    return <p className="mt-10 border-y border-ink/10 py-8 text-sm text-stone-600">{error || "Loading your preview profile…"}</p>;
+    return <p className="mt-10 border-y border-ink/10 py-8 text-sm text-stone-600">{error || "Loading your account profile…"}</p>;
   }
 
   const initials = draft.fullName.trim().split(/\s+/).map((part) => part[0]).slice(0, 2).join("").toUpperCase() || "DJ";
@@ -126,8 +126,8 @@ export function DashboardProfileEditor({ role }: { role: DashboardRole }) {
               <input required minLength={3} maxLength={20} pattern="[a-z][a-z0-9_]{2,19}" autoCapitalize="none" autoComplete="username" spellCheck={false} disabled={usernameLocked} value={draft.username} onChange={(event) => update("username", event.target.value)} className={inputClass} placeholder="Choose a username" />
               <span className="mt-2 block text-xs font-normal leading-5 text-stone-600">{usernameLocked ? "Chosen username is locked for this preview account." : "3–20 characters. Once saved, you cannot change it in this browser."}</span>
             </label>
-            <label className="block text-sm font-semibold text-ink">Email <span className="font-normal text-stone-500">(optional)</span>
-              <input type="email" autoComplete="email" value={draft.email} onChange={(event) => update("email", event.target.value)} className={inputClass} placeholder="you@example.com" />
+            <label className="block text-sm font-semibold text-ink">Email
+              <input required type="email" autoComplete="email" value={draft.email} onChange={(event) => update("email", event.target.value)} className={inputClass} placeholder="you@example.com" />
             </label>
             <label className="block text-sm font-semibold text-ink">Phone <span className="font-normal text-stone-500">(optional)</span>
               <input type="tel" autoComplete="tel" value={draft.phone} onChange={(event) => update("phone", event.target.value)} className={inputClass} placeholder="Your phone number" />

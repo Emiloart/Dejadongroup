@@ -4,11 +4,11 @@ import Image from "next/image";
 import { Check, Copy, Download, Link2 } from "lucide-react";
 import QRCode from "qrcode";
 import { useEffect, useState } from "react";
-import { readPreviewProfile, type PreviewProfile } from "@/lib/preview-profile";
+import { getCurrentPreviewAccount, type PreviewAccount } from "@/lib/preview-account";
 import type { DashboardRole } from "@/types/site";
 
 export function DashboardReferralTools({ role }: { role: DashboardRole }) {
-  const [profile, setProfile] = useState<PreviewProfile | null>(null);
+  const [profile, setProfile] = useState<PreviewAccount | null>(null);
   const [origin, setOrigin] = useState("");
   const [qrDataUrl, setQrDataUrl] = useState("");
   const [message, setMessage] = useState("");
@@ -18,7 +18,7 @@ export function DashboardReferralTools({ role }: { role: DashboardRole }) {
     setOrigin(window.location.origin);
     function refreshProfile() {
       try {
-        setProfile(readPreviewProfile(role));
+        setProfile(getCurrentPreviewAccount(role));
       } catch {
         setProfile(null);
       }

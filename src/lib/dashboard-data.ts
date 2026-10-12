@@ -80,12 +80,12 @@ export const dashboardIntroductions: Record<DashboardRole, string> = {
 
 export const dashboardHighlights: Record<DashboardRole, DashboardHighlight[]> = {
   partner: [
-    { label: "Your profile", detail: "Add your name, photo, and username", href: "/dashboard/partner/profile" },
+    { label: "Your profile", detail: "Review your details and photo", href: "/dashboard/partner/profile" },
     { label: "Referral tools", detail: "Create a link and QR code", href: "/dashboard/partner/profile#referral-link" },
     { label: "Account activity", detail: "Waiting for account connection" }
   ],
   client: [
-    { label: "Your profile", detail: "Add your name, photo, and username", href: "/dashboard/client/profile" },
+    { label: "Your profile", detail: "Review your details and photo", href: "/dashboard/client/profile" },
     { label: "Land records", detail: "Waiting for account connection" },
     { label: "Farm updates", detail: "Waiting for account connection" }
   ]
