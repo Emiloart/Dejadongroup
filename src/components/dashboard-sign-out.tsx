@@ -12,7 +12,7 @@ export function DashboardSignOut({ role }: { role: DashboardRole }) {
       type="button"
       className="inline-flex min-h-11 items-center text-sm font-semibold text-orangeAction hover:text-orange-700"
       onClick={() => {
-        signOutPreviewAccount();
+        signOutPreviewAccount(role);
         router.replace("/login?role=" + role);
       }}
     >

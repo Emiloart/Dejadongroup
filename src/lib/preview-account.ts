@@ -9,7 +9,8 @@ export type PreviewAccount = PreviewProfile & {
 type Result = { ok: true; account: PreviewAccount } | { ok: false; message: string };
 
 const accountsKey = "dejadon-preview-accounts-v1";
-const sessionKey = "dejadon-preview-session-v1";
+const legacySessionKey = "dejadon-preview-session-v1";
+const sessionKey = (role: DashboardRole) => `dejadon-preview-session-v2:${role}`;
 const reservationsKey = "dejadon-preview-usernames-v1";
 const usernamePattern = /^[a-z][a-z0-9_]{2,19}$/;
 
@@ -64,18 +65,28 @@ function validateDetails(fullName: string, username: string, email: string) {
   return "";
 }
 
-export function getCurrentPreviewAccount(role?: DashboardRole): PreviewAccount | null {
+export function getCurrentPreviewAccount(role: DashboardRole): PreviewAccount | null {
   try {
-    const id = sessionStorage.getItem(sessionKey);
+    let id = sessionStorage.getItem(sessionKey(role));
+    if (!id) {
+      const legacyId = sessionStorage.getItem(legacySessionKey);
+      const legacyAccount = readAccounts().find((account) => account.id === legacyId && account.role === role);
+      if (legacyAccount) {
+        id = legacyAccount.id;
+        sessionStorage.setItem(sessionKey(role), id);
+        sessionStorage.removeItem(legacySessionKey);
+      }
+    }
     if (!id) return null;
-    return readAccounts().find((account) => account.id === id && (!role || account.role === role)) || null;
+    return readAccounts().find((account) => account.id === id && account.role === role) || null;
   } catch {
     return null;
   }
 }
 
-export function signOutPreviewAccount() {
-  sessionStorage.removeItem(sessionKey);
+export function signOutPreviewAccount(role: DashboardRole) {
+  getCurrentPreviewAccount(role);
+  sessionStorage.removeItem(sessionKey(role));
 }
 
 export async function registerPreviewAccount(input: {
@@ -123,7 +134,7 @@ export async function registerPreviewAccount(input: {
     };
     localStorage.setItem(accountsKey, JSON.stringify([...accounts, account]));
     localStorage.setItem(reservationsKey, JSON.stringify({ ...reservations, [username]: account.id }));
-    sessionStorage.setItem(sessionKey, account.id);
+    sessionStorage.setItem(sessionKey(input.role), account.id);
     return { ok: true, account };
   } catch {
     return { ok: false, message: "This browser could not save the account. Check storage and try again." };
@@ -138,7 +149,7 @@ export async function signInPreviewAccount(role: DashboardRole, emailValue: stri
     if (await hashPassword(password, account.passwordSalt) !== account.passwordHash) {
       return { ok: false, message: "Incorrect password." };
     }
-    sessionStorage.setItem(sessionKey, account.id);
+    sessionStorage.setItem(sessionKey(role), account.id);
     return { ok: true, account };
   } catch {
     return { ok: false, message: "Sign-in is unavailable in this browser." };
@@ -148,7 +159,7 @@ export async function signInPreviewAccount(role: DashboardRole, emailValue: stri
 export function updatePreviewAccount(accountId: string, changes: Pick<PreviewAccount, "fullName" | "username" | "email" | "phone" | "photoDataUrl">): Result {
   const accounts = readAccounts();
   const account = accounts.find((candidate) => candidate.id === accountId);
-  if (!account || getCurrentPreviewAccount()?.id !== accountId) return { ok: false, message: "Sign in again to edit this profile." };
+  if (!account || getCurrentPreviewAccount(account.role)?.id !== accountId) return { ok: false, message: "Sign in again to edit this profile." };
 
   const fullName = changes.fullName.trim();
   const username = changes.username.trim().toLowerCase();
