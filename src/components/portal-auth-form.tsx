@@ -8,7 +8,7 @@ import type { DashboardRole } from "@/types/site";
 type Mode = "signin" | "signup";
 const inputClass = "mt-2 w-full rounded-card border border-ink/15 bg-white px-3 py-3 text-sm text-ink outline-none focus:border-orangeAction";
 
-export function PortalAuthForm({ initialRole, nextPath }: { initialRole: DashboardRole; nextPath?: string }) {
+export function PortalAuthForm({ initialRole, nextPath, hideRoleChooser = false, onSuccess }: { initialRole: DashboardRole; nextPath?: string; hideRoleChooser?: boolean; onSuccess?: () => void }) {
   const router = useRouter();
   const [role, setRole] = useState<DashboardRole>(initialRole);
   const [mode, setMode] = useState<Mode>("signin");
@@ -43,6 +43,7 @@ export function PortalAuthForm({ initialRole, nextPath }: { initialRole: Dashboa
       const destination = nextPath && (nextPath === root || nextPath.startsWith(root + "/") || nextPath.startsWith(root + "?") || nextPath.startsWith(root + "#"))
         ? nextPath
         : root;
+      onSuccess?.();
       router.push(destination);
       router.refresh();
     } catch {
@@ -54,7 +55,7 @@ export function PortalAuthForm({ initialRole, nextPath }: { initialRole: Dashboa
 
   return (
     <div>
-      <div>
+      {!hideRoleChooser ? <div>
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-orangeAction">Choose your portal</p>
         <div className="mt-3 flex gap-6 border-b border-ink/10">
           {(["partner", "client"] as const).map((option) => (
@@ -63,9 +64,9 @@ export function PortalAuthForm({ initialRole, nextPath }: { initialRole: Dashboa
             </button>
           ))}
         </div>
-      </div>
+      </div> : null}
 
-      <div className="mt-7 flex gap-6 border-b border-ink/10">
+      <div className={`${hideRoleChooser ? "" : "mt-7 "}flex gap-6 border-b border-ink/10`}>
         <button type="button" aria-pressed={mode === "signin"} onClick={() => { setMode("signin"); setError(""); }} className={`min-h-11 border-b-2 text-sm font-semibold ${mode === "signin" ? "border-orangeAction text-ink" : "border-transparent text-stone-500 hover:text-orangeAction"}`}>Sign in</button>
         <button type="button" aria-pressed={mode === "signup"} onClick={() => { setMode("signup"); setError(""); }} className={`min-h-11 border-b-2 text-sm font-semibold ${mode === "signup" ? "border-orangeAction text-ink" : "border-transparent text-stone-500 hover:text-orangeAction"}`}>Create account</button>
       </div>

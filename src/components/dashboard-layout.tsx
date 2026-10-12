@@ -3,7 +3,8 @@ import type { ReactNode } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { DashboardAccessGate } from "@/components/dashboard-access-gate";
 import { DashboardSignOut } from "@/components/dashboard-sign-out";
-import { dashboardLabels, dashboardSections, validDashboardRoles } from "@/lib/dashboard-data";
+import { DashboardRoleSwitcher } from "@/components/dashboard-role-switcher";
+import { dashboardLabels, dashboardSections } from "@/lib/dashboard-data";
 import type { DashboardRole } from "@/types/site";
 
 type DashboardLayoutProps = {
@@ -36,20 +37,7 @@ export function DashboardLayout({ role, page, children }: DashboardLayoutProps) 
           <div className="pr-5 lg:hidden"><DashboardSignOut role={role} /></div>
         </div>
 
-        <nav aria-label="Choose dashboard" className="flex gap-6 border-t border-white/10 px-5 lg:mt-7 lg:border-t-0 lg:border-b lg:border-white/15 lg:px-0">
-          {validDashboardRoles.map((dashboardRole) => (
-            <Link
-              key={dashboardRole}
-              href={dashboardRole === role ? overviewHref : "/login?role=" + dashboardRole + "&next=" + encodeURIComponent("/dashboard/" + dashboardRole)}
-              aria-current={role === dashboardRole ? "true" : undefined}
-              className={`min-h-10 border-b-2 py-2 text-sm font-semibold capitalize transition-colors lg:min-h-11 ${
-                role === dashboardRole ? "border-orangeAction text-white" : "border-transparent text-stone-400 hover:text-white"
-              }`}
-            >
-              {dashboardRole}
-            </Link>
-          ))}
-        </nav>
+        <DashboardRoleSwitcher role={role} />
 
         <nav aria-label="Account pages" className="flex border-t border-white/10 px-5 lg:mt-6 lg:grid lg:gap-1 lg:border-t-0 lg:px-0">
           <Link href={overviewHref} aria-current={page === "overview" ? "page" : undefined} className={`flex min-h-12 flex-1 items-center justify-center border-b-2 px-2 text-sm font-semibold transition-colors lg:min-h-11 lg:justify-start lg:border-b-0 lg:border-l-2 lg:px-3 ${page === "overview" ? "border-orangeAction text-white" : "border-transparent text-stone-300 hover:text-white"}`}>
