@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 import { X } from "lucide-react";
@@ -39,9 +38,9 @@ export function DashboardRoleSwitcher({ role }: { role: DashboardRole }) {
     <>
       <nav aria-label="Choose dashboard" className="flex gap-6 border-t border-white/10 px-5 lg:mt-7 lg:border-t-0 lg:border-b lg:border-white/15 lg:px-0">
         {validDashboardRoles.map((dashboardRole) => dashboardRole === role ? (
-          <Link key={dashboardRole} href={"/dashboard/" + role} aria-current="page" className={`${tabClass} border-orangeAction text-white`}>
+          <span key={dashboardRole} aria-current="true" className={`${tabClass} border-orangeAction text-white`}>
             {dashboardRole}
-          </Link>
+          </span>
         ) : (
           <button key={dashboardRole} type="button" onClick={() => openSwitch(dashboardRole)} aria-haspopup="dialog" className={`${tabClass} border-transparent text-stone-400 hover:text-white`}>
             {dashboardRole}

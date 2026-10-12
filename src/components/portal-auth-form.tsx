@@ -1,12 +1,19 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
-import { registerPreviewAccount, signInPreviewAccount } from "@/lib/preview-account";
+import { useEffect, useState, type FormEvent } from "react";
+import { getCurrentPreviewAccount, registerPreviewAccount, signInPreviewAccount, type PreviewAccount } from "@/lib/preview-account";
 import type { DashboardRole } from "@/types/site";
 
 type Mode = "signin" | "signup";
 const inputClass = "mt-2 w-full rounded-card border border-ink/15 bg-white px-3 py-3 text-sm text-ink outline-none focus:border-orangeAction";
+
+function destinationFor(role: DashboardRole, nextPath?: string) {
+  const root = "/dashboard/" + role;
+  return nextPath && (nextPath === root || nextPath.startsWith(root + "/") || nextPath.startsWith(root + "?") || nextPath.startsWith(root + "#"))
+    ? nextPath
+    : root;
+}
 
 export function PortalAuthForm({ initialRole, nextPath, hideRoleChooser = false, onSuccess }: { initialRole: DashboardRole; nextPath?: string; hideRoleChooser?: boolean; onSuccess?: () => void }) {
   const router = useRouter();
@@ -20,6 +27,21 @@ export function PortalAuthForm({ initialRole, nextPath, hideRoleChooser = false,
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [existingAccount, setExistingAccount] = useState<PreviewAccount | null>(null);
+  const [useAnotherAccount, setUseAnotherAccount] = useState(false);
+
+  useEffect(() => setRole(initialRole), [initialRole]);
+
+  useEffect(() => {
+    if (hideRoleChooser) return;
+    setExistingAccount(getCurrentPreviewAccount(role));
+    setUseAnotherAccount(false);
+  }, [role, hideRoleChooser]);
+
+  function continueToDashboard() {
+    router.push(destinationFor(role, nextPath));
+    router.refresh();
+  }
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -39,12 +61,8 @@ export function PortalAuthForm({ initialRole, nextPath, hideRoleChooser = false,
         setError(result.message);
         return;
       }
-      const root = "/dashboard/" + role;
-      const destination = nextPath && (nextPath === root || nextPath.startsWith(root + "/") || nextPath.startsWith(root + "?") || nextPath.startsWith(root + "#"))
-        ? nextPath
-        : root;
       onSuccess?.();
-      router.push(destination);
+      router.push(destinationFor(role, nextPath));
       router.refresh();
     } catch {
       setError("This browser could not open the account. Try again.");
@@ -66,6 +84,21 @@ export function PortalAuthForm({ initialRole, nextPath, hideRoleChooser = false,
         </div>
       </div> : null}
 
+      {existingAccount && !useAnotherAccount && !hideRoleChooser ? (
+        <div className="mt-7 border-y border-ink/10 py-6">
+          <p className="text-sm text-stone-600">Already signed in to the {role} dashboard as <span className="font-semibold text-ink">@{existingAccount.username}</span>.</p>
+          <button type="button" onClick={continueToDashboard} className="mt-4 inline-flex min-h-11 items-center rounded-card bg-orangeAction px-6 text-sm font-semibold text-white hover:bg-orange-700">
+            Continue to {role} dashboard
+          </button>
+          <button type="button" onClick={() => setUseAnotherAccount(true)} className="mt-3 block min-h-11 text-sm font-semibold text-stone-600 hover:text-orangeAction">
+            Sign in or create another account
+          </button>
+        </div>
+      ) : (
+        <div>
+      {existingAccount && useAnotherAccount && !hideRoleChooser ? (
+        <button type="button" onClick={() => setUseAnotherAccount(false)} className="mt-5 text-sm font-semibold text-orangeAction hover:underline">Back to @{existingAccount.username}</button>
+      ) : null}
       <div className={`${hideRoleChooser ? "" : "mt-7 "}flex gap-6 border-b border-ink/10`}>
         <button type="button" aria-pressed={mode === "signin"} onClick={() => { setMode("signin"); setError(""); }} className={`min-h-11 border-b-2 text-sm font-semibold ${mode === "signin" ? "border-orangeAction text-ink" : "border-transparent text-stone-500 hover:text-orangeAction"}`}>Sign in</button>
         <button type="button" aria-pressed={mode === "signup"} onClick={() => { setMode("signup"); setError(""); }} className={`min-h-11 border-b-2 text-sm font-semibold ${mode === "signup" ? "border-orangeAction text-ink" : "border-transparent text-stone-500 hover:text-orangeAction"}`}>Create account</button>
@@ -111,6 +144,8 @@ export function PortalAuthForm({ initialRole, nextPath, hideRoleChooser = false,
         </button>
         {mode === "signup" ? <p className="mt-4 text-xs leading-5 text-stone-500">Usernames are unique in this browser. Earlier usernames stay reserved if you change yours later.</p> : null}
       </form>
+        </div>
+      )}
     </div>
   );
 }
