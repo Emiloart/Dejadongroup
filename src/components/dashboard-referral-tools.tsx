@@ -75,7 +75,7 @@ export function DashboardReferralTools({ role }: { role: DashboardRole }) {
   return (
     <section id="referral-link" aria-labelledby="referral-heading" className="mt-14 scroll-mt-28 border-t border-ink/10 pt-8">
       <div className="max-w-2xl">
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-orangeAction">Share your link</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-orange-700">Share your link</p>
         <h2 id="referral-heading" className="mt-3 text-2xl font-medium text-ink">Referral tools</h2>
         <p className="mt-2 text-sm leading-6 text-stone-600">
           {role === "partner" ? "Share the Partner Program with a prospective client." : "Share De Jadon Group’s businesses with someone interested."}
@@ -87,21 +87,21 @@ export function DashboardReferralTools({ role }: { role: DashboardRole }) {
           <div className="min-w-0">
             <label htmlFor="referral-url" className="text-sm font-semibold text-ink">Your referral link</label>
             <div className="mt-2 flex min-w-0 items-center gap-2 rounded-card border border-ink/15 bg-white px-3">
-              <Link2 aria-hidden="true" className="h-4 w-4 shrink-0 text-orangeAction" />
-              <input id="referral-url" readOnly value={referralUrl} onFocus={(event) => event.target.select()} className="min-w-0 flex-1 py-3 text-sm text-ink outline-none" />
+              <Link2 aria-hidden="true" className="h-4 w-4 shrink-0 text-orange-700" />
+              <input id="referral-url" readOnly value={referralUrl} onFocus={(event) => event.target.select()} className="min-w-0 flex-1 rounded-card py-3 text-base text-ink outline-none focus-visible:ring-2 focus-visible:ring-orange-700 focus-visible:ring-offset-2 sm:text-sm" />
             </div>
             <div className="mt-4 flex flex-wrap gap-3">
-              <button type="button" onClick={copyLink} className="inline-flex min-h-11 items-center gap-2 rounded-card bg-orangeAction px-4 text-sm font-semibold text-white hover:bg-orange-700">
+              <button type="button" onClick={copyLink} className="inline-flex min-h-11 items-center gap-2 rounded-card bg-orangeAction px-4 text-sm font-semibold text-ink hover:brightness-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">
                 <Copy aria-hidden="true" className="h-4 w-4" /> Copy link
               </button>
               {qrDataUrl ? (
-                <a href={qrDataUrl} download={"dejadon-" + username + "-referral-qr.png"} className="inline-flex min-h-11 items-center gap-2 rounded-card border border-orangeAction px-4 text-sm font-semibold text-orangeAction hover:bg-orange-50">
+                <a href={qrDataUrl} download={"dejadon-" + username + "-referral-qr.png"} className="inline-flex min-h-11 items-center gap-2 rounded-card border border-orangeAction px-4 text-sm font-semibold text-orange-700 hover:bg-orange-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-700">
                   <Download aria-hidden="true" className="h-4 w-4" /> Download QR code
                 </a>
               ) : null}
             </div>
             {message ? <p role="status" className={`mt-3 inline-flex items-center gap-2 text-sm ${hasError ? "text-red-700" : "text-agriculture"}`}>{hasError ? null : <Check aria-hidden="true" className="h-4 w-4" />}{message}</p> : null}
-            <p className="mt-6 max-w-xl border-t border-ink/10 pt-4 text-xs leading-5 text-stone-500">This preview link opens the website with your username in the URL. Referral attribution, sign-ups, and commissions are not recorded yet.</p>
+            <p className="mt-6 max-w-xl border-t border-ink/10 pt-4 text-xs leading-5 text-stone-600">This preview link opens the website with your username in the URL. Referral attribution, sign-ups, and commissions are not recorded yet.</p>
           </div>
           <div className="flex items-start justify-center lg:justify-end">
             {qrDataUrl ? (
@@ -109,15 +109,15 @@ export function DashboardReferralTools({ role }: { role: DashboardRole }) {
                 <div className="border border-ink/10 bg-white p-3">
                   <Image src={qrDataUrl} alt={"QR code for @" + username + " referral link"} width={176} height={176} unoptimized className="h-44 w-44" />
                 </div>
-                <figcaption className="mt-2 text-xs text-stone-500">Scan to open your link</figcaption>
+                <figcaption className="mt-2 text-xs text-stone-600">Scan to open your link</figcaption>
               </figure>
-            ) : <p className="text-sm text-stone-500">Generating QR code…</p>}
+            ) : <p className="text-sm text-stone-600">Generating QR code…</p>}
           </div>
         </div>
       ) : (
         <div className="mt-8 border-y border-ink/10 py-6">
           <p className="text-sm leading-6 text-stone-600">Save your name and choose a username above to generate your personal link and QR code.</p>
-          <a href="#profile-heading" className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-orangeAction hover:text-orange-700">Go to profile details</a>
+          <a href="#profile-heading" className="mt-3 inline-flex min-h-11 items-center rounded-card text-sm font-semibold text-orange-700 hover:text-orange-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-700">Go to profile details</a>
         </div>
       )}
     </section>

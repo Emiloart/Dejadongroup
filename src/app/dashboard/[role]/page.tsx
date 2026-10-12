@@ -25,7 +25,7 @@ export default function DashboardPage({ params }: DashboardPageProps) {
   return (
     <DashboardLayout role={params.role} page="overview">
       <div className="max-w-2xl">
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-orangeAction">Account overview</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-orange-700">Account overview</p>
         <h1 className="mt-3 text-4xl font-medium tracking-tight text-ink sm:text-5xl">{dashboardLabels[params.role]}</h1>
         <p className="mt-4 text-sm leading-7 text-stone-600">{dashboardIntroductions[params.role]}</p>
       </div>
@@ -34,23 +34,23 @@ export default function DashboardPage({ params }: DashboardPageProps) {
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-stone-600">On this page</p>
         <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1">
           {sections.map((section) => (
-            <a key={section.label} href={"#section-" + sectionId(section.label)} className="inline-flex min-h-11 items-center border-b border-orangeAction/60 text-sm font-semibold text-ink hover:border-orangeAction hover:text-orange-700">
+            <a key={section.label} href={"#section-" + sectionId(section.label)} className="inline-flex min-h-11 items-center border-b border-orangeAction/60 text-sm font-semibold text-ink hover:border-orangeAction hover:text-orange-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-700">
               {section.label}
             </a>
           ))}
         </div>
       </nav>
 
-      <p className="mt-10 text-xs font-semibold uppercase tracking-[0.16em] text-stone-500">Quick access</p>
+      <p className="mt-10 text-xs font-semibold uppercase tracking-[0.16em] text-stone-600">Quick access</p>
       <nav aria-label="Quick access" className="mt-3 grid gap-0 border-y border-ink/10 sm:grid-cols-3">
         {highlights.map((highlight) => (
           highlight.href ? (
-            <Link key={highlight.label} href={highlight.href} className="group flex min-w-0 items-start justify-between gap-3 border-b border-ink/10 py-5 last:border-b-0 sm:border-b-0 sm:border-r sm:px-5 sm:first:pl-0 sm:last:border-r-0">
+            <Link key={highlight.label} href={highlight.href} className="group flex min-w-0 items-start justify-between gap-3 border-b border-ink/10 py-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-700 last:border-b-0 sm:border-b-0 sm:border-r sm:px-5 sm:first:pl-0 sm:last:border-r-0">
               <span>
-                <span className="block text-sm font-semibold text-ink group-hover:text-orangeAction">{highlight.label}</span>
+                <span className="block text-sm font-semibold text-ink group-hover:text-orange-700">{highlight.label}</span>
                 <span className="mt-2 block text-sm leading-5 text-stone-600">{highlight.detail}</span>
               </span>
-              <ArrowUpRight aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-orangeAction" />
+              <ArrowUpRight aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0 text-orange-700" />
             </Link>
           ) : (
             <div key={highlight.label} className="min-w-0 py-5 sm:px-5">

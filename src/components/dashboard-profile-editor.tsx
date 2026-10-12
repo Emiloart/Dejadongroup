@@ -6,7 +6,7 @@ import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { getCurrentPreviewAccount, updatePreviewAccount, type PreviewAccount } from "@/lib/preview-account";
 import type { DashboardRole } from "@/types/site";
 
-const inputClass = "mt-2 w-full rounded-card border border-ink/15 bg-white px-3 py-3 text-sm text-ink outline-none transition-colors focus:border-orangeAction disabled:bg-stone-100 disabled:text-stone-500";
+const inputClass = "mt-2 w-full rounded-card border border-ink/15 bg-white px-3 py-3 text-base text-ink outline-none transition-colors focus:border-orange-700 focus-visible:ring-2 focus-visible:ring-orange-700 focus-visible:ring-offset-2 disabled:bg-stone-100 disabled:text-stone-500 sm:text-sm";
 
 export function DashboardProfileEditor({ role }: { role: DashboardRole }) {
   const [profile, setProfile] = useState<PreviewAccount | null>(null);
@@ -94,7 +94,7 @@ export function DashboardProfileEditor({ role }: { role: DashboardRole }) {
     <section aria-labelledby="profile-heading" className="mt-8 border-t border-ink/10">
       <div className="flex flex-wrap items-center justify-between gap-5 border-b border-ink/10 py-6">
         <div className="flex min-w-0 items-center gap-4">
-          <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full bg-orangeAction/10 text-xl font-semibold text-orangeAction">
+          <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full bg-orangeAction/10 text-xl font-semibold text-orange-800">
             {visiblePhoto ? <Image src={visiblePhoto} alt="Your profile photo" width={80} height={80} unoptimized className="h-full w-full object-cover" /> : initials}
           </div>
           <div className="min-w-0">
@@ -102,22 +102,22 @@ export function DashboardProfileEditor({ role }: { role: DashboardRole }) {
             <p className="text-sm text-stone-600">{profile.username ? "@" + profile.username : "Choose a username"}</p>
             {editing ? (
               <>
-                <label htmlFor="profile-photo" className="mt-1 inline-flex min-h-9 cursor-pointer items-center gap-2 text-sm font-semibold text-orangeAction hover:text-orange-700">
+                <label htmlFor="profile-photo" className="mt-1 inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-card text-sm font-semibold text-orange-700 hover:text-orange-800 focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-orange-700">
                   <Camera aria-hidden="true" className="h-4 w-4" /> {draft.photoDataUrl ? "Change photo" : "Add a photo"}
+                  <input id="profile-photo" type="file" accept="image/jpeg,image/png,image/webp" onChange={onPhotoChange} className="sr-only" />
                 </label>
-                <input id="profile-photo" type="file" accept="image/jpeg,image/png,image/webp" onChange={onPhotoChange} className="sr-only" />
-                {draft.photoDataUrl ? <button type="button" onClick={() => setDraft((current) => current ? { ...current, photoDataUrl: "" } : current)} className="ml-3 text-xs font-medium text-stone-600 underline hover:text-orangeAction">Remove</button> : null}
+                {draft.photoDataUrl ? <button type="button" onClick={() => setDraft((current) => current ? { ...current, photoDataUrl: "" } : current)} className="ml-3 min-h-11 rounded-card text-xs font-medium text-stone-600 underline hover:text-orange-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-700">Remove</button> : null}
               </>
             ) : null}
           </div>
         </div>
         <dl className="min-w-0 border-t border-ink/10 pt-4 sm:border-t-0 sm:border-l sm:py-2 sm:pl-5">
-          <dt className="text-xs font-semibold uppercase tracking-[0.12em] text-stone-500">User ID</dt>
+          <dt className="text-xs font-semibold uppercase tracking-[0.12em] text-stone-600">User ID</dt>
           <dd className="mt-1 break-all font-mono text-sm text-ink">{profile.id}</dd>
-          <dd className="mt-1 text-xs text-stone-500">Browser preview ID</dd>
+          <dd className="mt-1 text-xs text-stone-600">Browser preview ID</dd>
         </dl>
       </div>
-      {editing ? <p className="mt-3 text-xs text-stone-500">Photo: JPG, PNG, or WebP · under 1 MB</p> : null}
+      {editing ? <p className="mt-3 text-xs text-stone-600">Photo: JPG, PNG, or WebP · under 1 MB</p> : null}
 
       <div className="mt-8 flex flex-wrap items-start justify-between gap-4">
         <div className="max-w-2xl">
@@ -125,7 +125,7 @@ export function DashboardProfileEditor({ role }: { role: DashboardRole }) {
           <p className="mt-2 text-sm leading-6 text-stone-600">Changes are saved in this browser only.</p>
         </div>
         {!editing ? (
-          <button type="button" onClick={() => { setEditing(true); setMessage(""); }} className="inline-flex min-h-11 items-center gap-2 border-b border-orangeAction text-sm font-semibold text-orangeAction hover:text-orange-700">
+          <button type="button" onClick={() => { setEditing(true); setMessage(""); }} className="inline-flex min-h-11 items-center gap-2 border-b border-orangeAction text-sm font-semibold text-orange-700 hover:text-orange-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-700">
             <Pencil aria-hidden="true" className="h-4 w-4" /> Edit profile
           </button>
         ) : null}
@@ -144,16 +144,16 @@ export function DashboardProfileEditor({ role }: { role: DashboardRole }) {
             <label className="block text-sm font-semibold text-ink">Email
               <input required type="email" autoComplete="email" value={draft.email} onChange={(event) => update("email", event.target.value)} className={inputClass} placeholder="you@example.com" />
             </label>
-            <label className="block text-sm font-semibold text-ink">Phone <span className="font-normal text-stone-500">(optional)</span>
+            <label className="block text-sm font-semibold text-ink">Phone <span className="font-normal text-stone-600">(optional)</span>
               <input type="tel" autoComplete="tel" value={draft.phone} onChange={(event) => update("phone", event.target.value)} className={inputClass} placeholder="Your phone number" />
             </label>
           </div>
           {error ? <p role="alert" className="mt-5 text-sm text-red-700">{error}</p> : null}
           <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-3 border-t border-ink/10 pt-5">
-            <button type="submit" className="inline-flex min-h-11 items-center gap-2 rounded-card bg-orangeAction px-5 py-2 text-sm font-semibold text-white hover:bg-orange-700">
+            <button type="submit" className="inline-flex min-h-11 items-center gap-2 rounded-card bg-orangeAction px-5 py-2 text-sm font-semibold text-ink hover:brightness-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">
               <Save aria-hidden="true" className="h-4 w-4" /> Save changes
             </button>
-            <button type="button" onClick={() => { setDraft(profile); setEditing(false); setError(""); }} className="inline-flex min-h-11 items-center text-sm font-semibold text-stone-600 hover:text-ink">Cancel</button>
+            <button type="button" onClick={() => { setDraft(profile); setEditing(false); setError(""); }} className="inline-flex min-h-11 items-center rounded-card text-sm font-semibold text-stone-600 hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-700">Cancel</button>
           </div>
         </form>
       ) : (

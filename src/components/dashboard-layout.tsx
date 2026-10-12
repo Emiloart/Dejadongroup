@@ -28,7 +28,7 @@ export function DashboardLayout({ role, page, children }: DashboardLayoutProps) 
       <aside className="bg-ink text-white lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:overflow-y-auto lg:px-6 lg:py-8">
         <div className="flex items-center justify-between">
           <Link href="/" className="mx-5 my-4 inline-flex items-center gap-3 lg:mx-0 lg:my-0">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-card bg-orangeAction text-sm font-bold text-white">DJ</span>
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-card bg-orangeAction text-sm font-bold text-ink">DJ</span>
             <span className="min-w-0">
               <span className="block text-base font-semibold leading-tight">De Jadon Group</span>
               <span className="block text-xs text-stone-300">Account workspace</span>
@@ -67,9 +67,9 @@ export function DashboardLayout({ role, page, children }: DashboardLayoutProps) 
       <div className="min-w-0">
         <header className="border-b border-ink/10">
           <div className="mx-auto flex max-w-6xl items-center justify-between gap-5 px-5 py-3 sm:px-8 lg:px-10 lg:py-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.15em] text-stone-500">{dashboardLabels[role]} <span aria-hidden="true" className="px-2 text-stone-300">/</span> {page}</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.15em] text-stone-600">{dashboardLabels[role]} <span aria-hidden="true" className="px-2 text-stone-400">/</span> {page}</p>
             <div className="hidden items-center gap-5 lg:flex">
-              <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-stone-600 hover:text-orangeAction" href="/">Website</Link>
+              <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-stone-600 hover:text-orange-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-700" href="/">Website</Link>
               <DashboardSignOut role={role} />
             </div>
           </div>

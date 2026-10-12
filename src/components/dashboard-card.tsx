@@ -15,11 +15,11 @@ export function DashboardCard({ card, id }: DashboardCardProps) {
         <p className="mt-1 max-w-2xl text-sm leading-6 text-stone-600">{card.description}</p>
       </div>
       {card.href && card.action ? (
-        <Link href={card.href} className="mt-3 inline-flex shrink-0 items-center gap-1 text-sm font-semibold text-orangeAction hover:text-orange-700 sm:mt-1">
+        <Link href={card.href} className="mt-3 inline-flex min-h-11 shrink-0 items-center gap-1 rounded-card text-sm font-semibold text-orange-700 hover:text-orange-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-700 sm:mt-1">
           {card.action} <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
         </Link>
       ) : (
-        <span className="mt-3 inline-block shrink-0 text-xs font-medium text-stone-500 sm:mt-2">Awaiting connection</span>
+        <span className="mt-3 inline-block shrink-0 text-xs font-medium text-stone-600 sm:mt-2">Awaiting connection</span>
       )}
     </article>
   );

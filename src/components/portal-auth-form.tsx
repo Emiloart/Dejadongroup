@@ -6,7 +6,7 @@ import { getCurrentPreviewAccount, registerPreviewAccount, signInPreviewAccount,
 import type { DashboardRole } from "@/types/site";
 
 type Mode = "signin" | "signup";
-const inputClass = "mt-2 w-full rounded-card border border-ink/15 bg-white px-3 py-3 text-sm text-ink outline-none focus:border-orangeAction";
+const inputClass = "mt-2 w-full rounded-card border border-ink/15 bg-white px-3 py-3 text-base text-ink outline-none focus:border-orange-700 focus-visible:ring-2 focus-visible:ring-orange-700 focus-visible:ring-offset-2 sm:text-sm";
 
 function destinationFor(role: DashboardRole, nextPath?: string) {
   const root = "/dashboard/" + role;
@@ -74,10 +74,10 @@ export function PortalAuthForm({ initialRole, nextPath, hideRoleChooser = false,
   return (
     <div>
       {!hideRoleChooser ? <div>
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-orangeAction">Choose your portal</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-orange-700">Choose your portal</p>
         <div className="mt-3 flex gap-6 border-b border-ink/10">
           {(["partner", "client"] as const).map((option) => (
-            <button key={option} type="button" aria-pressed={role === option} onClick={() => { setRole(option); setError(""); }} className={`min-h-11 border-b-2 text-sm font-semibold capitalize ${role === option ? "border-orangeAction text-ink" : "border-transparent text-stone-500 hover:text-orangeAction"}`}>
+            <button key={option} type="button" aria-pressed={role === option} onClick={() => { setRole(option); setError(""); }} className={`min-h-11 border-b-2 text-sm font-semibold capitalize focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-700 ${role === option ? "border-orangeAction text-ink" : "border-transparent text-stone-600 hover:text-orange-700"}`}>
               {option}
             </button>
           ))}
@@ -87,21 +87,21 @@ export function PortalAuthForm({ initialRole, nextPath, hideRoleChooser = false,
       {existingAccount && !useAnotherAccount && !hideRoleChooser ? (
         <div className="mt-7 border-y border-ink/10 py-6">
           <p className="text-sm text-stone-600">Already signed in to the {role} dashboard as <span className="font-semibold text-ink">@{existingAccount.username}</span>.</p>
-          <button type="button" onClick={continueToDashboard} className="mt-4 inline-flex min-h-11 items-center rounded-card bg-orangeAction px-6 text-sm font-semibold text-white hover:bg-orange-700">
+          <button type="button" onClick={continueToDashboard} className="mt-4 inline-flex min-h-11 items-center rounded-card bg-orangeAction px-6 text-sm font-semibold text-ink hover:brightness-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">
             Continue to {role} dashboard
           </button>
-          <button type="button" onClick={() => setUseAnotherAccount(true)} className="mt-3 block min-h-11 text-sm font-semibold text-stone-600 hover:text-orangeAction">
+          <button type="button" onClick={() => setUseAnotherAccount(true)} className="mt-3 block min-h-11 rounded-card text-sm font-semibold text-stone-600 hover:text-orange-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-700">
             Sign in or create another account
           </button>
         </div>
       ) : (
         <div>
       {existingAccount && useAnotherAccount && !hideRoleChooser ? (
-        <button type="button" onClick={() => setUseAnotherAccount(false)} className="mt-5 text-sm font-semibold text-orangeAction hover:underline">Back to @{existingAccount.username}</button>
+        <button type="button" onClick={() => setUseAnotherAccount(false)} className="mt-5 rounded-card text-sm font-semibold text-orange-700 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-700">Back to @{existingAccount.username}</button>
       ) : null}
       <div className={`${hideRoleChooser ? "" : "mt-7 "}flex gap-6 border-b border-ink/10`}>
-        <button type="button" aria-pressed={mode === "signin"} onClick={() => { setMode("signin"); setError(""); }} className={`min-h-11 border-b-2 text-sm font-semibold ${mode === "signin" ? "border-orangeAction text-ink" : "border-transparent text-stone-500 hover:text-orangeAction"}`}>Sign in</button>
-        <button type="button" aria-pressed={mode === "signup"} onClick={() => { setMode("signup"); setError(""); }} className={`min-h-11 border-b-2 text-sm font-semibold ${mode === "signup" ? "border-orangeAction text-ink" : "border-transparent text-stone-500 hover:text-orangeAction"}`}>Create account</button>
+        <button type="button" aria-pressed={mode === "signin"} onClick={() => { setMode("signin"); setError(""); }} className={`min-h-11 border-b-2 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-700 ${mode === "signin" ? "border-orangeAction text-ink" : "border-transparent text-stone-600 hover:text-orange-700"}`}>Sign in</button>
+        <button type="button" aria-pressed={mode === "signup"} onClick={() => { setMode("signup"); setError(""); }} className={`min-h-11 border-b-2 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-700 ${mode === "signup" ? "border-orangeAction text-ink" : "border-transparent text-stone-600 hover:text-orange-700"}`}>Create account</button>
       </div>
 
       <form onSubmit={onSubmit} className="mt-6">
@@ -124,7 +124,7 @@ export function PortalAuthForm({ initialRole, nextPath, hideRoleChooser = false,
             <input required type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} className={inputClass} placeholder="you@example.com" />
           </label>
           {mode === "signup" ? (
-            <label className="block text-sm font-semibold text-ink">Phone <span className="font-normal text-stone-500">(optional)</span>
+            <label className="block text-sm font-semibold text-ink">Phone <span className="font-normal text-stone-600">(optional)</span>
               <input type="tel" autoComplete="tel" value={phone} onChange={(event) => setPhone(event.target.value)} className={inputClass} placeholder="Your phone number" />
             </label>
           ) : null}
@@ -139,10 +139,10 @@ export function PortalAuthForm({ initialRole, nextPath, hideRoleChooser = false,
         </div>
 
         {error ? <p role="alert" className="mt-5 text-sm text-red-700">{error}</p> : null}
-        <button disabled={busy} type="submit" className="mt-7 inline-flex min-h-11 items-center rounded-card bg-orangeAction px-6 text-sm font-semibold text-white hover:bg-orange-700 disabled:opacity-60">
+        <button disabled={busy} type="submit" className="mt-7 inline-flex min-h-11 items-center rounded-card bg-orangeAction px-6 text-sm font-semibold text-ink hover:brightness-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:opacity-60">
           {busy ? "Please wait…" : mode === "signup" ? "Create account" : "Sign in"}
         </button>
-        {mode === "signup" ? <p className="mt-4 text-xs leading-5 text-stone-500">Usernames are unique in this browser. Earlier usernames stay reserved if you change yours later.</p> : null}
+        {mode === "signup" ? <p className="mt-4 text-xs leading-5 text-stone-600">Usernames are unique in this browser. Earlier usernames stay reserved if you change yours later.</p> : null}
       </form>
         </div>
       )}

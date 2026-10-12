@@ -16,7 +16,7 @@ export default function ProfilePage({ params }: ProfilePageProps) {
 
   return (
     <DashboardLayout role={params.role} page="profile">
-      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-orangeAction">Account details</p>
+      <p className="text-xs font-semibold uppercase tracking-[0.16em] text-orange-700">Account details</p>
       <h1 className="mt-3 text-4xl font-medium tracking-tight text-ink sm:text-5xl">Your profile</h1>
       <p className="mt-4 max-w-2xl text-sm leading-7 text-stone-600">Manage your details and share your link from one place.</p>
       <DashboardProfileEditor role={params.role} />

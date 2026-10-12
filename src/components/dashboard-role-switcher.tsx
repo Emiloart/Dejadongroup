@@ -42,7 +42,7 @@ export function DashboardRoleSwitcher({ role }: { role: DashboardRole }) {
             {dashboardRole}
           </span>
         ) : (
-          <button key={dashboardRole} type="button" onClick={() => openSwitch(dashboardRole)} aria-haspopup="dialog" className={`${tabClass} border-transparent text-stone-400 hover:text-white`}>
+          <button key={dashboardRole} type="button" onClick={() => openSwitch(dashboardRole)} aria-haspopup="dialog" className={`${tabClass} border-transparent text-stone-400 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white`}>
             {dashboardRole}
           </button>
         ))}
@@ -59,11 +59,11 @@ export function DashboardRoleSwitcher({ role }: { role: DashboardRole }) {
           <div className="p-6 sm:p-8">
             <div className="flex items-start justify-between gap-5">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-orangeAction">Switch workspace</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.16em] text-orange-700">Switch workspace</p>
                 <h2 className="mt-2 text-2xl font-medium">{targetRole === "client" ? "Client" : "Partner"} dashboard</h2>
                 <p className="mt-2 text-sm leading-6 text-stone-600">Your {role} session stays signed in while you switch.</p>
               </div>
-              <button type="button" onClick={closeSwitch} aria-label="Close switch workspace" className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-stone-600 hover:bg-ink/5 hover:text-ink">
+              <button type="button" onClick={closeSwitch} aria-label="Close switch workspace" className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-stone-600 hover:bg-ink/5 hover:text-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-700">
                 <X aria-hidden="true" className="h-5 w-5" />
               </button>
             </div>
@@ -71,16 +71,16 @@ export function DashboardRoleSwitcher({ role }: { role: DashboardRole }) {
             {existingAccount && !useAnotherAccount ? (
               <div className="mt-7 border-t border-ink/10 pt-6">
                 <p className="text-sm text-stone-600">Already signed in as <span className="font-semibold text-ink">@{existingAccount.username}</span></p>
-                <button type="button" onClick={continueToTarget} className="mt-5 inline-flex min-h-11 items-center rounded-card bg-orangeAction px-6 text-sm font-semibold text-white hover:bg-orange-700">
+                <button type="button" onClick={continueToTarget} className="mt-5 inline-flex min-h-11 items-center rounded-card bg-orangeAction px-6 text-sm font-semibold text-ink hover:brightness-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">
                   Continue to {targetRole} dashboard
                 </button>
-                <button type="button" onClick={() => setUseAnotherAccount(true)} className="mt-3 block min-h-11 text-sm font-semibold text-stone-600 hover:text-orangeAction">
+                <button type="button" onClick={() => setUseAnotherAccount(true)} className="mt-3 block min-h-11 rounded-card text-sm font-semibold text-stone-600 hover:text-orange-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-700">
                   Sign in or create another account
                 </button>
               </div>
             ) : (
               <div className="mt-7 border-t border-ink/10 pt-5">
-                {existingAccount ? <button type="button" onClick={() => setUseAnotherAccount(false)} className="mb-5 text-sm font-semibold text-orangeAction hover:underline">Back to @{existingAccount.username}</button> : null}
+                {existingAccount ? <button type="button" onClick={() => setUseAnotherAccount(false)} className="mb-5 rounded-card text-sm font-semibold text-orange-700 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-700">Back to @{existingAccount.username}</button> : null}
                 <PortalAuthForm key={targetRole} initialRole={targetRole} hideRoleChooser onSuccess={closeSwitch} />
               </div>
             )}
