@@ -38,8 +38,10 @@ export function DashboardReferralTools({ role }: { role: DashboardRole }) {
 
   useEffect(() => {
     let cancelled = false;
+    setQrDataUrl("");
+    setMessage("");
+    setHasError(false);
     if (!referralUrl) {
-      setQrDataUrl("");
       return;
     }
     QRCode.toDataURL(referralUrl, {

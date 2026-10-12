@@ -1,4 +1,4 @@
-import { createPreviewProfile, readPreviewProfile, type PreviewProfile } from "@/lib/preview-profile";
+import { createPreviewProfile, readLegacyPreviewProfile, type PreviewProfile } from "@/lib/preview-profile";
 import type { DashboardRole } from "@/types/site";
 
 export type PreviewAccount = PreviewProfile & {
@@ -100,7 +100,7 @@ export async function registerPreviewAccount(input: {
   }
 
   // A matching earlier browser preview can keep its photo, phone, and ID.
-  const legacy = readPreviewProfile(input.role);
+  const legacy = readLegacyPreviewProfile(input.role);
   const canImport = legacy?.username === username && !accounts.some((account) => account.id === legacy.id);
   const base = canImport && legacy ? legacy : createPreviewProfile(input.role);
   const reservations = readReservations();
