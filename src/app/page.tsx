@@ -20,7 +20,7 @@ export default function HomePage() {
           </div>
         </div>
       </PageSection>
-      <PageSection>
+      <PageSection className="!max-w-3xl">
         <div className="mb-10 flex flex-wrap items-end justify-between gap-5">
           <SectionHeader title="Our businesses" eyebrow="What we do" />
           <ButtonLink href="/businesses" variant="outline">Explore all businesses</ButtonLink>

@@ -14,6 +14,8 @@ export const mainNavigation: NavItem[] = [
   { label: "Home", href: "/" },
   { label: "About", href: "/about" },
   { label: "Businesses", href: "/businesses" },
+  { label: "Marketplace", href: "/marketplace" },
+  { label: "Gallery", href: "/gallery" },
   { label: "Partner Program", href: "/partner-program" },
   { label: "Contact", href: "/contact" },
   { label: "Login", href: "/login" }

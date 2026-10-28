@@ -56,7 +56,7 @@ export function SiteHeader() {
           <BrandLogo className="h-11 w-auto sm:h-12" />
         </Link>
 
-        <nav aria-label="Main navigation" className="hidden items-center gap-0.5 lg:flex">
+        <nav aria-label="Main navigation" className="hidden items-center gap-0.5 xl:flex">
           {mainNavigation.map((item) => {
             const active = isActivePath(pathname, item.href);
             if (item.label === "Businesses") {
@@ -89,9 +89,6 @@ export function SiteHeader() {
                           {business.name}
                         </Link>
                       ))}
-                      <div className="my-1 border-t border-ink/10" />
-                      <Link href="/gallery" aria-current={isActivePath(pathname, "/gallery") ? "page" : undefined} onClick={() => setBusinessesOpen(false)} className="block rounded-card px-3 py-2.5 text-sm font-medium text-stone-600 hover:bg-orange-50 hover:text-orangeAction">Gallery</Link>
-                      <Link href="/marketplace" aria-current={isActivePath(pathname, "/marketplace") ? "page" : undefined} onClick={() => setBusinessesOpen(false)} className="block rounded-card px-3 py-2.5 text-sm font-medium text-stone-600 hover:bg-orange-50 hover:text-orangeAction">Marketplace</Link>
                     </div>
                   ) : null}
                 </div>
@@ -116,7 +113,7 @@ export function SiteHeader() {
           aria-label={menuOpen ? "Close navigation" : "Open navigation"}
           aria-expanded={menuOpen}
           aria-controls="mobile-navigation"
-          className="rounded-card p-2 text-orangeAction hover:bg-orange-50 lg:hidden"
+          className="rounded-card p-2 text-orangeAction hover:bg-orange-50 xl:hidden"
           onClick={() => setMenuOpen((open) => !open)}
         >
           {menuOpen ? <X aria-hidden="true" className="h-6 w-6" /> : <Menu aria-hidden="true" className="h-6 w-6" />}
@@ -124,7 +121,7 @@ export function SiteHeader() {
       </div>
 
       {menuOpen ? (
-        <div id="mobile-navigation" className="max-h-[calc(100dvh-64px)] overflow-y-auto border-t border-ink/10 bg-white px-5 py-3 shadow-md lg:hidden">
+        <div id="mobile-navigation" className="max-h-[calc(100dvh-64px)] overflow-y-auto border-t border-ink/10 bg-white px-5 py-3 shadow-md xl:hidden">
           <nav aria-label="Mobile navigation" className="mx-auto grid max-w-7xl gap-0.5 sm:px-1">
             {mainNavigation.map((item) => {
               const active = isActivePath(pathname, item.href);
@@ -138,15 +135,13 @@ export function SiteHeader() {
                       </button>
                     </div>
                   ) : (
-                    <Link href={item.href} onClick={() => setMenuOpen(false)} aria-current={active ? "page" : undefined} className={`block rounded-card px-3 py-3 text-sm font-semibold ${active ? "text-orangeAction" : "text-stone-700 hover:text-orangeAction"}`}>{item.label}</Link>
+                    <Link href={item.href} onClick={() => setMenuOpen(false)} aria-current={active ? "page" : undefined} className={`block rounded-card px-3 py-3 text-sm font-semibold ${item.label === "Login" ? "mt-2 bg-orangeAction text-center text-white hover:bg-orange-700" : active ? "text-orangeAction" : "text-stone-700 hover:text-orangeAction"}`}>{item.label}</Link>
                   )}
                   {item.label === "Businesses" && mobileBusinessesOpen ? (
                     <div id="mobile-business-links" className="ml-3 grid border-l border-orangeAction/25 pl-3">
                       {businesses.map((business) => (
                         <Link key={business.href} href={business.href} onClick={() => setMenuOpen(false)} aria-current={isActivePath(pathname, business.href) ? "page" : undefined} className="rounded-card px-3 py-2.5 text-sm font-medium text-stone-600 hover:text-orangeAction">{business.name}</Link>
                       ))}
-                      <Link href="/gallery" onClick={() => setMenuOpen(false)} aria-current={isActivePath(pathname, "/gallery") ? "page" : undefined} className="rounded-card px-3 py-2.5 text-sm font-medium text-stone-600 hover:text-orangeAction">Gallery</Link>
-                      <Link href="/marketplace" onClick={() => setMenuOpen(false)} aria-current={isActivePath(pathname, "/marketplace") ? "page" : undefined} className="rounded-card px-3 py-2.5 text-sm font-medium text-stone-600 hover:text-orangeAction">Marketplace</Link>
                     </div>
                   ) : null}
                 </div>

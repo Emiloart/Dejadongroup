@@ -1,11 +1,13 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { ArrowUpRight, FileText, Handshake, LayoutDashboard, Link2, Settings, Sprout, Users, type LucideIcon } from "lucide-react";
+import { ArrowUpRight, FileText, Handshake, LayoutDashboard, Link2, Package, Settings, Sprout, Users, type LucideIcon } from "lucide-react";
 import { BrandLogo } from "@/components/brand-logo";
+import { AdminSignOut } from "@/components/admin-sign-out";
 import { adminSections, type AdminSectionId } from "@/lib/admin-data";
 
 const icons: Record<AdminSectionId, LucideIcon> = {
   overview: LayoutDashboard,
+  products: Package,
   clients: Users,
   partners: Handshake,
   referrals: Link2,
@@ -50,7 +52,7 @@ export function AdminShell({ section, children }: { section: AdminSectionId; chi
         </nav>
 
         <div className="mt-auto hidden border-t border-white/10 pt-6 lg:block">
-          <p className="text-xs leading-5 text-stone-300">Layout preview. No live records or admin permissions are connected.</p>
+          <p className="text-xs leading-5 text-stone-300">Manage marketplace products here. Other operations tools are still being prepared.</p>
           <Link href="/" className="mt-5 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-white hover:text-orange-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
             Visit website <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
           </Link>
@@ -61,7 +63,10 @@ export function AdminShell({ section, children }: { section: AdminSectionId; chi
         <header className="border-b border-ink/10">
           <div className="mx-auto flex min-h-16 max-w-7xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-5 py-3 sm:px-8 lg:px-10">
             <p className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-600">Admin workspace <span aria-hidden="true" className="px-2 text-stone-400">/</span> {current?.label}</p>
-            <span className="inline-flex items-center gap-2 text-xs font-semibold text-stone-600"><span aria-hidden="true" className="h-2 w-2 rounded-full bg-orangeAction" /> Layout preview</span>
+            <div className="flex items-center gap-5">
+              <Link href="/marketplace" className="inline-flex min-h-9 items-center gap-2 text-xs font-semibold text-orange-700 hover:text-orange-800">View marketplace <ArrowUpRight aria-hidden="true" className="h-3.5 w-3.5" /></Link>
+              <AdminSignOut />
+            </div>
           </div>
         </header>
         <main id="main-content" className="mx-auto max-w-7xl px-5 pb-20 pt-9 sm:px-8 lg:px-10 lg:pt-12">{children}</main>

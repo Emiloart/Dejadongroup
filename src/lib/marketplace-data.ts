@@ -1,6 +1,9 @@
 export const marketplaceCategories = [
   { slug: "fish", name: "Fish products" },
-  { slug: "food-packages", name: "Food packages" }
+  { slug: "food-packages", name: "Food packages" },
+  { slug: "crops", name: "Crops" },
+  { slug: "livestock", name: "Poultry & livestock" },
+  { slug: "other", name: "Other products" }
 ] as const;
 
 export type MarketplaceCategory = (typeof marketplaceCategories)[number]["slug"];
@@ -10,7 +13,20 @@ export type MarketplaceProduct = {
   name: string;
   category: MarketplaceCategory;
   summary: string;
+  description?: string;
+  price?: number | null;
+  unit?: string;
+  image?: string | null;
+  imageAlt?: string;
+  status?: "draft" | "published";
+  availability?: "in-stock" | "out-of-stock" | "on-request";
 };
+
+export function formatProductPrice(product: MarketplaceProduct) {
+  return typeof product.price === "number"
+    ? new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN", maximumFractionDigits: 2 }).format(product.price)
+    : "Price on enquiry";
+}
 
 export const marketplaceProducts: MarketplaceProduct[] = [
   { slug: "fish-heads", name: "Fish Heads", category: "fish", summary: "Ask our team about current cuts, quantities and availability." },

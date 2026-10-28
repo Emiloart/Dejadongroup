@@ -10,7 +10,7 @@ export function ProductCard({ product }: { product: MarketplaceProduct }) {
     <article className="min-w-0 rounded-card border border-ink/10 bg-white p-3 sm:p-4">
       <Link href={`/marketplace/${product.slug}`} className="group flex h-full flex-col rounded-card focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orangeAction">
         <ProductMedia name={product.name} alt={product.imageAlt} src={product.image || getMarketplaceImage(product.slug)} />
-        <div className="px-1 pb-1 pt-5">
+        <div className="px-1 pb-5 pt-5">
           <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
             <p className="font-semibold text-agriculture">{getMarketplaceCategoryName(product.category)}</p>
             <span className={`rounded-full px-2.5 py-1 font-medium ${availability === "in-stock" ? "bg-agriculture/10 text-agriculture" : "bg-stone-100 text-stone-600"}`}>

@@ -1,7 +1,7 @@
 "use client";
 
-import { ArrowLeft, ArrowRight, Pause, Play } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import { useRef, useState } from "react";
 import mainHero from "@/assets/mainpage_hero.png";
 import agricultureHero from "@/assets/agriculture_hero.png";
 import agroRealEstateHero from "@/assets/Agro-realestate_hero.png";
@@ -9,7 +9,6 @@ import { ButtonLink } from "@/components/button-link";
 import { HeroBackground } from "@/components/hero-background";
 import type { HeroSlide } from "@/types/site";
 
-const slideDelay = 7500;
 const slideImages = {
   "Welcome to De Jadon Group": mainHero,
   Agriculture: agricultureHero,
@@ -18,36 +17,11 @@ const slideImages = {
 
 export function HomeHeroCarousel({ slides }: { slides: HeroSlide[] }) {
   const [activeSlide, setActiveSlide] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(true);
-  const [pageVisible, setPageVisible] = useState(true);
   const touchStartX = useRef<number | null>(null);
   const slide = slides[activeSlide] ?? slides[0];
   const slideImage = (slide ? slideImages[slide.title as keyof typeof slideImages] : undefined) ?? mainHero;
 
-  useEffect(() => {
-    const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const updateMotionPreference = () => {
-      if (motionPreference.matches) setIsPlaying(false);
-    };
-    const updateVisibility = () => setPageVisible(document.visibilityState === "visible");
-    updateMotionPreference();
-    updateVisibility();
-    motionPreference.addEventListener("change", updateMotionPreference);
-    document.addEventListener("visibilitychange", updateVisibility);
-    return () => {
-      motionPreference.removeEventListener("change", updateMotionPreference);
-      document.removeEventListener("visibilitychange", updateVisibility);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (slides.length < 2 || !isPlaying || !pageVisible) return;
-    const timeout = window.setTimeout(() => setActiveSlide((current) => (current + 1) % slides.length), slideDelay);
-    return () => window.clearTimeout(timeout);
-  }, [activeSlide, isPlaying, pageVisible, slides.length]);
-
   function showSlide(index: number) {
-    setIsPlaying(false);
     setActiveSlide((index + slides.length) % slides.length);
   }
 
@@ -60,8 +34,6 @@ export function HomeHeroCarousel({ slides }: { slides: HeroSlide[] }) {
       aria-roledescription="carousel"
       aria-describedby={slides.length > 1 ? "hero-carousel-instructions" : undefined}
       tabIndex={slides.length > 1 ? 0 : undefined}
-      onMouseEnter={() => setIsPlaying(false)}
-      onFocusCapture={() => setIsPlaying(false)}
       onKeyDown={(event) => {
         if (event.target !== event.currentTarget) return;
         if (event.key === "ArrowLeft") {
@@ -85,7 +57,7 @@ export function HomeHeroCarousel({ slides }: { slides: HeroSlide[] }) {
     >
       <HeroBackground image={slideImage} priority={activeSlide === 0} />
       {slides.length > 1 ? <p id="hero-carousel-instructions" className="sr-only">Use the left and right arrow keys to change slides.</p> : null}
-      {slides.length > 1 ? <p className="sr-only" aria-live={isPlaying ? "off" : "polite"} aria-atomic="true">Slide {activeSlide + 1} of {slides.length}: {slide.title}</p> : null}
+      {slides.length > 1 ? <p className="sr-only" aria-live="polite" aria-atomic="true">Slide {activeSlide + 1} of {slides.length}: {slide.title}</p> : null}
       <div className="mx-auto flex min-h-[600px] max-w-7xl flex-col px-5 pb-6 pt-10 sm:min-h-[640px] sm:px-6 lg:min-h-[680px] lg:px-8 lg:pt-16">
         <div className="flex flex-1 items-center py-8">
           <div key={activeSlide} className="hero-slide-enter max-w-2xl">
@@ -115,14 +87,6 @@ export function HomeHeroCarousel({ slides }: { slides: HeroSlide[] }) {
               ))}
             </div>
             <div className="ml-auto flex shrink-0 items-center gap-0.5 sm:gap-2">
-              <button
-                type="button"
-                aria-label={isPlaying ? "Pause slides" : "Resume slides"}
-                className="flex h-11 w-9 items-center justify-center rounded-full text-white/80 transition-colors hover:bg-white/15 hover:text-white focus-visible:outline-white sm:w-11"
-                onClick={() => setIsPlaying((playing) => !playing)}
-              >
-                {isPlaying ? <Pause aria-hidden="true" className="h-4 w-4" /> : <Play aria-hidden="true" className="h-4 w-4" />}
-              </button>
               <button type="button" aria-label="Previous slide" className="flex h-11 w-9 items-center justify-center rounded-full text-white transition-colors hover:bg-white/15 focus-visible:outline-white sm:w-11" onClick={() => showSlide(activeSlide - 1)}><ArrowLeft aria-hidden="true" className="h-5 w-5" /></button>
               <button type="button" aria-label="Next slide" className="flex h-11 w-9 items-center justify-center rounded-full text-white transition-colors hover:bg-white/15 focus-visible:outline-white sm:w-11" onClick={() => showSlide(activeSlide + 1)}><ArrowRight aria-hidden="true" className="h-5 w-5" /></button>
             </div>

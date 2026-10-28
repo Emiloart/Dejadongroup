@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Package, Plus } from "lucide-react";
 import { AdminShell } from "@/components/admin-shell";
 import { adminSubsections } from "@/lib/admin-data";
 
@@ -16,13 +16,17 @@ export default function AdminOverviewPage() {
       <div className="max-w-3xl">
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-orange-700">Operations workspace</p>
         <h1 className="mt-3 text-4xl font-medium tracking-tight sm:text-5xl">Overview</h1>
-        <p className="mt-4 text-sm leading-7 text-stone-600">A starting point for client, partner, referral, and property operations across De Jadon Group.</p>
+        <p className="mt-4 text-sm leading-7 text-stone-600">Keep your marketplace up to date and find the tools for your day-to-day operations.</p>
       </div>
 
-      <div className="mt-10 border-y border-ink/10 py-6 sm:flex sm:items-start sm:gap-10">
-        <p className="shrink-0 text-sm font-semibold text-ink">Preview status</p>
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-stone-600 sm:mt-0">This page shows the admin layout and navigation. Live records and admin permissions will be connected as the workspace is built.</p>
-      </div>
+      <section aria-labelledby="marketplace-management-heading" className="mt-10 rounded-card border border-ink/10 bg-white p-6 sm:flex sm:items-center sm:justify-between sm:gap-8 sm:p-8">
+        <div>
+          <Package aria-hidden="true" className="h-6 w-6 text-orange-700" />
+          <h2 id="marketplace-management-heading" className="mt-4 text-2xl font-medium">Your marketplace</h2>
+          <p className="mt-2 max-w-xl text-sm leading-6 text-stone-600">Add product photos, prices, and details. Save drafts while you prepare, then publish products for customers to browse.</p>
+        </div>
+        <Link href="/admin/products" className="mt-6 inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-card bg-ink px-5 text-sm font-semibold text-white hover:bg-stone-700 sm:mt-0"><Plus aria-hidden="true" className="h-4 w-4" /> Manage products</Link>
+      </section>
 
       <section aria-labelledby="snapshot-heading" className="mt-12">
         <div className="max-w-2xl">

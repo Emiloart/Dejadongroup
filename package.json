@@ -7,7 +7,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test:marketplace": "node --test scripts/marketplace.integration.test.mjs"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",

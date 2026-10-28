@@ -62,3 +62,13 @@ The website content is based on the information supplied by De Jadon Group durin
 This repository contains the De Jadon Group public website and its supporting content structure.
 
 Built for De Jadon Group.
+
+## Marketplace administration
+
+The marketplace is managed at `/admin/products`. Administrators can upload JPG, PNG or WebP photos (up to 5 MB), enter NGN prices and pack sizes, describe products, set availability, and save drafts or publish listings. Published changes are read by the public catalogue without rebuilding the website. Drafts are hidden from product listings and direct product URLs.
+
+To enable administrator sign-in, copy `.env.example` to `.env.local`, set `ADMIN_EMAIL` and a strong, unique `ADMIN_PASSWORD` of at least 12 characters, then restart the application. These credentials are separate from the client and partner preview accounts. Never commit `.env.local` or real credentials.
+
+The application stores products and uploaded photos on the server in `.data/` by default. In production, set `DEJADON_DATA_DIR` to an absolute directory on a persistent disk and run one application instance. Back up that directory together; it contains `products.json` and `uploads/`. Deployments on ephemeral or read-only filesystems require a persistent database/object-storage adapter before using product administration. Existing catalogue items start without invented prices or product photos.
+
+Admin APIs require a signed, expiring HTTP-only session and verify the origin of write requests. Production hosting should use HTTPS. The remaining admin operations sections continue to be placeholders; Products is functional.

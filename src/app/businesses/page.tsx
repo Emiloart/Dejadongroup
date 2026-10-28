@@ -16,9 +16,9 @@ export default function BusinessesPage() {
       </PageSection>
       <PageSection tinted>
         <SectionHeader title="Find your area of interest" />
-        <div className="mt-10 grid gap-12 lg:grid-cols-2 lg:gap-16">
+        <div className="mt-8 grid gap-6 sm:grid-cols-2">
           {businesses.map((business) => (
-            <BusinessCard key={business.slug} business={business} />
+            <BusinessCard key={business.slug} business={business} showSections />
           ))}
         </div>
       </PageSection>
