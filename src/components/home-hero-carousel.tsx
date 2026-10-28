@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import mainHero from "@/assets/mainpage_hero.png";
 import agricultureHero from "@/assets/agriculture_hero.png";
 import agroRealEstateHero from "@/assets/Agro-realestate_hero.png";
@@ -9,6 +9,7 @@ import { ButtonLink } from "@/components/button-link";
 import { HeroBackground } from "@/components/hero-background";
 import type { HeroSlide } from "@/types/site";
 
+const slideDelay = 7500;
 const slideImages = {
   "Welcome to De Jadon Group": mainHero,
   Agriculture: agricultureHero,
@@ -17,11 +18,38 @@ const slideImages = {
 
 export function HomeHeroCarousel({ slides }: { slides: HeroSlide[] }) {
   const [activeSlide, setActiveSlide] = useState(0);
+  const [isHovered, setIsHovered] = useState(false);
+  const [hasFocus, setHasFocus] = useState(false);
+  const [hasInteracted, setHasInteracted] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(true);
+  const [pageVisible, setPageVisible] = useState(true);
   const touchStartX = useRef<number | null>(null);
   const slide = slides[activeSlide] ?? slides[0];
   const slideImage = (slide ? slideImages[slide.title as keyof typeof slideImages] : undefined) ?? mainHero;
+  const isPlaying = slides.length > 1 && !isHovered && !hasFocus && !hasInteracted && !reducedMotion && pageVisible;
+
+  useEffect(() => {
+    const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updateMotion = () => setReducedMotion(motion.matches);
+    const updateVisibility = () => setPageVisible(document.visibilityState === "visible");
+    updateMotion();
+    updateVisibility();
+    motion.addEventListener("change", updateMotion);
+    document.addEventListener("visibilitychange", updateVisibility);
+    return () => {
+      motion.removeEventListener("change", updateMotion);
+      document.removeEventListener("visibilitychange", updateVisibility);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isPlaying) return;
+    const timeout = window.setTimeout(() => setActiveSlide((current) => (current + 1) % slides.length), slideDelay);
+    return () => window.clearTimeout(timeout);
+  }, [activeSlide, isPlaying, slides.length]);
 
   function showSlide(index: number) {
+    setHasInteracted(true);
     setActiveSlide((index + slides.length) % slides.length);
   }
 
@@ -34,6 +62,13 @@ export function HomeHeroCarousel({ slides }: { slides: HeroSlide[] }) {
       aria-roledescription="carousel"
       aria-describedby={slides.length > 1 ? "hero-carousel-instructions" : undefined}
       tabIndex={slides.length > 1 ? 0 : undefined}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      onClickCapture={() => setHasInteracted(true)}
+      onFocusCapture={() => setHasFocus(true)}
+      onBlurCapture={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) setHasFocus(false);
+      }}
       onKeyDown={(event) => {
         if (event.target !== event.currentTarget) return;
         if (event.key === "ArrowLeft") {
@@ -45,19 +80,22 @@ export function HomeHeroCarousel({ slides }: { slides: HeroSlide[] }) {
         }
       }}
       onTouchStart={(event) => {
+        setHasInteracted(true);
         touchStartX.current = event.touches[0]?.clientX ?? null;
       }}
       onTouchEnd={(event) => {
         if (touchStartX.current === null || slides.length < 2) return;
-        const distance = event.changedTouches[0].clientX - touchStartX.current;
+        const endX = event.changedTouches[0]?.clientX;
+        if (endX === undefined) { touchStartX.current = null; return; }
+        const distance = endX - touchStartX.current;
         touchStartX.current = null;
         if (Math.abs(distance) >= 50) showSlide(activeSlide + (distance < 0 ? 1 : -1));
       }}
       onTouchCancel={() => { touchStartX.current = null; }}
     >
       <HeroBackground image={slideImage} priority={activeSlide === 0} />
-      {slides.length > 1 ? <p id="hero-carousel-instructions" className="sr-only">Use the left and right arrow keys to change slides.</p> : null}
-      {slides.length > 1 ? <p className="sr-only" aria-live="polite" aria-atomic="true">Slide {activeSlide + 1} of {slides.length}: {slide.title}</p> : null}
+      {slides.length > 1 ? <p id="hero-carousel-instructions" className="sr-only">Slides change automatically. Hover, focus or click to pause. Use the left and right arrow keys to change slides.</p> : null}
+      {slides.length > 1 ? <p className="sr-only" aria-live={isPlaying ? "off" : "polite"} aria-atomic="true">{slide.title}</p> : null}
       <div className="mx-auto flex min-h-[600px] max-w-7xl flex-col px-5 pb-6 pt-10 sm:min-h-[640px] sm:px-6 lg:min-h-[680px] lg:px-8 lg:pt-16">
         <div className="flex flex-1 items-center py-8">
           <div key={activeSlide} className="hero-slide-enter max-w-2xl">
@@ -77,12 +115,12 @@ export function HomeHeroCarousel({ slides }: { slides: HeroSlide[] }) {
                 <button
                   key={item.title}
                   type="button"
-                  aria-label={`Show slide ${index + 1}: ${item.title}`}
+                  aria-label={`Show ${item.title}`}
                   aria-current={activeSlide === index ? "true" : undefined}
-                  className={`flex h-11 w-9 items-center justify-center text-xs tabular-nums transition-colors focus-visible:outline-white sm:w-11 ${activeSlide === index ? "text-orange-200" : "text-white/75 hover:text-white"}`}
+                  className="flex h-11 w-9 items-center justify-center rounded-card focus-visible:outline-white sm:w-11"
                   onClick={() => showSlide(index)}
                 >
-                  <span className={`border-b pb-1 ${activeSlide === index ? "border-orange-200" : "border-transparent"}`}>{String(index + 1).padStart(2, "0")}</span>
+                  <span aria-hidden="true" className={`h-1.5 rounded-full transition-all ${activeSlide === index ? "w-6 bg-white" : "w-1.5 bg-white/50"}`} />
                 </button>
               ))}
             </div>

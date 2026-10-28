@@ -100,7 +100,7 @@ export const partnerProgramSections = [
   "Login"
 ];
 
-const standardHomeHeroSlides: HeroSlide[] = [
+export const homeHeroSlides: HeroSlide[] = [
   {
     eyebrow: "De Jadon Group",
     title: "Welcome to De Jadon Group",
@@ -134,34 +134,8 @@ const standardHomeHeroSlides: HeroSlide[] = [
     primaryHref: "/businesses/agro-real-estate/investment-plans",
     secondaryLabel: "Contact",
     secondaryHref: "/contact"
-  },
-  {
-    eyebrow: "Partner Program",
-    title: "Partner Program",
-    description: "Introduce De Jadon Group to prospective customers and earn a 10% commission when a referred prospect becomes a paying client.",
-    slotLabel: "Partner Program Hero Slot",
-    canvasLabel: "Partner Program Hero Canvas",
-    primaryLabel: "Open Partner Program",
-    primaryHref: "/partner-program",
-    secondaryLabel: "Login",
-    secondaryHref: "/login"
   }
 ];
-
-const foodPackagesHeroSlide: HeroSlide = {
-  eyebrow: foodPackagePromotion.eyebrow,
-  title: foodPackagePromotion.title,
-  slotLabel: foodPackagePromotion.heroSlotLabel,
-  canvasLabel: foodPackagePromotion.heroCanvasLabel,
-  primaryLabel: "View Food Packages",
-  primaryHref: foodPackagePromotion.canonicalHref,
-  secondaryLabel: "View Raffle Promotion",
-  secondaryHref: `${foodPackagePromotion.canonicalHref}#raffle-promotion`
-};
-
-export const homeHeroSlides: HeroSlide[] = foodPackagePromotion.active
-  ? [foodPackagesHeroSlide, ...standardHomeHeroSlides]
-  : standardHomeHeroSlides;
 
 export const homeFaqSections = [
   "Agriculture FAQ",
