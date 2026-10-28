@@ -1,10 +1,12 @@
 import { notFound } from "next/navigation";
 import { ButtonLink } from "@/components/button-link";
+import { GalleryGrid } from "@/components/gallery-grid";
 import { PageHero } from "@/components/page-hero";
 import { PageSection } from "@/components/page-section";
 import { SectionHeader } from "@/components/section-header";
 import { SiteLayout } from "@/components/site-layout";
 import { agroRealEstateBuyingProcess, agroRealEstateFaqs, agroRealEstateServices, getSectionByPath } from "@/lib/site-data";
+import { getGalleryImages } from "@/lib/media-library";
 
 type AgroRealEstateSectionPageProps = { params: { section: string } };
 
@@ -30,7 +32,7 @@ export default function AgroRealEstateSectionPage({ params }: AgroRealEstateSect
       : isFaq
         ? "Answers to common questions about agricultural land and managed cultivation."
         : isGallery
-          ? "Project images will be added when available."
+          ? "Explore photographs from our agro-real estate projects as they become available."
           : "Ask our team about current agricultural land and investment opportunities.";
 
   return (
@@ -78,6 +80,12 @@ export default function AgroRealEstateSectionPage({ params }: AgroRealEstateSect
               </article>
             ))}
           </div>
+        </PageSection>
+      ) : null}
+      {isGallery ? (
+        <PageSection tinted>
+          <GalleryGrid images={getGalleryImages("agro-real-estate")} emptyTitle="Project photography is being added" />
+          <div className="mt-8"><ButtonLink href="/gallery" variant="outline">View the full gallery</ButtonLink></div>
         </PageSection>
       ) : null}
       {isGallery || params.section === "investment-plans" ? (

@@ -92,6 +92,8 @@ export function SiteHeader() {
                           {business.name}
                         </Link>
                       ))}
+                      <div className="my-1 border-t border-ink/10" />
+                      <Link href="/gallery" aria-current={isActivePath(pathname, "/gallery") ? "page" : undefined} onClick={() => setBusinessesOpen(false)} className="block rounded-card px-3 py-2.5 text-sm font-medium text-stone-600 hover:bg-orange-50 hover:text-orangeAction">Gallery</Link>
                     </div>
                   ) : null}
                 </div>
@@ -145,6 +147,7 @@ export function SiteHeader() {
                       {businesses.map((business) => (
                         <Link key={business.href} href={business.href} onClick={() => setMenuOpen(false)} aria-current={isActivePath(pathname, business.href) ? "page" : undefined} className="rounded-card px-3 py-2.5 text-sm font-medium text-stone-600 hover:text-orangeAction">{business.name}</Link>
                       ))}
+                      <Link href="/gallery" onClick={() => setMenuOpen(false)} aria-current={isActivePath(pathname, "/gallery") ? "page" : undefined} className="rounded-card px-3 py-2.5 text-sm font-medium text-stone-600 hover:text-orangeAction">Gallery</Link>
                     </div>
                   ) : null}
                 </div>

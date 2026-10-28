@@ -23,6 +23,13 @@ export default function BusinessesPage() {
         </div>
       </PageSection>
       <PageSection>
+        <div className="mb-14 flex flex-wrap items-center justify-between gap-5 border-b border-ink/10 pb-8">
+          <div>
+            <h2 className="text-2xl font-semibold text-ink">See our work</h2>
+            <p className="mt-2 text-stone-600">Browse photographs from our business areas.</p>
+          </div>
+          <ButtonLink href="/gallery" variant="outline">Browse gallery</ButtonLink>
+        </div>
         <div className="grid gap-8 border-t border-ink/10 pt-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
           <SectionHeader title="Flexisave" eyebrow="Structured savings" />
           <div>

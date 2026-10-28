@@ -1,11 +1,13 @@
 import { notFound } from "next/navigation";
 import { ButtonLink } from "@/components/button-link";
+import { GalleryGrid } from "@/components/gallery-grid";
 import { PageHero } from "@/components/page-hero";
 import { PageSection } from "@/components/page-section";
 import { SectionGrid } from "@/components/section-grid";
 import { SectionHeader } from "@/components/section-header";
 import { SiteLayout } from "@/components/site-layout";
 import { agricultureProducts, getSectionByPath } from "@/lib/site-data";
+import { getGalleryImages } from "@/lib/media-library";
 
 const cropDescriptions = [
   { name: "Palm", description: "The oil palm is a tropical tree. Its outer flesh contains palm oil, while the seed can be processed to produce palm kernel oil." },
@@ -44,7 +46,7 @@ export default function AgricultureSectionPage({ params }: AgricultureSectionPag
         ? "Our agriculture operations include poultry, fishery and Black Soldier Fly."
         : category === "products"
           ? "Our agricultural products include fresh and dried fish. Product sales are being prepared for a separate marketplace."
-          : "Images of our agriculture work will be added when available.";
+          : "Explore photographs from our agriculture work as they become available.";
 
   return (
     <SiteLayout>
@@ -81,6 +83,12 @@ export default function AgricultureSectionPage({ params }: AgricultureSectionPag
             {agricultureProducts.map((product) => <li key={product} className="border-t border-ink/10 py-5 text-lg text-ink">{product}</li>)}
           </ul>
           <ButtonLink href="/contact" variant="outline">Ask about products</ButtonLink>
+        </PageSection>
+      ) : null}
+      {category === "gallery" ? (
+        <PageSection tinted>
+          <GalleryGrid images={getGalleryImages("agriculture")} emptyTitle="Agriculture photography is being added" />
+          <div className="mt-8"><ButtonLink href="/gallery" variant="outline">View the full gallery</ButtonLink></div>
         </PageSection>
       ) : null}
       {category === "gallery" || detail ? (
