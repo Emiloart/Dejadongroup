@@ -1,11 +1,20 @@
 "use client";
 
+import Image from "next/image";
 import { ArrowLeft, ArrowRight, Pause, Play } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import mainHero from "@/assets/mainpage_hero.png";
+import agricultureHero from "@/assets/agriculture_hero.png";
+import agroRealEstateHero from "@/assets/Agro-realestate_hero.png";
 import { ButtonLink } from "@/components/button-link";
 import type { HeroSlide } from "@/types/site";
 
 const slideDelay = 7500;
+const slideImages = {
+  "Welcome to De Jadon Group": { src: mainHero, alt: "De Jadon Group branded building" },
+  Agriculture: { src: agricultureHero, alt: "Fish farming, palm cultivation, poultry and crops" },
+  "Agro-Real Estate": { src: agroRealEstateHero, alt: "Aerial view of a cultivated palm plantation" }
+};
 
 export function HomeHeroCarousel({ slides }: { slides: HeroSlide[] }) {
   const [activeSlide, setActiveSlide] = useState(0);
@@ -13,6 +22,7 @@ export function HomeHeroCarousel({ slides }: { slides: HeroSlide[] }) {
   const [pageVisible, setPageVisible] = useState(true);
   const touchStartX = useRef<number | null>(null);
   const slide = slides[activeSlide] ?? slides[0];
+  const slideImage = slide ? slideImages[slide.title as keyof typeof slideImages] : undefined;
 
   useEffect(() => {
     const motionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -84,10 +94,16 @@ export function HomeHeroCarousel({ slides }: { slides: HeroSlide[] }) {
             <ButtonLink href={slide.secondaryHref} variant="outline">{slide.secondaryLabel}</ButtonLink>
           </div>
         </div>
-        <div className="hidden max-w-sm border-l border-orangeAction/30 pl-8 lg:block">
-          <p className="font-serif text-3xl leading-snug text-ink/70">Your future is an investment. Let’s build it together.</p>
-          <p className="mt-8 text-xs font-semibold uppercase tracking-[0.2em] text-stone-500">{String(activeSlide + 1).padStart(2, "0")} / {String(slides.length).padStart(2, "0")}</p>
-        </div>
+        {slideImage ? (
+          <div className="relative aspect-[16/10] overflow-hidden rounded-card bg-ink/5 lg:aspect-[5/4]">
+            <Image src={slideImage.src} alt={slideImage.alt} fill priority={activeSlide === 0} unoptimized sizes="(max-width: 1024px) 100vw, 45vw" className="object-cover" />
+          </div>
+        ) : (
+          <div className="hidden max-w-sm border-l border-orangeAction/30 pl-8 lg:block">
+            <p className="font-serif text-3xl leading-snug text-ink/70">Your future is an investment. Let’s build it together.</p>
+            <p className="mt-8 text-xs font-semibold uppercase tracking-[0.2em] text-stone-500">{String(activeSlide + 1).padStart(2, "0")} / {String(slides.length).padStart(2, "0")}</p>
+          </div>
+        )}
       </div>
       {slides.length > 1 ? (
         <div className="mt-8 flex items-center justify-between gap-3 border-t border-ink/10 pt-4 lg:mt-10">

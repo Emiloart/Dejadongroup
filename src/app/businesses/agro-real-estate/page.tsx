@@ -1,4 +1,5 @@
 import { ButtonLink } from "@/components/button-link";
+import agroRealEstateHero from "@/assets/Agro-realestate_hero.png";
 import { PageHero } from "@/components/page-hero";
 import { PageSection } from "@/components/page-section";
 import { SectionGrid } from "@/components/section-grid";
@@ -19,6 +20,8 @@ export default function AgroRealEstatePage() {
         <PageHero
           title={business.name}
           eyebrow="Businesses"
+          image={agroRealEstateHero}
+          imageAlt="Aerial view of a cultivated palm plantation"
           actions={
             <>
               <ButtonLink href="/businesses/agro-real-estate/investment-plans">Investment Plans</ButtonLink>
