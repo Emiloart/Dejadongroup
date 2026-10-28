@@ -18,6 +18,7 @@ export function AdminShell({ section, children }: { section: AdminSectionId; chi
 
   return (
     <div className="min-h-screen bg-warm text-ink lg:grid lg:grid-cols-[256px_minmax(0,1fr)]">
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-card focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-ink">Skip to main content</a>
       <aside className="bg-ink text-white lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:overflow-y-auto lg:px-6 lg:py-8">
         <Link href="/admin" className="mx-5 flex min-h-20 items-center gap-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white lg:mx-0 lg:min-h-0">
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-card bg-orangeAction text-sm font-bold text-ink">DJ</span>

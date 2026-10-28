@@ -3,6 +3,13 @@ import { ArrowUpRight } from "lucide-react";
 import { AdminShell } from "@/components/admin-shell";
 import { adminSubsections } from "@/lib/admin-data";
 
+const snapshotIds = ["clients", "partners", "referrals", "land-farms"] as const;
+const workspaceGroups = [
+  { title: "Accounts", description: "People using the De Jadon Group portals.", ids: ["clients", "partners"] },
+  { title: "Operations", description: "Referrals, property, and farm records.", ids: ["referrals", "land-farms"] },
+  { title: "Workspace", description: "Website content and admin configuration.", ids: ["content", "settings"] }
+] as const;
+
 export default function AdminOverviewPage() {
   return (
     <AdminShell section="overview">
@@ -17,20 +24,50 @@ export default function AdminOverviewPage() {
         <p className="mt-2 max-w-2xl text-sm leading-6 text-stone-600 sm:mt-0">This page shows the admin layout and navigation. Live records and admin permissions will be connected as the workspace is built.</p>
       </div>
 
-      <section aria-labelledby="areas-heading" className="mt-12">
+      <section aria-labelledby="snapshot-heading" className="mt-12">
+        <div className="max-w-2xl">
+          <h2 id="snapshot-heading" className="text-2xl font-medium">Operations snapshot</h2>
+          <p className="mt-2 text-sm leading-6 text-stone-600">These spaces will show live totals once admin records are connected.</p>
+        </div>
+        <nav aria-label="Operations snapshot" className="mt-5 grid grid-cols-2 gap-x-5 border-t border-ink/10 lg:grid-cols-4 lg:gap-x-8">
+          {snapshotIds.map((id) => {
+            const section = adminSubsections.find((item) => item.id === id);
+            if (!section) return null;
+            return (
+              <Link key={id} href={section.href} className="group flex min-h-32 flex-col justify-between border-b border-ink/10 py-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-700">
+                <span className="text-sm font-semibold text-ink group-hover:text-orange-700">{section.label}</span>
+                <span aria-hidden="true" className="text-3xl leading-none text-stone-400">—</span>
+                <span className="text-xs text-stone-600">No live total</span>
+              </Link>
+            );
+          })}
+        </nav>
+      </section>
+
+      <section aria-labelledby="areas-heading" className="mt-12 lg:mt-14">
         <div className="max-w-2xl">
           <h2 id="areas-heading" className="text-2xl font-medium">Workspace areas</h2>
-          <p className="mt-2 text-sm leading-6 text-stone-600">Open an area to see where its tools and records will live.</p>
+          <p className="mt-2 text-sm leading-6 text-stone-600">Each area has a place for its records and tools as the admin workspace grows.</p>
         </div>
-        <div className="mt-6 grid border-t border-ink/10 sm:grid-cols-2 sm:gap-x-10">
-          {adminSubsections.map((section) => (
-            <Link key={section.id} href={section.href} className="group flex min-h-28 items-start justify-between gap-5 border-b border-ink/10 py-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-700">
-              <span>
-                <span className="block text-base font-semibold text-ink group-hover:text-orange-700">{section.label}</span>
-                <span className="mt-2 block text-sm leading-6 text-stone-600">{section.description}</span>
-              </span>
-              <ArrowUpRight aria-hidden="true" className="mt-1 h-4 w-4 shrink-0 text-orange-700" />
-            </Link>
+        <div className="mt-7 grid gap-10 lg:grid-cols-3 lg:gap-8">
+          {workspaceGroups.map((group) => (
+            <section key={group.title} aria-label={group.title}>
+              <div className="border-t border-ink/10 pt-5">
+                <h3 className="text-xl font-medium">{group.title}</h3>
+                <p className="mt-2 min-h-12 text-sm leading-6 text-stone-600">{group.description}</p>
+              </div>
+              <div className="mt-3 border-t border-ink/10">
+                {group.ids.map((id) => {
+                  const section = adminSubsections.find((item) => item.id === id);
+                  if (!section) return null;
+                  return (
+                    <Link key={id} href={section.href} className="group flex min-h-14 items-center justify-between gap-4 border-b border-ink/10 py-3 text-sm font-semibold text-ink hover:text-orange-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-700">
+                      {section.label}<ArrowUpRight aria-hidden="true" className="h-4 w-4 shrink-0 text-orange-700" />
+                    </Link>
+                  );
+                })}
+              </div>
+            </section>
           ))}
         </div>
       </section>
