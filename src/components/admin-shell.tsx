@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { ArrowUpRight, FileText, Handshake, LayoutDashboard, Link2, Settings, Sprout, Users, type LucideIcon } from "lucide-react";
+import { BrandLogo } from "@/components/brand-logo";
 import { adminSections, type AdminSectionId } from "@/lib/admin-data";
 
 const icons: Record<AdminSectionId, LucideIcon> = {
@@ -20,12 +21,9 @@ export function AdminShell({ section, children }: { section: AdminSectionId; chi
     <div className="min-h-screen bg-warm text-ink lg:grid lg:grid-cols-[256px_minmax(0,1fr)]">
       <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-card focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-ink">Skip to main content</a>
       <aside className="bg-ink text-white lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:overflow-y-auto lg:px-6 lg:py-8">
-        <Link href="/admin" className="mx-5 flex min-h-20 items-center gap-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white lg:mx-0 lg:min-h-0">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-card bg-orangeAction text-sm font-bold text-ink">DJ</span>
-          <span className="min-w-0">
-            <span className="block text-base font-semibold leading-tight">De Jadon Group</span>
-            <span className="block text-xs text-stone-300">Admin workspace</span>
-          </span>
+        <Link href="/admin" className="mx-5 flex min-h-20 flex-col items-start justify-center gap-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white lg:mx-0 lg:min-h-0">
+          <BrandLogo light className="h-11 w-auto" />
+          <span className="text-xs text-stone-300">Admin workspace</span>
         </Link>
 
         <div className="hidden lg:mt-10 lg:block">

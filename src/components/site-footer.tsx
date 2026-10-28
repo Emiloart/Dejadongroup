@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BrandLogo } from "@/components/brand-logo";
 import { businesses, mainNavigation } from "@/lib/site-data";
 
 export function SiteFooter() {
@@ -6,11 +7,8 @@ export function SiteFooter() {
     <footer className="border-t border-orangeAction/15 bg-ink text-white">
       <div className="mx-auto grid max-w-7xl gap-8 px-5 py-10 sm:px-6 lg:grid-cols-[1.2fr_1fr_1fr] lg:px-8">
         <div>
-          <Link href="/" className="inline-flex items-center gap-3">
-            <span className="flex h-10 w-10 items-center justify-center rounded-card bg-orangeAction text-sm font-bold text-white">
-              DJ
-            </span>
-            <span className="text-lg font-semibold">De Jadon Group</span>
+          <Link href="/" className="inline-block rounded-card focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
+            <BrandLogo light className="h-12 w-auto" />
           </Link>
           <div className="mt-5 h-1 w-16 rounded-full bg-orangeAction" />
         </div>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ChevronDown, Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { BrandLogo } from "@/components/brand-logo";
 import { businesses, mainNavigation } from "@/lib/site-data";
 
 function isActivePath(pathname: string, href: string) {
@@ -51,12 +52,8 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-ink/10 bg-white/95 backdrop-blur">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-5 px-5 py-3 sm:px-6 lg:px-8">
-        <Link href="/" aria-label="De Jadon Group, home" onClick={() => setMenuOpen(false)} className="group flex min-w-0 items-center gap-3">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-card bg-orangeAction text-sm font-bold text-white">DJ</span>
-          <span className="min-w-0">
-            <span className="block truncate text-base font-semibold leading-tight text-ink">De Jadon Group</span>
-            <span className="mt-1 block h-0.5 w-12 rounded-full bg-orangeAction transition-all group-hover:w-20" />
-          </span>
+        <Link href="/" aria-label="De Jadon Group, home" onClick={() => setMenuOpen(false)} className="block shrink-0 rounded-card focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orangeAction">
+          <BrandLogo className="h-11 w-auto sm:h-12" />
         </Link>
 
         <nav aria-label="Main navigation" className="hidden items-center gap-0.5 lg:flex">

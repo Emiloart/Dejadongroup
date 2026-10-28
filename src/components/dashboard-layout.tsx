@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { ArrowUpRight } from "lucide-react";
+import { BrandLogo } from "@/components/brand-logo";
 import { DashboardAccessGate } from "@/components/dashboard-access-gate";
 import { DashboardSignOut } from "@/components/dashboard-sign-out";
 import { DashboardRoleSwitcher } from "@/components/dashboard-role-switcher";
@@ -27,12 +28,9 @@ export function DashboardLayout({ role, page, children }: DashboardLayoutProps) 
     <div className="min-h-screen bg-warm text-ink lg:grid lg:grid-cols-[248px_minmax(0,1fr)]">
       <aside className="bg-ink text-white lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:overflow-y-auto lg:px-6 lg:py-8">
         <div className="flex items-center justify-between">
-          <Link href="/" className="mx-5 my-4 inline-flex items-center gap-3 lg:mx-0 lg:my-0">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-card bg-orangeAction text-sm font-bold text-ink">DJ</span>
-            <span className="min-w-0">
-              <span className="block text-base font-semibold leading-tight">De Jadon Group</span>
-              <span className="block text-xs text-stone-300">Account workspace</span>
-            </span>
+          <Link href="/" className="mx-5 my-4 inline-flex flex-col items-start gap-1 lg:mx-0 lg:my-0">
+            <BrandLogo light className="h-11 w-auto" />
+            <span className="text-xs text-stone-300">Account workspace</span>
           </Link>
           <div className="pr-5 lg:hidden"><DashboardSignOut role={role} /></div>
         </div>
