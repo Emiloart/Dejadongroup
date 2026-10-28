@@ -45,7 +45,7 @@ export default function AgricultureSectionPage({ params }: AgricultureSectionPag
       : category === "livestock"
         ? "Our agriculture operations include poultry, fishery and Black Soldier Fly."
         : category === "products"
-          ? "Our agricultural products include fresh and dried fish. Product sales are being prepared for a separate marketplace."
+          ? "Browse our agricultural products and ask our team about current availability, quantities and pricing."
           : "Explore photographs from our agriculture work as they become available.";
 
   return (
@@ -82,7 +82,7 @@ export default function AgricultureSectionPage({ params }: AgricultureSectionPag
           <ul className="mt-8 grid gap-x-10 sm:grid-cols-3">
             {agricultureProducts.map((product) => <li key={product} className="border-t border-ink/10 py-5 text-lg text-ink">{product}</li>)}
           </ul>
-          <ButtonLink href="/contact" variant="outline">Ask about products</ButtonLink>
+          <ButtonLink href="/marketplace" variant="outline">Browse marketplace</ButtonLink>
         </PageSection>
       ) : null}
       {category === "gallery" ? (

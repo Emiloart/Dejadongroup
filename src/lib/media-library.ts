@@ -43,3 +43,9 @@ export function getGalleryImages(category?: GalleryCategory): GalleryImage[] {
       filename
     })));
 }
+
+export function getMarketplaceImage(slug: string) {
+  const filename = imageFiles(path.join(process.cwd(), "public", "images", "marketplace"))
+    .find((file) => path.basename(file, path.extname(file)).toLowerCase() === slug);
+  return filename ? `/images/marketplace/${encodeURIComponent(filename)}` : null;
+}

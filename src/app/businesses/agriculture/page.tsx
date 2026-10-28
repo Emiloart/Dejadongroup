@@ -44,7 +44,7 @@ export default function AgriculturePage() {
           <div>
             <SectionHeader title="From our farms" eyebrow="Products" accent="green" />
             <div className="mt-6">
-              <ButtonLink href="/businesses/agriculture/products" variant="outline">View all products</ButtonLink>
+              <ButtonLink href="/marketplace" variant="outline">Browse marketplace</ButtonLink>
             </div>
           </div>
           <div className="grid gap-x-8 gap-y-5 sm:grid-cols-2">
