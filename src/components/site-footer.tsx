@@ -1,46 +1,55 @@
 import Link from "next/link";
 import { BrandLogo } from "@/components/brand-logo";
-import { businesses, mainNavigation } from "@/lib/site-data";
+import { businesses, foodPackagePromotion, mainNavigation } from "@/lib/site-data";
+import { SocialLinks } from "@/components/social-links";
 
 export function SiteFooter() {
   return (
     <footer className="border-t border-orangeAction/15 bg-ink text-white">
-      <div className="mx-auto grid max-w-7xl gap-8 px-5 py-10 sm:px-6 lg:grid-cols-[1.2fr_1fr_1fr] lg:px-8">
+      <div className="mx-auto grid max-w-7xl gap-9 px-5 py-12 sm:grid-cols-2 sm:px-6 lg:grid-cols-[1.35fr_0.8fr_1fr_1fr] lg:px-8">
         <div>
           <Link href="/" className="inline-block rounded-card focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
             <BrandLogo light className="h-12 w-auto" />
           </Link>
           <div className="mt-5 h-1 w-16 rounded-full bg-orangeAction" />
+          <SocialLinks className="mt-6" light />
         </div>
 
         <nav aria-label="Footer navigation">
           <h2 className="text-sm font-semibold text-orange-200">Navigation</h2>
-          <div className="mt-4 grid gap-2">
+          <div className="mt-4 grid gap-2.5">
             {mainNavigation.map((item) => (
-              <Link key={item.href} href={item.href} className="text-sm text-stone-200 hover:text-orange-200">
-                {item.label}
-              </Link>
+              <Link key={item.href} href={item.href} className="text-sm text-stone-200 hover:text-orange-200">{item.label}</Link>
             ))}
+            <Link href="/updates" className="text-sm text-stone-200 hover:text-orange-200">News & Updates</Link>
           </div>
         </nav>
 
         <nav aria-label="Footer businesses">
           <h2 className="text-sm font-semibold text-orange-200">Businesses</h2>
-          <div className="mt-4 grid gap-2">
+          <div className="mt-4 grid gap-2.5">
             {businesses.map((business) => (
-              <Link key={business.href} href={business.href} className="text-sm text-stone-200 hover:text-orange-200">
-                {business.name}
-              </Link>
+              <Link key={business.href} href={business.href} className="text-sm text-stone-200 hover:text-orange-200">{business.name}</Link>
             ))}
+            {foodPackagePromotion.active ? (
+              <Link href={foodPackagePromotion.shortHref} className="font-semibold text-orange-200 hover:text-white">Food Packages</Link>
+            ) : null}
           </div>
         </nav>
+
+        <div>
+          <h2 className="text-sm font-semibold text-orange-200">Contact & Legal</h2>
+          <div className="mt-4 grid gap-2.5">
+            <Link href="/contact" className="text-sm text-stone-200 hover:text-orange-200">Contact De Jadon Group</Link>
+            <Link href="/privacy" className="text-sm text-stone-200 hover:text-orange-200">Privacy</Link>
+            <Link href="/terms" className="text-sm text-stone-200 hover:text-orange-200">Terms</Link>
+          </div>
+        </div>
       </div>
       <div className="border-t border-white/10">
-        <div className="mx-auto flex max-w-7xl flex-col gap-3 px-5 py-5 text-sm text-stone-300 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
+        <div className="mx-auto flex max-w-7xl flex-col gap-2 px-5 py-5 text-sm text-stone-300 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
           <span>De Jadon Group</span>
-          <Link href="/contact" className="font-semibold text-orange-200 hover:text-white">
-            Contact
-          </Link>
+          <span>Official company website</span>
         </div>
       </div>
     </footer>

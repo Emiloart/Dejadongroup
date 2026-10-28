@@ -10,7 +10,7 @@ import { businesses, homeFaqSections, homeHeroSlides } from "@/lib/site-data";
 export default function HomePage() {
   return (
     <SiteLayout>
-      <PageSection className="!pb-10 !pt-10 lg:!pt-16"><HomeHeroCarousel slides={homeHeroSlides} /></PageSection>
+      <HomeHeroCarousel slides={homeHeroSlides} />
       <PageSection tinted>
         <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
           <SectionHeader title="About De Jadon Group" eyebrow="Who we are" />

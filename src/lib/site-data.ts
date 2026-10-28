@@ -1,4 +1,14 @@
-import type { Business, DashboardRole, DashboardSection, HeroSlide, NavItem } from "@/types/site";
+import type {
+  Business,
+  DashboardModule,
+  DashboardRole,
+  FoodPackageSection,
+  HeroSlide,
+  NavItem,
+  PromotionContent,
+  SocialLink,
+  UpdateSlot
+} from "@/types/site";
 
 export const mainNavigation: NavItem[] = [
   { label: "Home", href: "/" },
@@ -9,7 +19,7 @@ export const mainNavigation: NavItem[] = [
   { label: "Login", href: "/login" }
 ];
 
-export const agricultureProducts = ["Fish Heads", "Cutlets", "Fish Tail"];
+export const agricultureProducts = ["Fish Heads", "Cutlets", "Fish Tail", "Food Packages"];
 
 export const agricultureProductDetails = [
   { name: "Fish Heads", description: "", packaging: "" },
@@ -51,6 +61,33 @@ export const agroRealEstateBuyingProcess = [
   "The customer is handed the land documents as proof of transfer of ownership."
 ];
 
+export const foodPackagesHref = "/businesses/agriculture/products/food-packages";
+
+export const foodPackagePromotion: PromotionContent = {
+  active: true,
+  eyebrow: "Food Packages",
+  title: "Food Packages Raffle Promotion",
+  canonicalHref: foodPackagesHref,
+  shortHref: "/food-packages",
+  bannerSlotLabel: "Food Packages Promotion Banner Content",
+  heroSlotLabel: "Food Packages Promotion Hero Content",
+  heroCanvasLabel: "Food Packages Promotion Hero Image Canvas",
+  ctaSlotLabel: "Food Packages Raffle Promotion CTA Content"
+};
+
+export const foodPackageSections: FoodPackageSection[] = [
+  { title: "Available Food Packages", slotLabel: "Available Food Packages Content", canvasLabel: "Food Packages Collection Canvas" },
+  { title: "Raffle Promotion", slotLabel: "Raffle Promotion Content", canvasLabel: "Raffle Promotion Image Canvas" },
+  { title: "How to Participate", slotLabel: "Raffle Participation Requirements" },
+  { title: "Eligibility", slotLabel: "Raffle Eligibility Requirements" },
+  { title: "Draw Information", slotLabel: "Raffle Draw Information" },
+  { title: "Promotion Terms", slotLabel: "Approved Raffle Promotion Terms" },
+  { title: "FAQs", slotLabel: "Food Packages and Raffle FAQs" }
+];
+
+// Add only verified official accounts. Empty or invalid links are not rendered.
+export const socialLinks: SocialLink[] = [];
+
 export const partnerProgramSections = [
   "Overview",
   "Benefits",
@@ -61,7 +98,7 @@ export const partnerProgramSections = [
   "Login"
 ];
 
-export const homeHeroSlides: HeroSlide[] = [
+const standardHomeHeroSlides: HeroSlide[] = [
   {
     eyebrow: "De Jadon Group",
     title: "Welcome to De Jadon Group",
@@ -109,6 +146,21 @@ export const homeHeroSlides: HeroSlide[] = [
   }
 ];
 
+const foodPackagesHeroSlide: HeroSlide = {
+  eyebrow: foodPackagePromotion.eyebrow,
+  title: foodPackagePromotion.title,
+  slotLabel: foodPackagePromotion.heroSlotLabel,
+  canvasLabel: foodPackagePromotion.heroCanvasLabel,
+  primaryLabel: "View Food Packages",
+  primaryHref: foodPackagePromotion.canonicalHref,
+  secondaryLabel: "View Raffle Promotion",
+  secondaryHref: `${foodPackagePromotion.canonicalHref}#raffle-promotion`
+};
+
+export const homeHeroSlides: HeroSlide[] = foodPackagePromotion.active
+  ? [foodPackagesHeroSlide, ...standardHomeHeroSlides]
+  : standardHomeHeroSlides;
+
 export const homeFaqSections = [
   "Agriculture FAQ",
   "Agro-Real Estate FAQ",
@@ -116,10 +168,10 @@ export const homeFaqSections = [
   "Contact FAQ"
 ];
 
-export const updateSections = [
-  "Agriculture Update Slot",
-  "Agro-Real Estate Update Slot",
-  "Partner Program Update Slot"
+export const updateSections: UpdateSlot[] = [
+  { title: "Agriculture Update", canvasLabel: "Agriculture Update Image Canvas" },
+  { title: "Agro-Real Estate Update", canvasLabel: "Agro-Real Estate Update Image Canvas" },
+  { title: "Partner Program Update", canvasLabel: "Partner Program Update Image Canvas" }
 ];
 
 export const businesses: Business[] = [
@@ -141,7 +193,11 @@ export const businesses: Business[] = [
           { name: "BSF (Black Soldier Fly)", href: "/businesses/agriculture/livestock/bsf" }
         ]
       },
-      { name: "Products", href: "/businesses/agriculture/products" },
+      {
+        name: "Products",
+        href: "/businesses/agriculture/products",
+        sections: [{ name: "Food Packages", href: foodPackagesHref }]
+      },
       { name: "Gallery", href: "/businesses/agriculture/gallery" }
     ]
   },
@@ -168,80 +224,26 @@ export const businesses: Business[] = [
   }
 ];
 
-export const dashboardSections: Record<DashboardRole, DashboardSection[]> = {
+export const dashboardModules: Record<DashboardRole, DashboardModule[]> = {
   partner: [
-    {
-      label: "Account",
-      items: [
-        { title: "Profile", group: "Account", fields: ["Full Name", "Passport", "ID", "Address", "Bank Details"] },
-        { title: "Partner ID", group: "Account", fields: ["Partner ID", "Referral Code"], canvas: true },
-        { title: "Partner Tier", group: "Account", fields: ["Current Tier", "Tier Status"] }
-      ]
-    },
-    {
-      label: "Growth",
-      items: [
-        { title: "Referral Link", group: "Growth", fields: ["Referral Link", "QR Code"], canvas: true },
-        { title: "Referral Tree", group: "Growth", fields: ["Direct Referrals", "Downline"], canvas: true, wide: true },
-        { title: "Team", group: "Growth", fields: ["Team Members", "Team Activity"] }
-      ]
-    },
-    {
-      label: "Earnings",
-      items: [
-        { title: "Earnings", group: "Earnings", fields: ["Commission", "Bonuses"] },
-        { title: "Wallet", group: "Earnings", fields: ["Wallet Balance", "Wallet Activity"] },
-        { title: "Withdrawals", group: "Earnings", fields: ["Withdrawal Requests", "Withdrawal History"] }
-      ]
-    },
-    {
-      label: "Resources",
-      items: [
-        { title: "Products", group: "Resources", fields: ["Fish Heads", "Cutlets", "Fish Tail"] },
-        { title: "Marketing Materials", group: "Resources", fields: ["Banner", "Flyer", "Brochure"], canvas: true },
-        { title: "Notifications", group: "Resources", fields: ["Notifications"] },
-        { title: "Settings", group: "Resources", fields: ["Password", "Account Preferences"] }
-      ]
-    }
+    { label: "Overview", href: "/dashboard/partner", icon: "home" },
+    { label: "Profile", href: "/dashboard/partner/profile", icon: "user" },
+    { label: "Membership", href: "/dashboard/partner/membership", icon: "id" },
+    { label: "Network", href: "/dashboard/partner/network", icon: "network" },
+    { label: "Finances", href: "/dashboard/partner/finances", icon: "wallet" },
+    { label: "Products", href: "/dashboard/partner/products", icon: "package" },
+    { label: "Marketing Materials", href: "/dashboard/partner/marketing-materials", icon: "image" },
+    { label: "Notifications", href: "/dashboard/partner/notifications", icon: "bell" },
+    { label: "Settings", href: "/dashboard/partner/settings", icon: "settings" }
   ],
   client: [
-    {
-      label: "Account",
-      items: [
-        { title: "Profile", group: "Account", fields: ["Full Name", "Email", "Phone", "Address"] },
-        { title: "Client ID", group: "Account", fields: ["Client ID", "Account Type"] }
-      ]
-    },
-    {
-      label: "Agro-Real Estate",
-      items: [
-        {
-          title: "Agro-Real Estate",
-          group: "Agro-Real Estate",
-          fields: ["Buy Cultivated Farmland", "Buy Land & Managed Cultivation"],
-          wide: true
-        },
-        { title: "Land Records", group: "Agro-Real Estate", fields: ["Land Records", "Documents"] },
-        { title: "Managed Cultivation", group: "Agro-Real Estate", fields: ["Cultivation", "Management"] },
-        { title: "Investment Plans", group: "Agro-Real Estate", fields: ["Investment Plans"] }
-      ]
-    },
-    {
-      label: "Farm Updates",
-      items: [
-        { title: "Farm Stage", group: "Farm Updates", fields: ["Farm Stage", "Current Activity"] },
-        { title: "Photos", group: "Farm Updates", fields: ["Farm Photos"], canvas: true },
-        { title: "Reports", group: "Farm Updates", fields: ["Progress Reports"], wide: true },
-        { title: "Yield History", group: "Farm Updates", fields: ["Yield History"] }
-      ]
-    },
-    {
-      label: "Settings",
-      items: [
-        { title: "Notifications", group: "Settings", fields: ["Notifications"] },
-        { title: "Settings", group: "Settings", fields: ["Password", "Account Preferences"] }
-      ]
-    }
+    { label: "Overview", href: "/dashboard/client", icon: "home" },
+    { label: "Profile", href: "/dashboard/client/profile", icon: "user" },
+    { label: "Agro-Real Estate", href: "/dashboard/client/agro-real-estate", icon: "building" },
+    { label: "Farm Updates", href: "/dashboard/client/farm-updates", icon: "image" },
+    { label: "Reports", href: "/dashboard/client/reports", icon: "file" },
+    { label: "Notifications", href: "/dashboard/client/notifications", icon: "bell" },
+    { label: "Settings", href: "/dashboard/client/settings", icon: "settings" }
   ]
 };
 
@@ -255,7 +257,7 @@ export const dashboardHighlights: Record<DashboardRole, string[]> = {
   client: ["Client ID", "Land Records", "Managed Cultivation", "Reports"]
 };
 
-export const validDashboardRoles = Object.keys(dashboardSections) as DashboardRole[];
+export const validDashboardRoles = Object.keys(dashboardModules) as DashboardRole[];
 
 export function getBusinessBySlug(slug: string) {
   return businesses.find((business) => business.slug === slug);

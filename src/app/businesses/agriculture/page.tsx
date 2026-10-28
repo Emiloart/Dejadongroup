@@ -17,25 +17,22 @@ export default function AgriculturePage() {
 
   return (
     <SiteLayout>
-      <PageSection>
-        <PageHero
-          title={agriculture.name}
-          eyebrow="Businesses"
-          accent="green"
-          image={agricultureHero}
-          imageAlt="Fish farming, palm cultivation, poultry and crops"
-          actions={
-            <>
-              <ButtonLink href="/businesses/agriculture/products">Products</ButtonLink>
-              <ButtonLink href="/businesses/agriculture/gallery" variant="outline">
-                Gallery
-              </ButtonLink>
-            </>
-          }
-        >
-          <p>We are involved in agricultural activities aimed at producing food and other agricultural products. This includes crop farming and livestock/fish farming. De Jadon Group is not just about farming; it is about connecting land ownership, investment and food supply into one business model. The services currently provided include real estate services, agricultural services, food packages and investment opportunities.</p>
-        </PageHero>
-      </PageSection>
+      <PageHero
+        title={agriculture.name}
+        eyebrow="Businesses"
+        accent="green"
+        image={agricultureHero}
+        actions={
+          <>
+            <ButtonLink href="/businesses/agriculture/products">Products</ButtonLink>
+            <ButtonLink href="/businesses/agriculture/gallery" variant="inverse">
+              Gallery
+            </ButtonLink>
+          </>
+        }
+      >
+        <p>We are involved in agricultural activities aimed at producing food and other agricultural products. This includes crop farming and livestock/fish farming. De Jadon Group is not just about farming; it is about connecting land ownership, investment and food supply into one business model. The services currently provided include real estate services, agricultural services, food packages and investment opportunities.</p>
+      </PageHero>
       <PageSection tinted>
         <div className="mb-10">
           <SectionHeader title="Explore agriculture" accent="green" />

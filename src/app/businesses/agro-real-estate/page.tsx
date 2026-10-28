@@ -16,28 +16,25 @@ export default function AgroRealEstatePage() {
 
   return (
     <SiteLayout>
-      <PageSection>
-        <PageHero
-          title={business.name}
-          eyebrow="Businesses"
-          image={agroRealEstateHero}
-          imageAlt="Aerial view of a cultivated palm plantation"
-          actions={
-            <>
-              <ButtonLink href="/businesses/agro-real-estate/investment-plans">Investment Plans</ButtonLink>
-              <ButtonLink href="/contact" variant="outline">
-                Contact
-              </ButtonLink>
-            </>
-          }
-        >
-          <div className="space-y-4">
-            <p>Agro Real Estate is the combination of Agriculture and real estate, where land is acquired, developed, managed or sold specifically for agricultural purposes and related investments.</p>
-            <p>The business was created to make life easier by providing opportunities in real estate, agriculture, food production and investment. Our ideal customers are individuals who have interest in land ownership, agriculture and long-term investment opportunities.</p>
-            <p>De Jadon Group can be explained as a simple journey of interest to choice to payment to documentation to participation to value.</p>
-          </div>
-        </PageHero>
-      </PageSection>
+      <PageHero
+        title={business.name}
+        eyebrow="Businesses"
+        image={agroRealEstateHero}
+        actions={
+          <>
+            <ButtonLink href="/businesses/agro-real-estate/investment-plans">Investment Plans</ButtonLink>
+            <ButtonLink href="/contact" variant="inverse">
+              Contact
+            </ButtonLink>
+          </>
+        }
+      >
+        <div className="space-y-4">
+          <p>Agro Real Estate is the combination of Agriculture and real estate, where land is acquired, developed, managed or sold specifically for agricultural purposes and related investments.</p>
+          <p>The business was created to make life easier by providing opportunities in real estate, agriculture, food production and investment. Our ideal customers are individuals who have interest in land ownership, agriculture and long-term investment opportunities.</p>
+          <p>De Jadon Group can be explained as a simple journey of interest to choice to payment to documentation to participation to value.</p>
+        </div>
+      </PageHero>
       <PageSection tinted>
         <div className="mb-10">
           <SectionHeader title="Explore agro-real estate" />

@@ -5,7 +5,7 @@ import type { AnchorHTMLAttributes, ReactNode } from "react";
 type ButtonLinkProps = AnchorHTMLAttributes<HTMLAnchorElement> & {
   href: string;
   children: ReactNode;
-  variant?: "solid" | "outline";
+  variant?: "solid" | "outline" | "inverse";
 };
 
 export function ButtonLink({ href, children, variant = "solid", className = "", ...props }: ButtonLinkProps) {
@@ -14,12 +14,14 @@ export function ButtonLink({ href, children, variant = "solid", className = "", 
   const styles =
     variant === "solid"
       ? "bg-orangeAction text-white hover:bg-orange-600"
+      : variant === "inverse"
+      ? "border border-white/40 bg-white/10 text-white hover:bg-white/20 focus-visible:outline-white"
       : "text-ink hover:bg-orangeAction/5 hover:text-orangeAction";
 
   return (
     <Link href={href} className={`${base} ${styles} ${className}`} {...props}>
       {children}
-      {variant === "outline" ? <ArrowUpRight aria-hidden="true" className="h-4 w-4 shrink-0" /> : null}
+      {variant !== "solid" ? <ArrowUpRight aria-hidden="true" className="h-4 w-4 shrink-0" /> : null}
     </Link>
   );
 }
