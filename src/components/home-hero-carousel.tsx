@@ -2,13 +2,13 @@
 
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { getImageProps } from "next/image";
-import { heroMedia, heroImageSource } from "@/lib/hero-media";
+import { heroMedia } from "@/lib/hero-media";
 import { ButtonLink } from "@/components/button-link";
 import { HeroBackground } from "@/components/hero-background";
 import type { HeroSlide } from "@/types/site";
 
 const slideDelay = 7500;
+const transitionDuration = 500;
 const slideImages = {
   "Welcome to De Jadon Group": heroMedia.main,
   Agriculture: heroMedia.agriculture,
@@ -18,6 +18,10 @@ const slideImages = {
 
 export function HomeHeroCarousel({ slides }: { slides: HeroSlide[] }) {
   const [activeSlide, setActiveSlide] = useState(0);
+  const [outgoingSlide, setOutgoingSlide] = useState<number | null>(null);
+  const [pendingSlide, setPendingSlide] = useState<{ index: number; manual: boolean } | null>(null);
+  const [imageSlides, setImageSlides] = useState<number[]>([0]);
+  const [readySlides, setReadySlides] = useState<number[]>([]);
   const [isHovered, setIsHovered] = useState(false);
   const [hasFocus, setHasFocus] = useState(false);
   const [hasInteracted, setHasInteracted] = useState(false);
@@ -25,8 +29,7 @@ export function HomeHeroCarousel({ slides }: { slides: HeroSlide[] }) {
   const [pageVisible, setPageVisible] = useState(true);
   const touchStartX = useRef<number | null>(null);
   const slide = slides[activeSlide] ?? slides[0];
-  const slideImage = (slide ? slideImages[slide.title as keyof typeof slideImages] : undefined) ?? heroMedia.main;
-  const isPlaying = slides.length > 1 && !isHovered && !hasFocus && !hasInteracted && !reducedMotion && pageVisible;
+  const isPlaying = slides.length > 1 && !isHovered && !hasFocus && !hasInteracted && !reducedMotion && pageVisible && readySlides.includes(activeSlide);
 
   useEffect(() => {
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -42,31 +45,57 @@ export function HomeHeroCarousel({ slides }: { slides: HeroSlide[] }) {
     };
   }, []);
 
+  function prepareSlide(index: number, manual: boolean) {
+    if (!slides.length) return;
+    const target = (index + slides.length) % slides.length;
+    if (manual) setHasInteracted(true);
+    setImageSlides((current) => current.includes(target) ? current : [...current, target]);
+    setPendingSlide(target === activeSlide ? null : { index: target, manual });
+  }
+
   useEffect(() => {
-    if (!isPlaying) return;
-    const timeout = window.setTimeout(() => setActiveSlide((current) => (current + 1) % slides.length), slideDelay);
+    if (!isPlaying || pendingSlide || outgoingSlide !== null) return;
+    const timeout = window.setTimeout(() => {
+      const index = (activeSlide + 1) % slides.length;
+      setImageSlides((current) => current.includes(index) ? current : [...current, index]);
+      setPendingSlide({ index, manual: false });
+    }, slideDelay);
     return () => window.clearTimeout(timeout);
-  }, [activeSlide, isPlaying, slides.length]);
+  }, [activeSlide, isPlaying, slides.length, pendingSlide, outgoingSlide]);
 
   useEffect(() => {
     if (!pageVisible || slides.length < 2) return;
-    const next = slides[(activeSlide + 1) % slides.length];
-    const asset = slideImages[next.title as keyof typeof slideImages] ?? heroMedia.main;
+    // Mount just the next responsive image at low priority. Its own onLoad runs
+    // after Next/Image decodes the selected candidate, including on slow links.
     const timer = window.setTimeout(() => {
-      const { props } = getImageProps({ src: asset.full, alt: "", fill: true, sizes: "100vw", loader: ({ width }) => heroImageSource(asset, width) });
-      const preload = new window.Image();
-      preload.decoding = "async";
-      preload.setAttribute("fetchpriority", "low");
-      preload.sizes = props.sizes || "100vw";
-      if (props.srcSet) preload.srcset = props.srcSet;
-      preload.src = props.src;
+      const index = (activeSlide + 1) % slides.length;
+      setImageSlides((current) => current.includes(index) ? current : [...current, index]);
     }, 1500);
     return () => window.clearTimeout(timer);
-  }, [activeSlide, pageVisible, slides]);
+  }, [activeSlide, pageVisible, slides.length]);
+
+  useEffect(() => {
+    if (!pendingSlide || !readySlides.includes(pendingSlide.index)) return;
+    if (outgoingSlide !== null) return;
+    if (!pendingSlide.manual && !isPlaying) return;
+    setOutgoingSlide(reducedMotion ? null : activeSlide);
+    setActiveSlide(pendingSlide.index);
+    setPendingSlide(null);
+  }, [pendingSlide, readySlides, activeSlide, isPlaying, reducedMotion, outgoingSlide]);
+
+  useEffect(() => {
+    if (outgoingSlide === null) return;
+    if (reducedMotion) { setOutgoingSlide(null); return; }
+    const timer = window.setTimeout(() => setOutgoingSlide(null), transitionDuration);
+    return () => window.clearTimeout(timer);
+  }, [outgoingSlide, activeSlide, reducedMotion]);
 
   function showSlide(index: number) {
-    setHasInteracted(true);
-    setActiveSlide((index + slides.length) % slides.length);
+    prepareSlide(index, true);
+  }
+
+  function moveSlide(direction: number) {
+    showSlide((pendingSlide?.index ?? activeSlide) + direction);
   }
 
   if (!slide) return null;
@@ -89,10 +118,10 @@ export function HomeHeroCarousel({ slides }: { slides: HeroSlide[] }) {
         if (event.target !== event.currentTarget) return;
         if (event.key === "ArrowLeft") {
           event.preventDefault();
-          showSlide(activeSlide - 1);
+          moveSlide(-1);
         } else if (event.key === "ArrowRight") {
           event.preventDefault();
-          showSlide(activeSlide + 1);
+          moveSlide(1);
         }
       }}
       onTouchStart={(event) => {
@@ -105,27 +134,57 @@ export function HomeHeroCarousel({ slides }: { slides: HeroSlide[] }) {
         if (endX === undefined) { touchStartX.current = null; return; }
         const distance = endX - touchStartX.current;
         touchStartX.current = null;
-        if (Math.abs(distance) >= 50) showSlide(activeSlide + (distance < 0 ? 1 : -1));
+        if (Math.abs(distance) >= 50) moveSlide(distance < 0 ? 1 : -1);
       }}
       onTouchCancel={() => { touchStartX.current = null; }}
     >
-      <HeroBackground image={slideImage} priority={activeSlide === 0} />
       {slides.length > 1 ? <p id="hero-carousel-instructions" className="sr-only">Slides change automatically. Hover, focus or click to pause. Use the left and right arrow keys to change slides.</p> : null}
       {slides.length > 1 ? <p className="sr-only" aria-live={isPlaying ? "off" : "polite"} aria-atomic="true">{slide.title}</p> : null}
-      <div className="mx-auto flex min-h-[600px] max-w-7xl flex-col px-5 pb-6 pt-10 sm:min-h-[640px] sm:px-6 lg:min-h-[680px] lg:px-8 lg:pt-16">
-        <div className="flex flex-1 items-center py-8">
-          <div key={activeSlide} className="hero-slide-enter max-w-2xl">
-            <p className={`text-xs font-semibold uppercase tracking-[0.2em] ${slide.accent === "green" ? "text-green-200" : "text-orange-200"}`}>{slide.eyebrow}</p>
-            <h1 className="mt-5 max-w-2xl text-4xl font-normal leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-6xl">{slide.title}</h1>
-            {slide.description ? <p className="mt-6 max-w-xl text-base leading-8 text-white/90 sm:text-lg">{slide.description}</p> : null}
-            <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
-              <ButtonLink href={slide.primaryHref}>{slide.primaryLabel}</ButtonLink>
-              <ButtonLink href={slide.secondaryHref} variant="inverse">{slide.secondaryLabel}</ButtonLink>
+      <div className="grid">
+        {slides.map((item, index) => {
+          const active = activeSlide === index;
+          const visible = active || outgoingSlide === index;
+          const Heading = active ? "h1" : "h2";
+          const image = slideImages[item.title as keyof typeof slideImages] ?? heroMedia.main;
+          return (
+            <div
+              key={item.title}
+              data-hero-slide={item.title}
+              data-active={active}
+              aria-hidden={!active}
+              ref={(element) => { if (element) element.inert = !active; }}
+              className={`relative isolate col-start-1 row-start-1 transition-opacity duration-500 ease-in-out motion-reduce:transition-none ${active ? "z-10" : "z-0"} ${visible ? "visible opacity-100" : "invisible opacity-0"}`}
+            >
+              {imageSlides.includes(index) ? <HeroBackground
+                image={image}
+                priority={index === 0}
+                loading={index === 0 ? undefined : "eager"}
+                fetchPriority={active || pendingSlide?.index === index ? "high" : "low"}
+                onLoad={() => setReadySlides((current) => current.includes(index) ? current : [...current, index])}
+                onError={() => {
+                  // Retain the complete current slide on failure. A later manual
+                  // selection or autoplay attempt can retry this image.
+                  setPendingSlide((current) => current?.index === index ? null : current);
+                  setReadySlides((current) => current.filter((value) => value !== index));
+                  setImageSlides((current) => current.filter((value) => value !== index));
+                }}
+              /> : null}
+              <div className="mx-auto flex min-h-[600px] w-full max-w-7xl items-center px-5 pb-28 pt-10 sm:min-h-[640px] sm:px-6 lg:min-h-[680px] lg:px-8 lg:pt-16">
+                <div className="max-w-2xl py-8 [text-shadow:0_1px_6px_rgb(0_0_0_/_0.25)]">
+                  <p className={`text-xs font-semibold uppercase tracking-[0.2em] ${item.accent === "green" ? "text-green-200" : "text-orange-200"}`}>{item.eyebrow}</p>
+                  <Heading className="mt-5 max-w-2xl text-4xl font-normal leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-6xl">{item.title}</Heading>
+                  {item.description ? <p className="mt-6 max-w-xl text-base leading-8 text-white/90 sm:text-lg">{item.description}</p> : null}
+                  <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
+                    <ButtonLink href={item.primaryHref}>{item.primaryLabel}</ButtonLink>
+                    <ButtonLink href={item.secondaryHref} variant="inverse">{item.secondaryLabel}</ButtonLink>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
+          );
+        })}
         {slides.length > 1 ? (
-          <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-white/25 pt-4 lg:mt-10">
+          <div className="relative z-20 col-start-1 row-start-1 mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-3 self-end px-5 pb-6 pt-4 sm:px-6 lg:px-8">
             <div className="flex items-center gap-1" aria-label="Choose a slide">
               {slides.map((item, index) => (
                 <button
@@ -141,8 +200,8 @@ export function HomeHeroCarousel({ slides }: { slides: HeroSlide[] }) {
               ))}
             </div>
             <div className="ml-auto flex shrink-0 items-center gap-0.5 sm:gap-2">
-              <button type="button" aria-label="Previous slide" className="flex h-11 w-9 items-center justify-center rounded-full text-white transition-colors hover:bg-white/15 focus-visible:outline-white sm:w-11" onClick={() => showSlide(activeSlide - 1)}><ArrowLeft aria-hidden="true" className="h-5 w-5" /></button>
-              <button type="button" aria-label="Next slide" className="flex h-11 w-9 items-center justify-center rounded-full text-white transition-colors hover:bg-white/15 focus-visible:outline-white sm:w-11" onClick={() => showSlide(activeSlide + 1)}><ArrowRight aria-hidden="true" className="h-5 w-5" /></button>
+              <button type="button" aria-label="Previous slide" className="flex h-11 w-9 items-center justify-center rounded-full bg-ink/30 text-white transition-colors hover:bg-ink/50 focus-visible:outline-white sm:w-11" onClick={() => moveSlide(-1)}><ArrowLeft aria-hidden="true" className="h-5 w-5" /></button>
+              <button type="button" aria-label="Next slide" className="flex h-11 w-9 items-center justify-center rounded-full bg-ink/30 text-white transition-colors hover:bg-ink/50 focus-visible:outline-white sm:w-11" onClick={() => moveSlide(1)}><ArrowRight aria-hidden="true" className="h-5 w-5" /></button>
             </div>
           </div>
         ) : null}

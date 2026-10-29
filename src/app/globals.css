@@ -46,19 +46,14 @@ h4 {
   scroll-margin-top: 7rem;
 }
 
-@keyframes hero-slide-enter {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.hero-scrim {
+  background: linear-gradient(90deg, rgb(36 31 25 / 70%) 0%, rgb(36 31 25 / 54%) 60%, rgb(36 31 25 / 30%) 100%);
 }
 
-.hero-slide-enter {
-  animation: hero-slide-enter 450ms ease-out both;
+@media (min-width: 1024px) {
+  .hero-scrim {
+    background: linear-gradient(90deg, rgb(36 31 25 / 72%) 0%, rgb(36 31 25 / 55%) 35%, rgb(36 31 25 / 18%) 65%, transparent 100%);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

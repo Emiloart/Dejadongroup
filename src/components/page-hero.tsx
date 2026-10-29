@@ -21,7 +21,7 @@ export function PageHero({ title, eyebrow, canvasLabel, image, accent = "orange"
       <section className="relative isolate overflow-hidden bg-ink">
         <HeroBackground image={image} priority />
         <div className="mx-auto flex min-h-[560px] max-w-7xl items-center px-5 py-16 sm:px-6 sm:py-20 lg:min-h-[640px] lg:px-8 lg:py-24">
-          <div className="max-w-2xl">
+          <div className="max-w-2xl [text-shadow:0_1px_6px_rgb(0_0_0_/_0.25)]">
             <SectionHeader title={title} eyebrow={eyebrow} accent={accent} as="h1" inverse>
               {children}
             </SectionHeader>
