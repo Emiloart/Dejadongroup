@@ -4,6 +4,7 @@ import { ArrowUpRight, FileText, Handshake, LayoutDashboard, Link2, Mail, Newspa
 import { BrandLogo } from "@/components/brand-logo";
 import { AdminSignOut } from "@/components/admin-sign-out";
 import { adminSections, type AdminSectionId } from "@/lib/admin-data";
+import { isSuperAdminAuthenticated } from "@/lib/admin-auth";
 
 const icons: Record<AdminSectionId, LucideIcon> = {
   overview: LayoutDashboard,
@@ -20,6 +21,7 @@ const icons: Record<AdminSectionId, LucideIcon> = {
 
 export function AdminShell({ section, children }: { section: AdminSectionId; children: ReactNode }) {
   const current = adminSections.find((item) => item.id === section);
+  const superAdmin = isSuperAdminAuthenticated();
 
   return (
     <div className="min-h-screen bg-warm text-ink lg:grid lg:grid-cols-[256px_minmax(0,1fr)]">
@@ -36,7 +38,7 @@ export function AdminShell({ section, children }: { section: AdminSectionId; chi
         </div>
 
         <nav aria-label="Admin sections" className="flex gap-1 overflow-x-auto border-t border-white/10 px-4 pb-2 lg:mt-8 lg:grid lg:gap-1 lg:overflow-visible lg:border-t-0 lg:px-0 lg:pb-0">
-          {adminSections.map((item) => {
+          {adminSections.filter((item) => item.id !== "partners" || superAdmin).map((item) => {
             const Icon = icons[item.id];
             const active = item.id === section;
             return (
@@ -54,7 +56,7 @@ export function AdminShell({ section, children }: { section: AdminSectionId; chi
         </nav>
 
         <div className="mt-auto hidden border-t border-white/10 pt-6 lg:block">
-          <p className="text-xs leading-5 text-stone-300">Manage client records, products, articles and newsletter signups.</p>
+          <p className="text-xs leading-5 text-stone-300">{superAdmin ? "Super Admin · Manage the Partner Programme, client records and website content." : "Admin · Manage client records and website content."}</p>
           <Link href="/" className="mt-5 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-white hover:text-orange-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
             Visit website <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
           </Link>

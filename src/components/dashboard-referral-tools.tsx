@@ -4,10 +4,8 @@ import Image from "next/image";
 import { Check, Copy, Download, Link2 } from "lucide-react";
 import QRCode from "qrcode";
 import { useEffect, useState } from "react";
-import { getCurrentPreviewAccount, type PreviewAccount } from "@/lib/preview-account";
 
-export function DashboardReferralTools({ role }: { role: "partner" }) {
-  const [profile, setProfile] = useState<PreviewAccount | null>(null);
+export function DashboardReferralTools({ username }: { username: string }) {
   const [origin, setOrigin] = useState("");
   const [qrDataUrl, setQrDataUrl] = useState("");
   const [message, setMessage] = useState("");
@@ -15,23 +13,8 @@ export function DashboardReferralTools({ role }: { role: "partner" }) {
 
   useEffect(() => {
     setOrigin(window.location.origin);
-    function refreshProfile() {
-      try {
-        setProfile(getCurrentPreviewAccount(role));
-      } catch {
-        setProfile(null);
-      }
-    }
-    refreshProfile();
-    window.addEventListener("dejadon:profile-updated", refreshProfile);
-    window.addEventListener("storage", refreshProfile);
-    return () => {
-      window.removeEventListener("dejadon:profile-updated", refreshProfile);
-      window.removeEventListener("storage", refreshProfile);
-    };
-  }, [role]);
+  }, []);
 
-  const username = profile?.username || "";
   const destination = "/partner-program";
   const referralUrl = origin && username ? origin + destination + "?ref=" + encodeURIComponent(username) : "";
 
@@ -100,7 +83,7 @@ export function DashboardReferralTools({ role }: { role: "partner" }) {
               ) : null}
             </div>
             {message ? <p role="status" className={`mt-3 inline-flex items-center gap-2 text-sm ${hasError ? "text-red-700" : "text-agriculture"}`}>{hasError ? null : <Check aria-hidden="true" className="h-4 w-4" />}{message}</p> : null}
-            <p className="mt-6 max-w-xl border-t border-ink/10 pt-4 text-xs leading-5 text-stone-600">This preview link opens the website with your username in the URL. Referral attribution, sign-ups, and commissions are not recorded yet.</p>
+            <p className="mt-6 max-w-xl border-t border-ink/10 pt-4 text-xs leading-5 text-stone-600">Partner registrations through this link appear in your network totals. Paying-client commissions and payouts are managed separately by De Jadon Group.</p>
           </div>
           <div className="flex items-start justify-center lg:justify-end">
             {qrDataUrl ? (

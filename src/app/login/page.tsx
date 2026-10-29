@@ -4,7 +4,7 @@ import { SectionHeader } from "@/components/section-header";
 import { SiteLayout } from "@/components/site-layout";
 import type { DashboardRole } from "@/types/site";
 
-type LoginPageProps = { searchParams?: { role?: string; next?: string } };
+type LoginPageProps = { searchParams?: { role?: string; next?: string; mode?: string; ref?: string } };
 
 export default function LoginPage({ searchParams }: LoginPageProps) {
   const initialRole: DashboardRole = searchParams?.role === "client" ? "client" : "partner";
@@ -18,10 +18,10 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
               <p>Sign in to your client or partner workspace.</p>
             </SectionHeader>
             <p className="mt-8 max-w-sm border-l-2 border-orangeAction/40 pl-4 text-sm leading-6 text-stone-600">
-              Agro-Real Estate clients activate their account with a token issued by De Jadon Group after verification. The partner portal currently uses accounts saved on this device.
+              Agro-Real Estate clients activate with a De Jadon Group token. Partners verify their email, complete their details, and register for a tier before accessing their dashboard.
             </p>
           </div>
-          <PortalAuthForm initialRole={initialRole} nextPath={searchParams?.next} />
+          <PortalAuthForm initialRole={initialRole} initialMode={searchParams?.mode === "signup" ? "signup" : "signin"} referral={searchParams?.ref} nextPath={searchParams?.next} />
         </div>
       </PageSection>
     </SiteLayout>

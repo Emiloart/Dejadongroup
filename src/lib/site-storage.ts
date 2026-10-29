@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import path from "node:path";
 
-type CollectionName = "news" | "newsletter" | "clients";
+type CollectionName = "news" | "newsletter" | "clients" | "partner-programme";
 const directory = () => path.resolve(process.env.DEJADON_DATA_DIR || path.join(process.cwd(), ".data"));
 
 export async function readCollection<T>(name: CollectionName): Promise<T[]> {

@@ -2,8 +2,9 @@ import Link from "next/link";
 import { ArrowUpRight, Package, Plus } from "lucide-react";
 import { AdminShell } from "@/components/admin-shell";
 import { adminSections } from "@/lib/admin-data";
-import { isAdminAuthenticated } from "@/lib/admin-auth";
+import { isAdminAuthenticated, isSuperAdminAuthenticated } from "@/lib/admin-auth";
 import { getAdminClients } from "@/lib/client-store";
+import { getPartnerAccountCount } from "@/lib/partner-store";
 
 const snapshotIds = ["clients", "partners", "referrals", "land-farms"] as const;
 const workspaceGroups = [
@@ -15,6 +16,8 @@ const workspaceGroups = [
 export default async function AdminOverviewPage() {
   if (!isAdminAuthenticated()) return null;
   const clientCount = (await getAdminClients()).length;
+  const superAdmin = isSuperAdminAuthenticated();
+  const partnerCount = superAdmin ? await getPartnerAccountCount() : null;
   return (
     <AdminShell section="overview">
       <div className="max-w-3xl">
@@ -39,17 +42,18 @@ export default async function AdminOverviewPage() {
       <section aria-labelledby="snapshot-heading" className="mt-12">
         <div className="max-w-2xl">
           <h2 id="snapshot-heading" className="text-2xl font-medium">Operations snapshot</h2>
-          <p className="mt-2 text-sm leading-6 text-stone-600">Client totals reflect saved records. Other totals will appear as those tools are connected.</p>
+          <p className="mt-2 text-sm leading-6 text-stone-600">Account totals reflect saved records. Other totals will appear as those tools are connected.</p>
         </div>
         <nav aria-label="Operations snapshot" className="mt-5 grid grid-cols-2 gap-x-5 border-t border-ink/10 lg:grid-cols-4 lg:gap-x-8">
           {snapshotIds.map((id) => {
+            if (id === "partners" && !superAdmin) return null;
             const section = adminSections.find((item) => item.id === id);
             if (!section) return null;
             return (
               <Link key={id} href={section.href} className="group flex min-h-32 flex-col justify-between border-b border-ink/10 py-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-700">
                 <span className="text-sm font-semibold text-ink group-hover:text-orange-700">{section.label}</span>
-                <span className="text-3xl leading-none text-stone-400">{id === "clients" ? clientCount : "—"}</span>
-                <span className="text-xs text-stone-600">{id === "clients" ? "Saved client records" : "No live total"}</span>
+                <span className="text-3xl leading-none text-stone-400">{id === "clients" ? clientCount : id === "partners" ? partnerCount : "—"}</span>
+                <span className="text-xs text-stone-600">{id === "clients" ? "Saved client records" : id === "partners" ? "Saved partner accounts" : "No live total"}</span>
               </Link>
             );
           })}
@@ -70,6 +74,7 @@ export default async function AdminOverviewPage() {
               </div>
               <div className="mt-3 border-t border-ink/10">
                 {group.ids.map((id) => {
+                  if (id === "partners" && !superAdmin) return null;
                   const section = adminSections.find((item) => item.id === id);
                   if (!section) return null;
                   return (

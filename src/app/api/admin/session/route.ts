@@ -25,7 +25,8 @@ export async function POST(request: Request) {
   }
   attempts.delete(key);
   const response = NextResponse.json({ ok: true }, { headers: { "Cache-Control": "no-store" } });
-  response.cookies.set(adminCookieName, createAdminSession(), { ...adminCookieOptions, maxAge: adminSessionSeconds });
+  const role = verifyAdminCredentials(input.email, input.password)!;
+  response.cookies.set(adminCookieName, createAdminSession(role), { ...adminCookieOptions, maxAge: adminSessionSeconds });
   return response;
 }
 

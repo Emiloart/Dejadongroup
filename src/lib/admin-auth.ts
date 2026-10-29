@@ -4,54 +4,67 @@ import { cookies } from "next/headers";
 export const adminCookieName = "dejadon-admin";
 export const adminSessionSeconds = 8 * 60 * 60;
 
+export type AdminRole = "super-admin" | "admin";
 function credentials() {
+  const superEmail = process.env.SUPER_ADMIN_EMAIL?.trim().toLowerCase();
+  const superPassword = process.env.SUPER_ADMIN_PASSWORD;
   const email = process.env.ADMIN_EMAIL?.trim().toLowerCase();
   const password = process.env.ADMIN_PASSWORD;
-  return email && password && password.length >= 12 ? { email, password } : null;
+  const users: { email: string; password: string; role: AdminRole }[] = [];
+  // An existing single-owner installation remains the Super Admin. Once explicit
+  // Super Admin credentials are set, ADMIN_* becomes the ordinary admin account.
+  if (superEmail && superPassword && superPassword.length >= 12) users.push({ email: superEmail, password: superPassword, role: "super-admin" });
+  if (email && password && password.length >= 12) users.push({ email, password, role: superEmail || superPassword ? "admin" : "super-admin" });
+  return users;
 }
 
 export function isAdminConfigured() {
-  return credentials() !== null;
+  return credentials().length > 0;
 }
 
 function equal(value: string, expected: string) {
   return timingSafeEqual(createHash("sha256").update(value).digest(), createHash("sha256").update(expected).digest());
 }
 
-export function verifyAdminCredentials(email: string, password: string) {
-  const configured = credentials();
-  if (!configured) return false;
-  const emailMatches = equal(email.trim().toLowerCase(), configured.email);
-  const passwordMatches = equal(password, configured.password);
-  return emailMatches && passwordMatches;
+export function verifyAdminCredentials(email: string, password: string): AdminRole | null {
+  let role: AdminRole | null = null;
+  for (const configured of credentials()) {
+    const emailMatches = equal(email.trim().toLowerCase(), configured.email);
+    const passwordMatches = equal(password, configured.password);
+    if (emailMatches && passwordMatches && role !== "super-admin") role = configured.role;
+  }
+  return role;
 }
 
 function signature(payload: string) {
   const configured = credentials();
-  if (!configured) return "";
+  if (!configured.length) return "";
   const key = createHash("sha256").update(JSON.stringify(configured)).digest();
   return createHmac("sha256", key).update(payload).digest("base64url");
 }
 
-export function createAdminSession() {
-  const payload = Buffer.from(JSON.stringify({ expires: Date.now() + adminSessionSeconds * 1000, nonce: randomBytes(24).toString("hex") })).toString("base64url");
+export function createAdminSession(role: AdminRole) {
+  const payload = Buffer.from(JSON.stringify({ role, expires: Date.now() + adminSessionSeconds * 1000, nonce: randomBytes(24).toString("hex") })).toString("base64url");
   return `${payload}.${signature(payload)}`;
 }
 
-export function isAdminAuthenticated() {
-  if (!isAdminConfigured()) return false;
+export function currentAdminRole(): AdminRole | null {
+  if (!isAdminConfigured()) return null;
   const token = cookies().get(adminCookieName)?.value;
-  if (!token || token.length > 512) return false;
+  if (!token || token.length > 512) return null;
   const [payload, supplied, extra] = token.split(".");
-  if (!payload || !supplied || extra || !equal(supplied, signature(payload))) return false;
+  if (!payload || !supplied || extra || !equal(supplied, signature(payload))) return null;
   try {
     const session: unknown = JSON.parse(Buffer.from(payload, "base64url").toString("utf8"));
-    return !!session && typeof session === "object" && "expires" in session &&
-      typeof session.expires === "number" && session.expires > Date.now();
+    if (session && typeof session === "object" && "expires" in session && typeof session.expires === "number" && session.expires > Date.now() && "role" in session && (session.role === "super-admin" || session.role === "admin")) return session.role;
+    return null;
   } catch {
-    return false;
+    return null;
   }
 }
+
+export const isAdminAuthenticated = () => currentAdminRole() !== null;
+export const isSuperAdminAuthenticated = () => currentAdminRole() === "super-admin";
 
 export function isSameOrigin(request: Request) {
   const origin = request.headers.get("origin");
