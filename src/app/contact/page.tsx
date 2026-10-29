@@ -1,9 +1,10 @@
 import { publicPageMetadata } from "@/lib/seo";
-import { companyContact, companyMapHref, companySocialProfiles } from "@/lib/site-data";
+import { companyContact, companySocialProfiles } from "@/lib/site-data";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { ButtonLink } from "@/components/button-link";
 import { FaqSection } from "@/components/faq-section";
+import { OfficeMapPreview } from "@/components/office-map-preview";
 import { PageHero } from "@/components/page-hero";
 import { PageSection } from "@/components/page-section";
 import { SectionHeader } from "@/components/section-header";
@@ -62,13 +63,14 @@ export default function ContactPage() {
               </div>
               <div>
                 <dt className="mb-1 text-xs font-semibold uppercase tracking-[0.16em] text-stone-500">Office</dt>
-                <dd className="max-w-md text-stone-700">{companyContact.office}<a href={companyMapHref} target="_blank" rel="noreferrer" className="mt-3 block font-semibold text-orange-700 underline underline-offset-4">Open office address in Google Maps</a></dd>
+                <dd className="max-w-md text-stone-700">{companyContact.office}</dd>
               </div>
               <div>
                 <dt className="mb-1 text-xs font-semibold uppercase tracking-[0.16em] text-stone-500">Working hours</dt>
                 <dd className="text-stone-700">{companyContact.workingHours}</dd>
               </div>
             </dl>
+            <OfficeMapPreview className="mt-7" />
             <section className="mt-9 border-t border-ink/10 pt-7" aria-label="Company social profiles">
               <h2 className="text-xl">Find us on social media</h2>
               <dl className="mt-4 space-y-4">{companySocialProfiles.map((profile) => <div key={profile.platform}><dt className="text-xs font-semibold uppercase tracking-widest text-stone-500">{profile.platform}</dt><dd className="mt-1 text-sm text-stone-700">{profile.names}</dd></div>)}</dl>

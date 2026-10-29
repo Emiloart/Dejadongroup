@@ -293,6 +293,8 @@ export const companyContact = {
   workingHours: "8:30am – 5:00pm"
 };
 export const companyMapHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(companyContact.office)}`;
+// Search the supplied mall and road; the unit number does not have a verified map pin.
+export const companyMapEmbedHref = `https://www.google.com/maps?q=${encodeURIComponent("Ebube Dike Shopping Mall, Umuodu Road, Okpuno, Awka, Anambra State")}&output=embed`;
 export const companySocialProfiles = [
   { platform: "Facebook", names: "De Jadon Group · De Jadon Properties" },
   { platform: "Instagram", names: "De Jadon Group" },

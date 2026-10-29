@@ -4,13 +4,16 @@ import { ManagedPublicContent } from "@/components/managed-public-content";
 import { ButtonLink } from "@/components/button-link";
 import { BusinessCarousel } from "@/components/business-carousel";
 import { HomeHeroCarousel } from "@/components/home-hero-carousel";
+import { HeroBackground } from "@/components/hero-background";
 import { HomeFaq } from "@/components/home-faq";
+import { OfficeMapPreview } from "@/components/office-map-preview";
 import { NewsCarousel } from "@/components/news-carousel";
 import { NewsletterSection } from "@/components/newsletter-section";
 import { PageSection } from "@/components/page-section";
 import { SectionHeader } from "@/components/section-header";
 import { SiteLayout } from "@/components/site-layout";
-import { businesses, companyContact, companyMapHref, founderMessage, homeFaqSections, homeHeroSlides } from "@/lib/site-data";
+import { businesses, companyContact, founderMessage, homeFaqSections, homeHeroSlides } from "@/lib/site-data";
+import { heroMedia } from "@/lib/hero-media";
 import { getPublishedNews } from "@/lib/news-store";
 
 export const metadata = publicPageMetadata("/", "De Jadon Group", "Explore De Jadon Group’s agriculture, agro-real estate, Flexisave and partner opportunities in Nigeria.");
@@ -39,18 +42,22 @@ export default async function HomePage() {
         </div>
         <BusinessCarousel businesses={businesses} />
       </PageSection>
-      <PageSection tinted>
-        <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
-          <SectionHeader title="Grow with us." eyebrow="Partner program" />
-          <div>
-            <p className="max-w-2xl text-lg leading-8 text-stone-600">The Partner Program allows individuals to introduce De Jadon Group to prospective customers and earn a 10% commission when a referred prospect becomes a paying client.</p>
+      <section aria-labelledby="partner-promo-heading" className="relative isolate overflow-hidden bg-ink text-white">
+        <HeroBackground image={heroMedia.partner} />
+        <div className="mx-auto flex min-h-[360px] max-w-7xl items-center px-5 py-14 sm:px-6 sm:py-16 lg:min-h-[400px] lg:px-8 lg:py-20">
+          <div className="max-w-xl [text-shadow:0_1px_6px_rgb(0_0_0_/_0.25)]">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-white/80">Partner Programme</p>
+            <h2 id="partner-promo-heading" className="mt-4 text-3xl font-medium leading-[1.12] tracking-tight sm:text-4xl">Grow with us.</h2>
+            <p className="mt-5 text-base leading-8 text-white/90 sm:text-lg">The Partner Program allows individuals to introduce De Jadon Group to prospective customers and earn a 10% commission when a referred prospect becomes a paying client.</p>
             <div className="mt-7 flex flex-wrap items-center gap-4">
               <ButtonLink href="/partner-program">Explore the program</ButtonLink>
-              <ButtonLink href="/login" variant="outline">Partner login</ButtonLink>
+              <ButtonLink href="/login?role=partner" variant="inverse">Partner login</ButtonLink>
             </div>
           </div>
         </div>
-        <div className="mt-14 grid gap-8 border-t border-ink/10 pt-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
+      </section>
+      <PageSection tinted>
+        <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
           <SectionHeader title="Meet our founder" eyebrow="Leadership" />
           <div className="max-w-2xl">
             <h3 className="text-2xl text-ink">Ifeanyi Luke Ananwude</h3>
@@ -78,7 +85,7 @@ export default async function HomePage() {
           <dl className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
             <div><dt className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">Call us</dt><dd className="mt-2"><a href="tel:+2348070458759" className="break-words text-base font-semibold hover:text-orangeAction">08070458759</a></dd></div>
             <div><dt className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">Email us</dt><dd className="mt-2"><a href="mailto:dejadongroup@gmail.com" className="break-all text-base font-semibold hover:text-orangeAction">dejadongroup@gmail.com</a></dd></div>
-            <div><dt className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">Visit our office</dt><dd className="mt-2 max-w-sm text-sm leading-7 text-stone-600">{companyContact.office}<a href={companyMapHref} target="_blank" rel="noreferrer" className="mt-2 inline-flex min-h-9 items-center font-semibold text-orange-700 underline underline-offset-4">Find our office on Google Maps</a></dd></div>
+            <div><dt className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">Visit our office</dt><dd className="mt-2 text-sm leading-7 text-stone-600"><p className="max-w-sm">{companyContact.office}</p><OfficeMapPreview className="mt-4" /></dd></div>
             <div><dt className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">Working hours</dt><dd className="mt-2 text-sm leading-7 text-stone-600">{companyContact.workingHours}</dd></div>
           </dl>
         </div>
