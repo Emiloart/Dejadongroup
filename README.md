@@ -71,4 +71,14 @@ To enable administrator sign-in, copy `.env.example` to `.env.local`, set `ADMIN
 
 The application stores products and uploaded photos on the server in `.data/` by default. In production, set `DEJADON_DATA_DIR` to an absolute directory on a persistent disk and run one application instance. Back up that directory together; it contains `products.json` and `uploads/`. Deployments on ephemeral or read-only filesystems require a persistent database/object-storage adapter before using product administration. Existing catalogue items start without invented prices or product photos.
 
-Admin APIs require a signed, expiring HTTP-only session and verify the origin of write requests. Production hosting should use HTTPS. The remaining admin operations sections continue to be placeholders; Products is functional.
+Admin APIs require a signed, expiring HTTP-only session and verify the origin of write requests. Production hosting should use HTTPS. Products, Blog & news, and Newsletter are functional; the remaining admin operations sections continue to be placeholders.
+
+## Blog, news, and newsletter
+
+Use `/admin/news` to add a public blog or news URL. The server imports the source’s title, original preview image, and opening paragraph (or its description when article text is unavailable). There is no image upload or manual image-editing step. Articles publish immediately, and up to four can appear in the homepage carousel. Hide, refresh, remove, or reorder articles in the same workspace. Sites that block automated access, require sign-in, or render their article only in JavaScript may not provide a usable preview.
+
+The preview reader permits only public HTTP(S) pages, validates DNS results and each redirect, pins connections to the validated public address, and limits download sizes and timeouts. Source HTML is converted to plain text; scripts and markup are not rendered in cards.
+
+Newsletter signups are stored with consent timestamps and deduplicated by email address. `/admin/newsletter` provides a private subscriber list, removal controls, and CSV export for use with your email campaign service. The site captures subscriptions; sending newsletters requires your email service and is not performed by the signup form. No outbound email is sent automatically.
+
+`news.json` and `newsletter.json` use the same persistent `DEJADON_DATA_DIR` as the marketplace. Include them in backups. Contact details are shown in the homepage contact section and on `/contact`; the footer uses separate branding, navigation, and copyright rows.

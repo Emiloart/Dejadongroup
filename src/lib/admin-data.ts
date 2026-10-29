@@ -1,4 +1,4 @@
-export type AdminSectionId = "overview" | "products" | "clients" | "partners" | "referrals" | "land-farms" | "content" | "settings";
+export type AdminSectionId = "overview" | "products" | "news" | "newsletter" | "clients" | "partners" | "referrals" | "land-farms" | "content" | "settings";
 
 export type AdminSection = {
   id: AdminSectionId;
@@ -10,6 +10,8 @@ export type AdminSection = {
 export const adminSections: AdminSection[] = [
   { id: "overview", label: "Overview", href: "/admin", description: "Manage the marketplace and find your workspace tools." },
   { id: "products", label: "Products", href: "/admin/products", description: "Upload product photos, set prices, and publish marketplace listings." },
+  { id: "news", label: "Blog & news", href: "/admin/news", description: "Publish article links with their original images and opening excerpts." },
+  { id: "newsletter", label: "Newsletter", href: "/admin/newsletter", description: "Manage and export newsletter subscribers." },
   { id: "clients", label: "Clients", href: "/admin/clients", description: "Review client accounts and their records." },
   { id: "partners", label: "Partners", href: "/admin/partners", description: "Manage partner accounts and programme activity." },
   { id: "referrals", label: "Referrals", href: "/admin/referrals", description: "Follow referral links and attribution." },
@@ -18,4 +20,4 @@ export const adminSections: AdminSection[] = [
   { id: "settings", label: "Settings", href: "/admin/settings", description: "Configure access and workspace preferences." }
 ];
 
-export const adminSubsections = adminSections.filter((section) => section.id !== "overview" && section.id !== "products");
+export const adminSubsections = adminSections.filter((section) => !["overview", "products", "news", "newsletter"].includes(section.id));

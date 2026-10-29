@@ -28,6 +28,10 @@ export default function AdminOverviewPage() {
         <Link href="/admin/products" className="mt-6 inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-card bg-ink px-5 text-sm font-semibold text-white hover:bg-stone-700 sm:mt-0"><Plus aria-hidden="true" className="h-4 w-4" /> Manage products</Link>
       </section>
 
+      <section aria-label="Publishing and subscribers" className="mt-6 grid gap-5 sm:grid-cols-2">
+        {[{ href: "/admin/news", title: "Blog & news", description: "Add a link to publish its original image and excerpt in the four-slide homepage carousel.", label: "Manage articles" }, { href: "/admin/newsletter", title: "Newsletter", description: "View newsletter signups and export subscribers for your email campaigns.", label: "Manage subscribers" }].map((item) => <Link key={item.href} href={item.href} className="group rounded-card border border-ink/10 bg-white p-6"><h2 className="text-2xl group-hover:text-orangeAction">{item.title}</h2><p className="mt-3 text-sm leading-7 text-stone-600">{item.description}</p><span className="mt-4 inline-flex min-h-10 items-center gap-2 text-sm font-semibold text-orange-700">{item.label}<ArrowUpRight aria-hidden="true" className="h-4 w-4" /></span></Link>)}
+      </section>
+
       <section aria-labelledby="snapshot-heading" className="mt-12">
         <div className="max-w-2xl">
           <h2 id="snapshot-heading" className="text-2xl font-medium">Operations snapshot</h2>

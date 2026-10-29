@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { ArrowUpRight, FileText, Handshake, LayoutDashboard, Link2, Package, Settings, Sprout, Users, type LucideIcon } from "lucide-react";
+import { ArrowUpRight, FileText, Handshake, LayoutDashboard, Link2, Mail, Newspaper, Package, Settings, Sprout, Users, type LucideIcon } from "lucide-react";
 import { BrandLogo } from "@/components/brand-logo";
 import { AdminSignOut } from "@/components/admin-sign-out";
 import { adminSections, type AdminSectionId } from "@/lib/admin-data";
@@ -8,6 +8,8 @@ import { adminSections, type AdminSectionId } from "@/lib/admin-data";
 const icons: Record<AdminSectionId, LucideIcon> = {
   overview: LayoutDashboard,
   products: Package,
+  news: Newspaper,
+  newsletter: Mail,
   clients: Users,
   partners: Handshake,
   referrals: Link2,
@@ -52,7 +54,7 @@ export function AdminShell({ section, children }: { section: AdminSectionId; chi
         </nav>
 
         <div className="mt-auto hidden border-t border-white/10 pt-6 lg:block">
-          <p className="text-xs leading-5 text-stone-300">Manage marketplace products here. Other operations tools are still being prepared.</p>
+          <p className="text-xs leading-5 text-stone-300">Manage products, articles and newsletter signups. Other operations tools are still being prepared.</p>
           <Link href="/" className="mt-5 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-white hover:text-orange-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
             Visit website <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
           </Link>

@@ -2,12 +2,18 @@ import { ButtonLink } from "@/components/button-link";
 import { BusinessCarousel } from "@/components/business-carousel";
 import { HomeHeroCarousel } from "@/components/home-hero-carousel";
 import { HomeFaq } from "@/components/home-faq";
+import { NewsCarousel } from "@/components/news-carousel";
+import { NewsletterSection } from "@/components/newsletter-section";
 import { PageSection } from "@/components/page-section";
 import { SectionHeader } from "@/components/section-header";
 import { SiteLayout } from "@/components/site-layout";
 import { businesses, homeFaqSections, homeHeroSlides } from "@/lib/site-data";
+import { getPublishedNews } from "@/lib/news-store";
 
-export default function HomePage() {
+export const dynamic = "force-dynamic";
+
+export default async function HomePage() {
+  const articles = await getPublishedNews();
   return (
     <SiteLayout>
       <HomeHeroCarousel slides={homeHeroSlides} />
@@ -52,20 +58,25 @@ export default function HomePage() {
           <SectionHeader title="A little more clarity." eyebrow="Common questions" />
           <HomeFaq sections={homeFaqSections} />
         </div>
-        <div className="mt-14 flex flex-col gap-3 border-t border-ink/10 pt-8 sm:flex-row sm:items-baseline sm:justify-between">
-          <h2 className="text-xl text-ink">News & updates</h2>
-          <p className="text-sm leading-6 text-stone-500">Company updates will appear here when available.</p>
-        </div>
       </PageSection>
       <PageSection tinted>
-        <div className="flex flex-col gap-7 sm:flex-row sm:items-center sm:justify-between">
-          <div>
+        <div id="contact" className="grid gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
+          <div className="max-w-md">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-orangeAction">Let’s talk</p>
             <h2 className="mt-3 text-3xl font-normal tracking-tight sm:text-4xl">Find your next opportunity.</h2>
+            <p className="mt-4 text-sm leading-7 text-stone-600">Speak with our team about products, productive land or partnering with De Jadon Group.</p>
+            <ButtonLink href="/contact" className="mt-6">Contact our team</ButtonLink>
           </div>
-          <ButtonLink href="/contact" className="self-start sm:self-auto">Contact our team</ButtonLink>
+          <dl className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
+            <div><dt className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">Call us</dt><dd className="mt-2"><a href="tel:+2348070458759" className="break-words text-base font-semibold hover:text-orangeAction">08070458759</a></dd></div>
+            <div><dt className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">Email us</dt><dd className="mt-2"><a href="mailto:dejadongroup@gmail.com" className="break-all text-base font-semibold hover:text-orangeAction">dejadongroup@gmail.com</a></dd></div>
+            <div><dt className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">Visit our office</dt><dd className="mt-2 max-w-sm text-sm leading-7 text-stone-600">Shop C15 Ebube Dike Shopping Mall, Umuodu Road, Good Will Junction, Nodu, Okpuno, Awka, Anambra State.</dd></div>
+            <div><dt className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">Working hours</dt><dd className="mt-2 text-sm leading-7 text-stone-600">8:30am – 5:00pm</dd></div>
+          </dl>
         </div>
       </PageSection>
+      <NewsCarousel articles={articles} />
+      <NewsletterSection />
     </SiteLayout>
   );
 }

@@ -8,9 +8,12 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test:marketplace": "node --test scripts/marketplace.integration.test.mjs"
+    "test:marketplace": "node --test scripts/marketplace.integration.test.mjs",
+    "test:content": "node --test scripts/content.test.cjs"
   },
   "dependencies": {
+    "cheerio": "1.2.0",
+    "ipaddr.js": "2.5.0",
     "lucide-react": "^0.468.0",
     "next": "^14.2.23",
     "qrcode": "^1.5.4",
