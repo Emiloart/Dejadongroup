@@ -49,8 +49,10 @@ Partner tiers, fees, benefits and promo codes are configured by the Super Admin 
 
 **Office:** Shop C15 Ebube Dike Shopping Mall, Umuodu Road, Good Will Junction, Nodu, Okpuno, Awka, Anambra State.
 
-**Phone:** 08070458759  
-**Email:** dejadongroup@gmail.com  
+**Phone:** 08070458759
+
+**Email:** dejadongroup@gmail.com
+
 **Working hours:** 8:30am – 5:00pm
 
 ## Website Content
