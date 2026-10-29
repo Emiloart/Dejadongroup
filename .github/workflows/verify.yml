@@ -1,0 +1,20 @@
+name: Verify application
+on:
+  push:
+    branches: [main]
+  pull_request:
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npx tsc --noEmit --incremental false
+      - run: npm run build
+      - run: node --test scripts/content.test.cjs scripts/partner.test.cjs scripts/admin-storage.test.cjs scripts/marketplace.integration.test.mjs scripts/client.integration.test.mjs scripts/partner.integration.test.mjs scripts/admin.integration.test.mjs
