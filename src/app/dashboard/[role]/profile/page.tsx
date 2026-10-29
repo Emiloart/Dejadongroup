@@ -1,4 +1,7 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { ClientDashboardLayout } from "@/components/client-dashboard-layout";
+import { ClientProfileEditor } from "@/components/client-profile-editor";
+import { getCurrentClient } from "@/lib/client-auth";
 import { DashboardLayout } from "@/components/dashboard-layout";
 import { DashboardProfileEditor } from "@/components/dashboard-profile-editor";
 import { DashboardReferralTools } from "@/components/dashboard-referral-tools";
@@ -7,12 +10,15 @@ import type { DashboardRole } from "@/types/site";
 
 type ProfilePageProps = { params: { role: DashboardRole } };
 
-export function generateStaticParams() {
-  return validDashboardRoles.map((role) => ({ role }));
-}
+export const dynamic = "force-dynamic";
 
-export default function ProfilePage({ params }: ProfilePageProps) {
+export default async function ProfilePage({ params }: ProfilePageProps) {
   if (!validDashboardRoles.includes(params.role)) notFound();
+  if (params.role === "client") {
+    const client = await getCurrentClient();
+    if (!client) redirect("/login?role=client&next=/dashboard/client/profile");
+    return <ClientDashboardLayout page="profile"><ClientProfileEditor client={client} /></ClientDashboardLayout>;
+  }
 
   return (
     <DashboardLayout role={params.role} page="profile">

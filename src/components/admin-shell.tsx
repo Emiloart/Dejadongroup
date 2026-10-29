@@ -54,7 +54,7 @@ export function AdminShell({ section, children }: { section: AdminSectionId; chi
         </nav>
 
         <div className="mt-auto hidden border-t border-white/10 pt-6 lg:block">
-          <p className="text-xs leading-5 text-stone-300">Manage products, articles and newsletter signups. Other operations tools are still being prepared.</p>
+          <p className="text-xs leading-5 text-stone-300">Manage client records, products, articles and newsletter signups.</p>
           <Link href="/" className="mt-5 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-white hover:text-orange-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
             Visit website <ArrowUpRight aria-hidden="true" className="h-4 w-4" />
           </Link>

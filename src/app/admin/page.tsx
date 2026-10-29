@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { ArrowUpRight, Package, Plus } from "lucide-react";
 import { AdminShell } from "@/components/admin-shell";
-import { adminSubsections } from "@/lib/admin-data";
+import { adminSections } from "@/lib/admin-data";
+import { isAdminAuthenticated } from "@/lib/admin-auth";
+import { getAdminClients } from "@/lib/client-store";
 
 const snapshotIds = ["clients", "partners", "referrals", "land-farms"] as const;
 const workspaceGroups = [
@@ -10,7 +12,9 @@ const workspaceGroups = [
   { title: "Workspace", description: "Website content and admin configuration.", ids: ["content", "settings"] }
 ] as const;
 
-export default function AdminOverviewPage() {
+export default async function AdminOverviewPage() {
+  if (!isAdminAuthenticated()) return null;
+  const clientCount = (await getAdminClients()).length;
   return (
     <AdminShell section="overview">
       <div className="max-w-3xl">
@@ -28,24 +32,24 @@ export default function AdminOverviewPage() {
         <Link href="/admin/products" className="mt-6 inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-card bg-ink px-5 text-sm font-semibold text-white hover:bg-stone-700 sm:mt-0"><Plus aria-hidden="true" className="h-4 w-4" /> Manage products</Link>
       </section>
 
-      <section aria-label="Publishing and subscribers" className="mt-6 grid gap-5 sm:grid-cols-2">
-        {[{ href: "/admin/news", title: "Blog & news", description: "Add a link to publish its original image and excerpt in the four-slide homepage carousel.", label: "Manage articles" }, { href: "/admin/newsletter", title: "Newsletter", description: "View newsletter signups and export subscribers for your email campaigns.", label: "Manage subscribers" }].map((item) => <Link key={item.href} href={item.href} className="group rounded-card border border-ink/10 bg-white p-6"><h2 className="text-2xl group-hover:text-orangeAction">{item.title}</h2><p className="mt-3 text-sm leading-7 text-stone-600">{item.description}</p><span className="mt-4 inline-flex min-h-10 items-center gap-2 text-sm font-semibold text-orange-700">{item.label}<ArrowUpRight aria-hidden="true" className="h-4 w-4" /></span></Link>)}
+      <section aria-label="Client and publishing tools" className="mt-6 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+        {[{ href: "/admin/clients", title: "Client records", description: "Verify Agro-Real Estate clients, issue activation tokens and update their dashboard records.", label: "Manage clients" }, { href: "/admin/news", title: "Blog & news", description: "Add a link to publish its original image and excerpt in the four-slide homepage carousel.", label: "Manage articles" }, { href: "/admin/newsletter", title: "Newsletter", description: "View newsletter signups and export subscribers for your email campaigns.", label: "Manage subscribers" }].map((item) => <Link key={item.href} href={item.href} className="group rounded-card border border-ink/10 bg-white p-6"><h2 className="text-2xl group-hover:text-orangeAction">{item.title}</h2><p className="mt-3 text-sm leading-7 text-stone-600">{item.description}</p><span className="mt-4 inline-flex min-h-10 items-center gap-2 text-sm font-semibold text-orange-700">{item.label}<ArrowUpRight aria-hidden="true" className="h-4 w-4" /></span></Link>)}
       </section>
 
       <section aria-labelledby="snapshot-heading" className="mt-12">
         <div className="max-w-2xl">
           <h2 id="snapshot-heading" className="text-2xl font-medium">Operations snapshot</h2>
-          <p className="mt-2 text-sm leading-6 text-stone-600">These spaces will show live totals once admin records are connected.</p>
+          <p className="mt-2 text-sm leading-6 text-stone-600">Client totals reflect saved records. Other totals will appear as those tools are connected.</p>
         </div>
         <nav aria-label="Operations snapshot" className="mt-5 grid grid-cols-2 gap-x-5 border-t border-ink/10 lg:grid-cols-4 lg:gap-x-8">
           {snapshotIds.map((id) => {
-            const section = adminSubsections.find((item) => item.id === id);
+            const section = adminSections.find((item) => item.id === id);
             if (!section) return null;
             return (
               <Link key={id} href={section.href} className="group flex min-h-32 flex-col justify-between border-b border-ink/10 py-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-700">
                 <span className="text-sm font-semibold text-ink group-hover:text-orange-700">{section.label}</span>
-                <span aria-hidden="true" className="text-3xl leading-none text-stone-400">—</span>
-                <span className="text-xs text-stone-600">No live total</span>
+                <span className="text-3xl leading-none text-stone-400">{id === "clients" ? clientCount : "—"}</span>
+                <span className="text-xs text-stone-600">{id === "clients" ? "Saved client records" : "No live total"}</span>
               </Link>
             );
           })}
@@ -66,7 +70,7 @@ export default function AdminOverviewPage() {
               </div>
               <div className="mt-3 border-t border-ink/10">
                 {group.ids.map((id) => {
-                  const section = adminSubsections.find((item) => item.id === id);
+                  const section = adminSections.find((item) => item.id === id);
                   if (!section) return null;
                   return (
                     <Link key={id} href={section.href} className="group flex min-h-14 items-center justify-between gap-4 border-b border-ink/10 py-3 text-sm font-semibold text-ink hover:text-orange-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-700">

@@ -9,7 +9,8 @@
     "start": "next start",
     "lint": "next lint",
     "test:marketplace": "node --test scripts/marketplace.integration.test.mjs",
-    "test:content": "node --test scripts/content.test.cjs"
+    "test:content": "node --test scripts/content.test.cjs",
+    "test:clients": "node --test scripts/client.integration.test.mjs"
   },
   "dependencies": {
     "cheerio": "1.2.0",

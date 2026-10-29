@@ -48,23 +48,12 @@ export const dashboardSections: Record<DashboardRole, DashboardSection[]> = {
     }
   ],
   client: [
-    {
-      label: "Your property",
-      description: "A home for your land and managed cultivation records.",
-      items: [
-        { title: "Land records", description: "Ownership details and documents will appear when your account is connected." },
-        { title: "Managed cultivation", description: "Track the work associated with your land once farm records are available." },
-        { title: "Investment plans", description: "Explore the available agro-real estate plans.", href: "/businesses/agro-real-estate/investment-plans", action: "View plans" }
-      ]
-    },
-    {
-      label: "Farm activity",
-      description: "Follow progress in one place as updates become available.",
-      items: [
-        { title: "Farm updates", description: "Photos and current farm activity will appear when they are shared with your account." },
-        { title: "Reports", description: "Progress reports and yield history will be available when issued." }
-      ]
-    }
+    { label: "Property", description: "Your verified property location and reference.", items: [] },
+    { label: "Investment Plan", description: "Your plan and recorded progress.", items: [] },
+    { label: "Processes", description: "Track the steps managed by De Jadon Group.", items: [] },
+    { label: "Actual Date", description: "The date and label supplied for your account.", items: [] },
+    { label: "Balance", description: "Your recorded balance.", items: [] },
+    { label: "Withdrawal Requests", description: "Pending, Processing and Successful requests.", items: [] }
   ]
 };
 
@@ -75,7 +64,7 @@ export const dashboardLabels: Record<DashboardRole, string> = {
 
 export const dashboardIntroductions: Record<DashboardRole, string> = {
   partner: "Keep your profile and referral tools together. Network and finance records will appear when account services are connected.",
-  client: "Keep your profile close to your property and farm records. Account-specific updates will appear when services are connected."
+  client: "View your verified property, investment progress, processes, date, balance and withdrawal records."
 };
 
 export const dashboardHighlights: Record<DashboardRole, DashboardHighlight[]> = {
@@ -85,9 +74,9 @@ export const dashboardHighlights: Record<DashboardRole, DashboardHighlight[]> = 
     { label: "Account activity", detail: "Waiting for account connection" }
   ],
   client: [
-    { label: "Your profile", detail: "Review your details and photo", href: "/dashboard/client/profile" },
-    { label: "Land records", detail: "Waiting for account connection" },
-    { label: "Farm updates", detail: "Waiting for account connection" }
+    { label: "Your profile", detail: "Manage your contact details and password", href: "/dashboard/client/profile" },
+    { label: "Property", detail: "View your property location", href: "/dashboard/client#property" },
+    { label: "Withdrawal Requests", detail: "Track your request statuses", href: "/dashboard/client#withdrawal-requests" }
   ]
 };
 

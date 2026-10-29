@@ -17,7 +17,7 @@ export function DashboardRoleSwitcher({ role }: { role: DashboardRole }) {
 
   function openSwitch(target: DashboardRole) {
     setTargetRole(target);
-    setExistingAccount(getCurrentPreviewAccount(target));
+    setExistingAccount(target === "partner" ? getCurrentPreviewAccount(target) : null);
     setUseAnotherAccount(false);
     dialogRef.current?.showModal();
   }

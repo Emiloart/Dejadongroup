@@ -215,11 +215,12 @@ export const dashboardModules: Record<DashboardRole, DashboardModule[]> = {
   client: [
     { label: "Overview", href: "/dashboard/client", icon: "home" },
     { label: "Profile", href: "/dashboard/client/profile", icon: "user" },
-    { label: "Agro-Real Estate", href: "/dashboard/client/agro-real-estate", icon: "building" },
-    { label: "Farm Updates", href: "/dashboard/client/farm-updates", icon: "image" },
-    { label: "Reports", href: "/dashboard/client/reports", icon: "file" },
-    { label: "Notifications", href: "/dashboard/client/notifications", icon: "bell" },
-    { label: "Settings", href: "/dashboard/client/settings", icon: "settings" }
+    { label: "Property", href: "/dashboard/client#property", icon: "building" },
+    { label: "Investment Plan", href: "/dashboard/client#investment-plan", icon: "file" },
+    { label: "Processes", href: "/dashboard/client#processes", icon: "file" },
+    { label: "Actual Date", href: "/dashboard/client#actual-date", icon: "file" },
+    { label: "Balance", href: "/dashboard/client#balance", icon: "wallet" },
+    { label: "Withdrawal Requests", href: "/dashboard/client#withdrawal-requests", icon: "wallet" }
   ]
 };
 
@@ -230,7 +231,7 @@ export const dashboardLabels: Record<DashboardRole, string> = {
 
 export const dashboardHighlights: Record<DashboardRole, string[]> = {
   partner: ["Partner ID", "Partner Tier", "Referral Link", "Wallet"],
-  client: ["Client ID", "Land Records", "Managed Cultivation", "Reports"]
+  client: ["Property", "Investment Plan", "Processes", "Actual Date", "Balance", "Withdrawal Requests"]
 };
 
 export const validDashboardRoles = Object.keys(dashboardModules) as DashboardRole[];

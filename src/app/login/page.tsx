@@ -15,10 +15,10 @@ export default function LoginPage({ searchParams }: LoginPageProps) {
         <div className="mx-auto grid max-w-5xl gap-10 py-6 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20 lg:py-12">
           <div>
             <SectionHeader as="h1" title="Your portal" eyebrow="De Jadon Group">
-              <p>Create an account or sign in to your client or partner workspace.</p>
+              <p>Sign in to your client or partner workspace.</p>
             </SectionHeader>
             <p className="mt-8 max-w-sm border-l-2 border-orangeAction/40 pl-4 text-sm leading-6 text-stone-600">
-              This is a browser-local preview. Accounts and profile details stay on this device and are not yet connected to a live service.
+              Agro-Real Estate clients activate their account with a token issued by De Jadon Group after verification. The partner portal currently uses accounts saved on this device.
             </p>
           </div>
           <PortalAuthForm initialRole={initialRole} nextPath={searchParams?.next} />

@@ -42,7 +42,7 @@ export function DashboardLayout({ role, page, children }: DashboardLayoutProps) 
             Overview
           </Link>
           <Link href={profileHref} aria-current={page === "profile" ? "page" : undefined} className={`flex min-h-12 flex-1 items-center justify-center border-b-2 px-2 text-sm font-semibold transition-colors lg:min-h-11 lg:justify-start lg:border-b-0 lg:border-l-2 lg:px-3 ${page === "profile" ? "border-orangeAction text-white" : "border-transparent text-stone-300 hover:text-white"}`}>
-            Profile &amp; referral
+            {role === "partner" ? "Profile & referral" : "Profile"}
           </Link>
         </nav>
 

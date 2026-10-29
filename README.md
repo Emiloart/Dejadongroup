@@ -67,11 +67,24 @@ Built for De Jadon Group.
 
 The marketplace is managed at `/admin/products`. Administrators can upload JPG, PNG or WebP photos (up to 5 MB), enter NGN prices and pack sizes, describe products, set availability, and save drafts or publish listings. Published changes are read by the public catalogue without rebuilding the website. Drafts are hidden from product listings and direct product URLs.
 
-To enable administrator sign-in, copy `.env.example` to `.env.local`, set `ADMIN_EMAIL` and a strong, unique `ADMIN_PASSWORD` of at least 12 characters, then restart the application. These credentials are separate from the client and partner preview accounts. Never commit `.env.local` or real credentials.
+To enable administrator sign-in, copy `.env.example` to `.env.local`, set `ADMIN_EMAIL` and a strong, unique `ADMIN_PASSWORD` of at least 12 characters, then restart the application. These credentials are separate from client accounts and partner preview accounts. Never commit `.env.local` or real credentials.
 
 The application stores products and uploaded photos on the server in `.data/` by default. In production, set `DEJADON_DATA_DIR` to an absolute directory on a persistent disk and run one application instance. Back up that directory together; it contains `products.json` and `uploads/`. Deployments on ephemeral or read-only filesystems require a persistent database/object-storage adapter before using product administration. Existing catalogue items start without invented prices or product photos.
 
-Admin APIs require a signed, expiring HTTP-only session and verify the origin of write requests. Production hosting should use HTTPS. Products, Blog & news, and Newsletter are functional; the remaining admin operations sections continue to be placeholders.
+Admin APIs require a signed, expiring HTTP-only session and verify the origin of write requests. Production hosting should use HTTPS. Clients, Products, Blog & news, and Newsletter are functional; the remaining admin operations sections continue to be placeholders.
+
+## Agro-Real Estate client accounts
+
+1. Open `/admin/clients`, add the client's verified name and information, and save the record. Email is optional at this stage; if entered, activation must use that same address.
+2. Mark the information as verified and save. Enter the property name/location/reference, investment plan and progress, process steps, balance in NGN, and an **Actual Date with your own label** as available. Blank dates and balances display as unavailable rather than invented values.
+3. Issue an activation token. Copy it immediately and provide it directly to the verified client; the raw token is shown only once. Tokens expire after seven days, can be revoked, and are invalidated by issuing a replacement. Client invite/referral links are not used.
+4. The client chooses **Client → Activate account** at `/login`, enters the token, an email address (including Gmail), and a password of 10–128 characters. Successful activation consumes the token. Future sign-ins use email and password.
+
+`/dashboard/client` shows only the signed-in client's property and map location, investment plan/progress, processes, Actual Date and label, balance, and withdrawal requests filtered by Pending, Processing or Successful. `/dashboard/client/profile` lets clients update their phone, email, and password; changing email or password requires the current password. Verified names and property/financial records are maintained by the administrator. Withdrawal records track requests; the dashboard does not send payments or calculate balances automatically. Admin updates appear on the client's next page load.
+
+Client accounts and records are stored in `clients.json` in the same persistent `DEJADON_DATA_DIR`. Include this sensitive file in restricted backups. Passwords use salted scrypt hashes; activation tokens and opaque session tokens are stored as hashes. Sessions use HTTP-only, SameSite cookies, are secure in production, and expire after eight hours. Password changes revoke previous sessions; sign-out revokes the current session. Removing verification revokes pending tokens and signs out that client. Authentication/profile writes verify their origin and limit attempts; deployments should also apply rate limits at their trusted reverse proxy. Run one application instance with a persistent writable disk, as with the marketplace.
+
+Earlier browser-local client preview accounts cannot access these records and must be activated using an administrator-issued token. Partner preview accounts and partner referral tools remain available separately. Run `npm run build` followed by `npm run test:clients` to check the account workflow with isolated temporary records.
 
 ## Blog, news, and newsletter
 

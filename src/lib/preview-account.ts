@@ -66,6 +66,7 @@ function validateDetails(fullName: string, username: string, email: string) {
 }
 
 export function getCurrentPreviewAccount(role: DashboardRole): PreviewAccount | null {
+  if (role === "client") return null;
   try {
     let id = sessionStorage.getItem(sessionKey(role));
     if (!id) {
@@ -97,6 +98,7 @@ export async function registerPreviewAccount(input: {
   phone: string;
   password: string;
 }): Promise<Result> {
+  if (input.role === "client") return { ok: false, message: "Activate your client account with the token issued by De Jadon Group." };
   const fullName = input.fullName.trim();
   const username = input.username.trim().toLowerCase();
   const email = input.email.trim().toLowerCase();
@@ -142,6 +144,7 @@ export async function registerPreviewAccount(input: {
 }
 
 export async function signInPreviewAccount(role: DashboardRole, emailValue: string, password: string): Promise<Result> {
+  if (role === "client") return { ok: false, message: "Use the client portal to sign in to your verified account." };
   const email = emailValue.trim().toLowerCase();
   const account = readAccounts().find((candidate) => candidate.role === role && candidate.email === email);
   if (!account) return { ok: false, message: "No account with that email was found for this portal." };

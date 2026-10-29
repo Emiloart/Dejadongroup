@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState, type FormEvent } from "react";
+import { ClientAuthForm } from "@/components/client-auth-form";
 import { getCurrentPreviewAccount, registerPreviewAccount, signInPreviewAccount, type PreviewAccount } from "@/lib/preview-account";
 import type { DashboardRole } from "@/types/site";
 
@@ -34,7 +35,7 @@ export function PortalAuthForm({ initialRole, nextPath, hideRoleChooser = false,
 
   useEffect(() => {
     if (hideRoleChooser) return;
-    setExistingAccount(getCurrentPreviewAccount(role));
+    setExistingAccount(role === "partner" ? getCurrentPreviewAccount(role) : null);
     setUseAnotherAccount(false);
   }, [role, hideRoleChooser]);
 
@@ -84,7 +85,7 @@ export function PortalAuthForm({ initialRole, nextPath, hideRoleChooser = false,
         </div>
       </div> : null}
 
-      {existingAccount && !useAnotherAccount && !hideRoleChooser ? (
+      {role === "client" ? <ClientAuthForm nextPath={nextPath} onSuccess={onSuccess} /> : existingAccount && !useAnotherAccount && !hideRoleChooser ? (
         <div className="mt-7 border-y border-ink/10 py-6">
           <p className="text-sm text-stone-600">Already signed in to the {role} dashboard as <span className="font-semibold text-ink">@{existingAccount.username}</span>.</p>
           <button type="button" onClick={continueToDashboard} className="mt-4 inline-flex min-h-11 items-center rounded-card bg-orangeAction px-6 text-sm font-semibold text-ink hover:brightness-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">

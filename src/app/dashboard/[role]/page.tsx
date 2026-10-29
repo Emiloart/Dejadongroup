@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { ClientDashboardLayout } from "@/components/client-dashboard-layout";
+import { ClientOverview } from "@/components/client-overview";
+import { getCurrentClient } from "@/lib/client-auth";
 import { DashboardCard } from "@/components/dashboard-card";
 import { DashboardLayout } from "@/components/dashboard-layout";
 import { dashboardHighlights, dashboardIntroductions, dashboardLabels, dashboardSections, validDashboardRoles } from "@/lib/dashboard-data";
@@ -8,16 +11,19 @@ import type { DashboardRole } from "@/types/site";
 
 type DashboardPageProps = { params: { role: DashboardRole } };
 
-export function generateStaticParams() {
-  return validDashboardRoles.map((role) => ({ role }));
-}
+export const dynamic = "force-dynamic";
 
 function sectionId(title: string) {
   return title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 }
 
-export default function DashboardPage({ params }: DashboardPageProps) {
+export default async function DashboardPage({ params }: DashboardPageProps) {
   if (!validDashboardRoles.includes(params.role)) notFound();
+  if (params.role === "client") {
+    const client = await getCurrentClient();
+    if (!client) redirect("/login?role=client&next=/dashboard/client");
+    return <ClientDashboardLayout page="overview"><ClientOverview client={client} /></ClientDashboardLayout>;
+  }
 
   const sections = dashboardSections[params.role];
   const highlights = dashboardHighlights[params.role];

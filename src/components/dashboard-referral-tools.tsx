@@ -5,9 +5,8 @@ import { Check, Copy, Download, Link2 } from "lucide-react";
 import QRCode from "qrcode";
 import { useEffect, useState } from "react";
 import { getCurrentPreviewAccount, type PreviewAccount } from "@/lib/preview-account";
-import type { DashboardRole } from "@/types/site";
 
-export function DashboardReferralTools({ role }: { role: DashboardRole }) {
+export function DashboardReferralTools({ role }: { role: "partner" }) {
   const [profile, setProfile] = useState<PreviewAccount | null>(null);
   const [origin, setOrigin] = useState("");
   const [qrDataUrl, setQrDataUrl] = useState("");
@@ -33,7 +32,7 @@ export function DashboardReferralTools({ role }: { role: DashboardRole }) {
   }, [role]);
 
   const username = profile?.username || "";
-  const destination = role === "partner" ? "/partner-program" : "/businesses";
+  const destination = "/partner-program";
   const referralUrl = origin && username ? origin + destination + "?ref=" + encodeURIComponent(username) : "";
 
   useEffect(() => {
@@ -78,7 +77,7 @@ export function DashboardReferralTools({ role }: { role: DashboardRole }) {
         <p className="text-xs font-semibold uppercase tracking-[0.16em] text-orange-700">Share your link</p>
         <h2 id="referral-heading" className="mt-3 text-2xl font-medium text-ink">Referral tools</h2>
         <p className="mt-2 text-sm leading-6 text-stone-600">
-          {role === "partner" ? "Share the Partner Program with a prospective client." : "Share De Jadon Group’s businesses with someone interested."}
+          Share the Partner Program with a prospective client.
         </p>
       </div>
 
