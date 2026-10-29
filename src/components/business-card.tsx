@@ -1,8 +1,7 @@
-import Image from "next/image";
+import { ResponsiveHeroImage } from "@/components/responsive-hero-image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import agricultureHero from "@/assets/agriculture_hero.png";
-import agroRealEstateHero from "@/assets/Agro-realestate_hero.png";
+import { heroMedia } from "@/lib/hero-media";
 import type { Business } from "@/types/site";
 
 type BusinessCardProps = {
@@ -12,12 +11,16 @@ type BusinessCardProps = {
 
 const businessPreviews = {
   agriculture: {
-    image: agricultureHero,
+    image: heroMedia.agriculture,
     description: "Food production through crop farming, poultry, fishery and sustainable farming."
   },
   "agro-real-estate": {
-    image: agroRealEstateHero,
+    image: heroMedia.agroRealEstate,
     description: "Own productive farmland through cultivated land sales and managed farming opportunities."
+  },
+  flexisave: {
+    image: heroMedia.flexisave,
+    description: "Structured savings to support disciplined financial planning and work towards your goals."
   }
 };
 
@@ -29,7 +32,7 @@ export function BusinessCard({ business, showSections = false }: BusinessCardPro
     <article className="h-full min-w-0 overflow-hidden rounded-card border border-ink/10 bg-white">
       <Link href={business.href} className={`group block focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-orangeAction ${linkTone}`}>
         <div className="relative aspect-[16/9] overflow-hidden bg-stone-100">
-          <Image src={preview.image} alt="" fill sizes={showSections ? "(min-width: 1024px) 580px, (min-width: 640px) 50vw, 100vw" : "(min-width: 640px) 320px, 280px"} className="object-cover transition-transform duration-300 motion-safe:group-hover:scale-105" />
+          <ResponsiveHeroImage asset={preview.image} sizes={showSections ? "(min-width: 1024px) 384px, (min-width: 640px) 50vw, 100vw" : "(min-width: 1024px) 384px, (min-width: 640px) 50vw, 280px"} className="object-cover transition-transform duration-300 motion-safe:group-hover:scale-105" />
         </div>
         <div className="p-5">
           <h3 className="text-xl font-semibold text-ink">{business.name}</h3>

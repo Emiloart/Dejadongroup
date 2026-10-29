@@ -1,3 +1,4 @@
+import { companyContact, companyMapHref, companySocialProfiles } from "@/lib/site-data";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { ButtonLink } from "@/components/button-link";
@@ -6,7 +7,7 @@ import { PageSection } from "@/components/page-section";
 import { SectionHeader } from "@/components/section-header";
 import { SiteLayout } from "@/components/site-layout";
 
-const inquiryOptions = ["Agriculture", "Agro-Real Estate", "Partner Program"];
+const inquiryOptions = ["Agriculture", "Agro-Real Estate", "Flexisave", "Partner Program"];
 const emailAddress = "dejadongroup@gmail.com";
 
 export default function ContactPage() {
@@ -23,7 +24,7 @@ export default function ContactPage() {
             </>
           }
         >
-          <p>Get in touch with De Jadon Group for enquiries about Agriculture, Agro-Real Estate, the Partner Program, or general company information.</p>
+          <p>Get in touch with De Jadon Group for enquiries about Agriculture, Agro-Real Estate, Flexisave, the Partner Program, or general company information.</p>
         </PageHero>
       </PageSection>
       <PageSection tinted>
@@ -57,13 +58,17 @@ export default function ContactPage() {
               </div>
               <div>
                 <dt className="mb-1 text-xs font-semibold uppercase tracking-[0.16em] text-stone-500">Office</dt>
-                <dd className="max-w-md text-stone-700">Shop C15 Ebube Dike Shopping Mall, Umuodu Road, Good Will Junction, Nodu, Okpuno, Awka, Anambra State.</dd>
+                <dd className="max-w-md text-stone-700">{companyContact.office}<a href={companyMapHref} target="_blank" rel="noreferrer" className="mt-3 block font-semibold text-orange-700 underline underline-offset-4">Open office address in Google Maps</a></dd>
               </div>
               <div>
                 <dt className="mb-1 text-xs font-semibold uppercase tracking-[0.16em] text-stone-500">Working hours</dt>
-                <dd className="text-stone-700">8:30am – 5:00pm</dd>
+                <dd className="text-stone-700">{companyContact.workingHours}</dd>
               </div>
             </dl>
+            <section className="mt-9 border-t border-ink/10 pt-7" aria-label="Company social profiles">
+              <h2 className="text-xl">Find us on social media</h2>
+              <dl className="mt-4 space-y-4">{companySocialProfiles.map((profile) => <div key={profile.platform}><dt className="text-xs font-semibold uppercase tracking-widest text-stone-500">{profile.platform}</dt><dd className="mt-1 text-sm text-stone-700">{profile.names}</dd></div>)}</dl>
+            </section>
           </div>
         </div>
       </PageSection>

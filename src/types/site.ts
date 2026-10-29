@@ -1,4 +1,4 @@
-export type BusinessSlug = "agriculture" | "agro-real-estate";
+export type BusinessSlug = "agriculture" | "agro-real-estate" | "flexisave";
 
 export type DashboardRole = "partner" | "client";
 

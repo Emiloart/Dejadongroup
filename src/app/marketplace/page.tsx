@@ -34,7 +34,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
           <div className="max-w-2xl">
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-agriculture">Products from De Jadon Group</p>
             <h1 className="mt-3 text-4xl font-medium tracking-tight text-ink sm:text-5xl">Marketplace</h1>
-            <p className="mt-4 max-w-xl leading-7 text-stone-600">Browse our agricultural products and food packages. View the details, then contact our team to arrange your order.</p>
+            <p className="mt-4 max-w-xl leading-7 text-stone-600">Our agricultural range includes fresh and dried fish alongside food packages. Browse the catalogue for product details and availability, then contact our team to arrange your order.</p>
           </div>
           <Link href="/businesses/agriculture" className="inline-flex items-center gap-2 self-start text-sm font-semibold text-agriculture hover:text-orangeAction lg:self-auto">About our agriculture business <ArrowUpRight aria-hidden="true" className="h-4 w-4" /></Link>
         </div>

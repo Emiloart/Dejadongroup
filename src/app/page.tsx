@@ -9,7 +9,7 @@ import { NewsletterSection } from "@/components/newsletter-section";
 import { PageSection } from "@/components/page-section";
 import { SectionHeader } from "@/components/section-header";
 import { SiteLayout } from "@/components/site-layout";
-import { businesses, homeFaqSections, homeHeroSlides } from "@/lib/site-data";
+import { businesses, companyContact, companyMapHref, founderMessage, homeFaqSections, homeHeroSlides } from "@/lib/site-data";
 import { getPublishedNews } from "@/lib/news-store";
 
 export const dynamic = "force-dynamic";
@@ -29,7 +29,7 @@ export default async function HomePage() {
           </div>
         </div>
       </PageSection>
-      <PageSection className="!max-w-3xl">
+      <PageSection>
         <div className="mb-10 flex flex-wrap items-end justify-between gap-5">
           <SectionHeader title="Our businesses" eyebrow="What we do" />
           <ButtonLink href="/businesses" variant="outline">Explore all businesses</ButtonLink>
@@ -53,6 +53,8 @@ export default async function HomePage() {
             <h3 className="text-2xl text-ink">Ifeanyi Luke Ananwude</h3>
             <p className="mt-2 text-sm text-stone-500">Managing Director and founder of De Jadon Group.</p>
             <p className="mt-5 leading-7 text-stone-600">He is passionate about creating sustainable value through Agro Real Estate, Agriculture and business innovation, guided by integrity, excellence and a customer-first approach.</p>
+            <blockquote className="mt-6 border-l-2 border-orangeAction pl-5 text-base leading-8 text-stone-700">“{founderMessage}”</blockquote>
+            <div className="mt-4"><ButtonLink href="/about" variant="outline">Meet De Jadon Group</ButtonLink></div>
           </div>
         </div>
       </PageSection>
@@ -73,8 +75,8 @@ export default async function HomePage() {
           <dl className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
             <div><dt className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">Call us</dt><dd className="mt-2"><a href="tel:+2348070458759" className="break-words text-base font-semibold hover:text-orangeAction">08070458759</a></dd></div>
             <div><dt className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">Email us</dt><dd className="mt-2"><a href="mailto:dejadongroup@gmail.com" className="break-all text-base font-semibold hover:text-orangeAction">dejadongroup@gmail.com</a></dd></div>
-            <div><dt className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">Visit our office</dt><dd className="mt-2 max-w-sm text-sm leading-7 text-stone-600">Shop C15 Ebube Dike Shopping Mall, Umuodu Road, Good Will Junction, Nodu, Okpuno, Awka, Anambra State.</dd></div>
-            <div><dt className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">Working hours</dt><dd className="mt-2 text-sm leading-7 text-stone-600">8:30am – 5:00pm</dd></div>
+            <div><dt className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">Visit our office</dt><dd className="mt-2 max-w-sm text-sm leading-7 text-stone-600">{companyContact.office}<a href={companyMapHref} target="_blank" rel="noreferrer" className="mt-2 inline-flex min-h-9 items-center font-semibold text-orange-700 underline underline-offset-4">Find our office on Google Maps</a></dd></div>
+            <div><dt className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">Working hours</dt><dd className="mt-2 text-sm leading-7 text-stone-600">{companyContact.workingHours}</dd></div>
           </dl>
         </div>
       </PageSection>

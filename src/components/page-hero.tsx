@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { StaticImageData } from "next/image";
+import type { HeroImageAsset } from "@/lib/hero-media";
 import { HeroBackground } from "@/components/hero-background";
 import { ImageCanvas } from "@/components/image-canvas";
 import { SectionHeader } from "@/components/section-header";
@@ -9,7 +9,7 @@ type PageHeroProps = {
   title: string;
   eyebrow?: string;
   canvasLabel?: string;
-  image?: StaticImageData;
+  image?: HeroImageAsset;
   accent?: Accent;
   children?: ReactNode;
   actions?: ReactNode;

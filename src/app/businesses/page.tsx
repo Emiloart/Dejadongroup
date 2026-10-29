@@ -16,14 +16,14 @@ export default function BusinessesPage() {
       </PageSection>
       <PageSection tinted>
         <SectionHeader title="Find your area of interest" />
-        <div className="mt-8 grid gap-6 sm:grid-cols-2">
+        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {businesses.map((business) => (
             <BusinessCard key={business.slug} business={business} showSections />
           ))}
         </div>
       </PageSection>
       <PageSection>
-        <div className="mb-14 grid gap-8 border-b border-ink/10 pb-10 sm:grid-cols-2 sm:gap-12">
+        <div className="grid gap-8 sm:grid-cols-2 sm:gap-12">
           <div>
             <h2 className="text-2xl font-semibold text-ink">See our work</h2>
             <p className="mt-2 text-stone-600">Browse photographs from our business areas.</p>
@@ -35,13 +35,7 @@ export default function BusinessesPage() {
             <div className="mt-4"><ButtonLink href="/marketplace" variant="outline">Browse marketplace</ButtonLink></div>
           </div>
         </div>
-        <div className="grid gap-8 border-t border-ink/10 pt-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
-          <SectionHeader title="Flexisave" eyebrow="Structured savings" />
-          <div>
-            <p className="max-w-2xl text-lg leading-8 text-stone-600">Flexisave is De Jadon Group’s structured savings solution, designed to encourage disciplined financial planning and help people work towards specific financial goals.</p>
-            <div className="mt-6"><ButtonLink href="/contact" variant="outline">Ask about Flexisave</ButtonLink></div>
-          </div>
-        </div>
+
       </PageSection>
     </SiteLayout>
   );

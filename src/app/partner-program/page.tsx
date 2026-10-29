@@ -1,3 +1,4 @@
+import { heroMedia } from "@/lib/hero-media";
 import { ButtonLink } from "@/components/button-link";
 import { PageHero } from "@/components/page-hero";
 import { PageSection } from "@/components/page-section";
@@ -12,11 +13,9 @@ export default async function PartnerProgramPage({ searchParams }: { searchParam
   const register = `/login?role=partner&mode=signup${searchParams?.ref ? `&ref=${encodeURIComponent(searchParams.ref.slice(0, 40))}` : ""}`;
   return (
     <SiteLayout>
-      <PageSection>
-        <PageHero title="Partner Programme" eyebrow="De Jadon Group" actions={<ButtonLink href={register}>Become a partner</ButtonLink>}>
+      <PageHero image={heroMedia.partner} title="Partner Programme" eyebrow="De Jadon Group" actions={<ButtonLink href={register}>Become a partner</ButtonLink>}>
           <p>Introduce De Jadon Group to a prospective customer. When that person becomes a paying client, the partner receives a 10% commission from the company.</p>
-        </PageHero>
-      </PageSection>
+      </PageHero>
       <PageSection tinted>
         <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
           <SectionHeader title="How referrals work" eyebrow="The approved rule" />

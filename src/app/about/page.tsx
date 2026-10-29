@@ -24,14 +24,14 @@ const aboutSections = [
 ];
 
 const values = [
-  "Integrity",
-  "Customer First",
-  "Excellence",
-  "Innovation",
-  "Accountability",
-  "Sustainability",
-  "Teamwork",
-  "Value Creation"
+  { name: "Integrity", description: "We conduct every transaction with honesty, transparency and fairness." },
+  { name: "Customer First", description: "We listen to our customers’ needs and strive to deliver genuine value and an exceptional experience." },
+  { name: "Excellence", description: "We pursue high standards in our products, services, processes and relationships, continually seeking to improve." },
+  { name: "Innovation", description: "We embrace new ideas, technology and better ways of doing things to create greater value." },
+  { name: "Accountability", description: "We take ownership of our decisions, responsibilities, promises and results." },
+  { name: "Sustainability", description: "We build businesses designed to create lasting economic, social and environmental value for future generations." },
+  { name: "Teamwork", description: "We believe great results come through collaboration, mutual respect, communication and shared responsibility." },
+  { name: "Value Creation", description: "Everything we do should create measurable, meaningful value for our customers, investors, employees, partners and communities." }
 ];
 
 export default function AboutPage() {
@@ -82,8 +82,9 @@ export default function AboutPage() {
           <SectionHeader title="Core Values" />
           <ul className="grid gap-x-8 sm:grid-cols-2">
             {values.map((value) => (
-              <li key={value} className="border-b border-ink/10 py-4 text-base font-medium text-ink">
-                {value}
+              <li key={value.name} className="border-b border-ink/10 py-5 text-base text-ink">
+                <h3 className="font-sans text-base font-semibold">{value.name}</h3>
+                <p className="mt-2 text-sm leading-7 text-stone-600">{value.description}</p>
               </li>
             ))}
           </ul>
@@ -96,7 +97,7 @@ export default function AboutPage() {
           <div className="space-y-4 text-stone-700">
               <h3 className="text-3xl font-medium text-ink">Ifeanyi Luke Ananwude</h3>
               <p className="leading-7">
-                Ananwude Ifeany Luke is an entrepreneur, farmer, and the founder of De Jadon Group. He is passionate about creating sustainable value through Agro Real Estate, Agriculture and business innovation. Guided by integrity, excellence and a customer-first approach, he is committed to building trusted brands, empowering communities and delivering lasting value that positively impacts lives.
+                Ifeanyi Luke Ananwude is an entrepreneur, farmer, and the founder of De Jadon Group. He is passionate about creating sustainable value through Agro Real Estate, Agriculture and business innovation. Guided by integrity, excellence and a customer-first approach, he is committed to building trusted brands, empowering communities and delivering lasting value that positively impacts lives.
               </p>
           </div>
         </div>

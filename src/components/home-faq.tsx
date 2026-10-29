@@ -7,6 +7,7 @@ import { useId, useState } from "react";
 const destinations: Record<string, { text: string; label: string; href: string }> = {
   "Agriculture FAQ": { text: "Explore our crop farming, livestock and agricultural products, and find answers to common questions.", label: "Explore agriculture", href: "/businesses/agriculture" },
   "Agro-Real Estate FAQ": { text: "Find information about agricultural land, managed cultivation and the buying process.", label: "Read agro-real estate FAQs", href: "/businesses/agro-real-estate/faqs" },
+  "Flexisave FAQ": { text: "Flexisave is De Jadon Group’s structured savings solution, designed to encourage disciplined financial planning and help people work towards specific goals.", label: "Explore Flexisave", href: "/businesses/flexisave" },
   "Partner Program FAQ": { text: "Partners receive a 10% commission when a referred prospect becomes a paying client. Visit the program page for available details.", label: "Explore the partner program", href: "/partner-program" },
   "Contact FAQ": { text: "Find our office address, phone number, email and working hours on the contact page.", label: "Contact the team", href: "/contact" }
 };

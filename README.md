@@ -21,6 +21,7 @@ Six areas share one permission-aware shell: Media & Content, Sales & Marketplace
 - [Financial workflows and entitlement policy](docs/admin/financial-workflows.md)
 - [Deployment, bootstrap, migrations, backups and recovery](docs/admin/operations.md)
 - [Business information and portal workflows](docs/website-and-portals.md)
+- [Content workbook review and hero-image preparation](docs/content/workbook-review.md)
 - [Release verification and limitations](docs/admin/release.md)
 
 ## Production requirements

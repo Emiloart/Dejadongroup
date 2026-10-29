@@ -2,18 +2,18 @@
 
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import mainHero from "@/assets/mainpage_hero.png";
-import agricultureHero from "@/assets/agriculture_hero.png";
-import agroRealEstateHero from "@/assets/Agro-realestate_hero.png";
+import { getImageProps } from "next/image";
+import { heroMedia, heroImageSource } from "@/lib/hero-media";
 import { ButtonLink } from "@/components/button-link";
 import { HeroBackground } from "@/components/hero-background";
 import type { HeroSlide } from "@/types/site";
 
 const slideDelay = 7500;
 const slideImages = {
-  "Welcome to De Jadon Group": mainHero,
-  Agriculture: agricultureHero,
-  "Agro-Real Estate": agroRealEstateHero
+  "Welcome to De Jadon Group": heroMedia.main,
+  Agriculture: heroMedia.agriculture,
+  "Agro-Real Estate": heroMedia.agroRealEstate,
+  Flexisave: heroMedia.flexisave
 };
 
 export function HomeHeroCarousel({ slides }: { slides: HeroSlide[] }) {
@@ -25,7 +25,7 @@ export function HomeHeroCarousel({ slides }: { slides: HeroSlide[] }) {
   const [pageVisible, setPageVisible] = useState(true);
   const touchStartX = useRef<number | null>(null);
   const slide = slides[activeSlide] ?? slides[0];
-  const slideImage = (slide ? slideImages[slide.title as keyof typeof slideImages] : undefined) ?? mainHero;
+  const slideImage = (slide ? slideImages[slide.title as keyof typeof slideImages] : undefined) ?? heroMedia.main;
   const isPlaying = slides.length > 1 && !isHovered && !hasFocus && !hasInteracted && !reducedMotion && pageVisible;
 
   useEffect(() => {
@@ -47,6 +47,22 @@ export function HomeHeroCarousel({ slides }: { slides: HeroSlide[] }) {
     const timeout = window.setTimeout(() => setActiveSlide((current) => (current + 1) % slides.length), slideDelay);
     return () => window.clearTimeout(timeout);
   }, [activeSlide, isPlaying, slides.length]);
+
+  useEffect(() => {
+    if (!pageVisible || slides.length < 2) return;
+    const next = slides[(activeSlide + 1) % slides.length];
+    const asset = slideImages[next.title as keyof typeof slideImages] ?? heroMedia.main;
+    const timer = window.setTimeout(() => {
+      const { props } = getImageProps({ src: asset.full, alt: "", fill: true, sizes: "100vw", loader: ({ width }) => heroImageSource(asset, width) });
+      const preload = new window.Image();
+      preload.decoding = "async";
+      preload.setAttribute("fetchpriority", "low");
+      preload.sizes = props.sizes || "100vw";
+      if (props.srcSet) preload.srcset = props.srcSet;
+      preload.src = props.src;
+    }, 1500);
+    return () => window.clearTimeout(timer);
+  }, [activeSlide, pageVisible, slides]);
 
   function showSlide(index: number) {
     setHasInteracted(true);

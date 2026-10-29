@@ -134,12 +134,25 @@ export const homeHeroSlides: HeroSlide[] = [
     primaryHref: "/businesses/agro-real-estate/investment-plans",
     secondaryLabel: "Contact",
     secondaryHref: "/contact"
+  },
+  {
+    eyebrow: "Structured savings",
+    title: "Flexisave",
+    description: "A structured savings solution designed to encourage disciplined financial planning and help you work towards specific financial goals.",
+    slotLabel: "Flexisave Hero Slot",
+    canvasLabel: "Flexisave Hero Canvas",
+    primaryLabel: "Explore Flexisave",
+    primaryHref: "/businesses/flexisave",
+    secondaryLabel: "Talk to our team",
+    secondaryHref: "/contact",
+    accent: "green"
   }
 ];
 
 export const homeFaqSections = [
   "Agriculture FAQ",
   "Agro-Real Estate FAQ",
+  "Flexisave FAQ",
   "Partner Program FAQ",
   "Contact FAQ"
 ];
@@ -196,6 +209,17 @@ export const businesses: Business[] = [
       { name: "Investment Plans", href: "/businesses/agro-real-estate/investment-plans" },
       { name: "FAQs", href: "/businesses/agro-real-estate/faqs" },
       { name: "Gallery", href: "/businesses/agro-real-estate/gallery" }
+    ]
+  },
+  {
+    slug: "flexisave",
+    name: "Flexisave",
+    href: "/businesses/flexisave",
+    accent: "green",
+    imageCanvas: "Flexisave Image Canvas",
+    sections: [
+      { name: "Overview", href: "/businesses/flexisave" },
+      { name: "Enquire about Flexisave", href: "/contact" }
     ]
   }
 ];
@@ -259,3 +283,19 @@ export function getSectionByPath(path: string) {
 
   return undefined;
 }
+
+// Supplied contact information. Profile URLs and WhatsApp were not supplied.
+export const companyContact = {
+  phone: "08070458759",
+  telephoneHref: "tel:+2348070458759",
+  email: "dejadongroup@gmail.com",
+  office: "Shop C15 Ebube Dike Shopping Mall, Umuodu Road, Good Will Junction, Nodu, Okpuno, Awka, Anambra State.",
+  workingHours: "8:30am – 5:00pm"
+};
+export const companyMapHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(companyContact.office)}`;
+export const companySocialProfiles = [
+  { platform: "Facebook", names: "De Jadon Group · De Jadon Properties" },
+  { platform: "Instagram", names: "De Jadon Group" },
+  { platform: "TikTok", names: "De Jadon Group" }
+];
+export const founderMessage = "Discover practical knowledge, innovative farming methods and valuable insights from our experience in agriculture and agro-real estate. Explore our journey, learn from what we do, and discover new opportunities to grow with us.";

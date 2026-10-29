@@ -12,7 +12,7 @@ import { getGalleryImages } from "@/lib/media-library";
 const cropDescriptions = [
   { name: "Palm", description: "The oil palm is a tropical tree. Its outer flesh contains palm oil, while the seed can be processed to produce palm kernel oil." },
   { name: "Pepper", description: "Pepper grows as a bushy plant with a soft green stem that becomes stronger as it matures." },
-  { name: "Cassava", description: "Cassava is a perennial shrub commonly grown as an annual or biennial crop." }
+  { name: "Cassava", description: "Cassava is a perennial shrub commonly grown as an annual or biennial crop. It has an upright, branching stem and can grow to approximately 1–3 metres depending on the variety and growing conditions." }
 ];
 
 const livestockDescriptions: Record<string, string> = {
@@ -45,7 +45,7 @@ export default function AgricultureSectionPage({ params }: AgricultureSectionPag
       : category === "livestock"
         ? "Our agriculture operations include poultry, fishery and Black Soldier Fly."
         : category === "products"
-          ? "Browse our agricultural products and ask our team about current availability, quantities and pricing."
+          ? "Our agricultural products include fresh and dried fish. Browse the marketplace and ask our team about current availability, quantities and pricing."
           : "Explore photographs from our agriculture work as they become available.";
 
   return (

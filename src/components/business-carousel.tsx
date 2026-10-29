@@ -65,7 +65,7 @@ export function BusinessCarousel({ businesses }: { businesses: Business[] }) {
         }}
       >
         {businesses.map((business) => (
-          <li key={business.slug} className="w-[280px] max-w-[calc(100vw-3.5rem)] shrink-0 snap-start sm:w-[320px]">
+          <li key={business.slug} className="w-[280px] max-w-[calc(100vw-3.5rem)] shrink-0 snap-start sm:w-[calc((100%_-_1.25rem)/2)] lg:w-[calc((100%_-_2.5rem)/3)]">
             <BusinessCard business={business} />
           </li>
         ))}

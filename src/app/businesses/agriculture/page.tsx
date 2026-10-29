@@ -1,5 +1,5 @@
 import { ButtonLink } from "@/components/button-link";
-import agricultureHero from "@/assets/agriculture_hero.png";
+import { heroMedia } from "@/lib/hero-media";
 import { InfoCard } from "@/components/info-card";
 import { PageHero } from "@/components/page-hero";
 import { PageSection } from "@/components/page-section";
@@ -21,7 +21,7 @@ export default function AgriculturePage() {
         title={agriculture.name}
         eyebrow="Businesses"
         accent="green"
-        image={agricultureHero}
+        image={heroMedia.agriculture}
         actions={
           <>
             <ButtonLink href="/businesses/agriculture/products">Products</ButtonLink>
