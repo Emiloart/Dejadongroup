@@ -8,6 +8,7 @@ import { SectionHeader } from "@/components/section-header";
 import { SiteLayout } from "@/components/site-layout";
 import { agricultureProducts, getSectionByPath } from "@/lib/site-data";
 import { getGalleryImages } from "@/lib/media-library";
+import { publicPageMetadata } from "@/lib/seo";
 
 const cropDescriptions = [
   { name: "Palm", description: "The oil palm is a tropical tree. Its outer flesh contains palm oil, while the seed can be processed to produce palm kernel oil." },
@@ -22,6 +23,13 @@ const livestockDescriptions: Record<string, string> = {
 };
 
 type AgricultureSectionPageProps = { params: { slug: string[] } };
+
+export function generateMetadata({ params }: AgricultureSectionPageProps) {
+  const path = `/businesses/agriculture/${params.slug.join("/")}`;
+  const match = getSectionByPath(path);
+  if (!match || match.business.slug !== "agriculture") notFound();
+  return publicPageMetadata(path, `${match.section.name} — Agriculture`, `Explore ${match.section.name.toLowerCase()} as part of De Jadon Group’s agriculture business.`);
+}
 
 export function generateStaticParams() {
   return [

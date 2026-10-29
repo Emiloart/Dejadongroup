@@ -5,8 +5,10 @@ import { GalleryGrid } from "@/components/gallery-grid";
 import { PageSection } from "@/components/page-section";
 import { SiteLayout } from "@/components/site-layout";
 import { galleryCategories, getGalleryImages, type GalleryCategory } from "@/lib/media-library";
+import { siteUrl } from "@/lib/seo";
 
 export const metadata: Metadata = {
+  alternates: { canonical: siteUrl("/gallery") },
   title: "Gallery",
   description: "Explore photographs from De Jadon Group's agriculture work and agro-real estate projects."
 };

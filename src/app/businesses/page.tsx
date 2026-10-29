@@ -1,3 +1,4 @@
+import { publicPageMetadata } from "@/lib/seo";
 import { BusinessCard } from "@/components/business-card";
 import { ButtonLink } from "@/components/button-link";
 import { PageHero } from "@/components/page-hero";
@@ -5,6 +6,8 @@ import { PageSection } from "@/components/page-section";
 import { SectionHeader } from "@/components/section-header";
 import { SiteLayout } from "@/components/site-layout";
 import { businesses } from "@/lib/site-data";
+
+export const metadata = publicPageMetadata("/businesses", "Our businesses", "Explore De Jadon Group’s businesses in agriculture, agro-real estate and structured savings with Flexisave.");
 
 export default function BusinessesPage() {
   return (

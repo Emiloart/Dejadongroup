@@ -22,6 +22,7 @@ Six areas share one permission-aware shell: Media & Content, Sales & Marketplace
 - [Deployment, bootstrap, migrations, backups and recovery](docs/admin/operations.md)
 - [Business information and portal workflows](docs/website-and-portals.md)
 - [Content workbook review and hero-image preparation](docs/content/workbook-review.md)
+- [Sitemap, domain configuration, favicons and FAQ navigation](docs/search-indexing.md)
 - [Release verification and limitations](docs/admin/release.md)
 
 ## Production requirements

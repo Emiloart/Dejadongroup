@@ -1,3 +1,4 @@
+import { publicPageMetadata } from "@/lib/seo";
 import { ButtonLink } from "@/components/button-link";
 import { PageHero } from "@/components/page-hero";
 import { PageSection } from "@/components/page-section";
@@ -33,6 +34,8 @@ const values = [
   { name: "Teamwork", description: "We believe great results come through collaboration, mutual respect, communication and shared responsibility." },
   { name: "Value Creation", description: "Everything we do should create measurable, meaningful value for our customers, investors, employees, partners and communities." }
 ];
+
+export const metadata = publicPageMetadata("/about", "About us", "Meet De Jadon Group, learn about our founder, and explore our vision, mission and core values.");
 
 export default function AboutPage() {
   return (

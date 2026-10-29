@@ -11,6 +11,7 @@ import { SiteLayout } from "@/components/site-layout";
 import { getMarketplaceImage } from "@/lib/media-library";
 import { formatProductPrice, getMarketplaceCategoryName, getProductInquiryHref } from "@/lib/marketplace-data";
 import { getPublishedProduct, getPublishedProducts } from "@/lib/marketplace-store";
+import { publicPageMetadata } from "@/lib/seo";
 
 type ProductPageProps = { params: { slug: string } };
 
@@ -18,7 +19,8 @@ export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
   const product = await getPublishedProduct(params.slug);
-  return { title: product ? product.name : "Product", description: product?.summary };
+  if (!product) notFound();
+  return publicPageMetadata(`/marketplace/${encodeURIComponent(product.slug)}`, product.name, product.summary);
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {

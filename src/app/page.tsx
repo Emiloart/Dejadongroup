@@ -1,3 +1,4 @@
+import { publicPageMetadata } from "@/lib/seo";
 import { managedContent } from "@/lib/managed-content";
 import { ManagedPublicContent } from "@/components/managed-public-content";
 import { ButtonLink } from "@/components/button-link";
@@ -11,6 +12,8 @@ import { SectionHeader } from "@/components/section-header";
 import { SiteLayout } from "@/components/site-layout";
 import { businesses, companyContact, companyMapHref, founderMessage, homeFaqSections, homeHeroSlides } from "@/lib/site-data";
 import { getPublishedNews } from "@/lib/news-store";
+
+export const metadata = publicPageMetadata("/", "De Jadon Group", "Explore De Jadon Group’s agriculture, agro-real estate, Flexisave and partner opportunities in Nigeria.");
 
 export const dynamic = "force-dynamic";
 

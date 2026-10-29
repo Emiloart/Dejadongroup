@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { ButtonLink } from "@/components/button-link";
+import { FaqSection } from "@/components/faq-section";
 import { GalleryGrid } from "@/components/gallery-grid";
 import { PageHero } from "@/components/page-hero";
 import { PageSection } from "@/components/page-section";
@@ -7,8 +8,16 @@ import { SectionHeader } from "@/components/section-header";
 import { SiteLayout } from "@/components/site-layout";
 import { agroRealEstateBuyingProcess, agroRealEstateFaqs, agroRealEstateServices, getSectionByPath } from "@/lib/site-data";
 import { getGalleryImages } from "@/lib/media-library";
+import { publicPageMetadata } from "@/lib/seo";
 
 type AgroRealEstateSectionPageProps = { params: { section: string } };
+
+export function generateMetadata({ params }: AgroRealEstateSectionPageProps) {
+  const path = `/businesses/agro-real-estate/${params.section}`;
+  const match = getSectionByPath(path);
+  if (!match || match.business.slug !== "agro-real-estate") notFound();
+  return publicPageMetadata(path, `${match.section.name} — Agro-Real Estate`, `Learn about ${match.section.name.toLowerCase()} and De Jadon Group’s agro-real estate offering.`);
+}
 
 export function generateStaticParams() {
   return [
@@ -70,18 +79,7 @@ export default function AgroRealEstateSectionPage({ params }: AgroRealEstateSect
           </div>
         </PageSection>
       ) : null}
-      {isFaq ? (
-        <PageSection tinted>
-          <div className="grid gap-x-12 gap-y-8 md:grid-cols-2">
-            {agroRealEstateFaqs.map((faq) => (
-              <article key={faq.question} className="border-t border-ink/10 pt-5">
-                <h2 className="text-lg text-ink">{faq.question}</h2>
-                <p className="mt-3 text-sm leading-7 text-stone-600">{faq.answer}</p>
-              </article>
-            ))}
-          </div>
-        </PageSection>
-      ) : null}
+      {isFaq ? <FaqSection items={agroRealEstateFaqs} /> : null}
       {isGallery ? (
         <PageSection tinted>
           <GalleryGrid images={getGalleryImages("agro-real-estate")} emptyTitle="Project photography is being added" />

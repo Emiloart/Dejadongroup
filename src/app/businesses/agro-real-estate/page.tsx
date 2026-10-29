@@ -1,3 +1,4 @@
+import { publicPageMetadata } from "@/lib/seo";
 import { ButtonLink } from "@/components/button-link";
 import { heroMedia } from "@/lib/hero-media";
 import { PageHero } from "@/components/page-hero";
@@ -6,6 +7,8 @@ import { SectionGrid } from "@/components/section-grid";
 import { SectionHeader } from "@/components/section-header";
 import { SiteLayout } from "@/components/site-layout";
 import { agroRealEstateServices, getBusinessBySlug } from "@/lib/site-data";
+
+export const metadata = publicPageMetadata("/businesses/agro-real-estate", "Agro-Real Estate", "Learn about De Jadon Group’s agricultural land sales, managed cultivation, consultancy and farm development.");
 
 export default function AgroRealEstatePage() {
   const business = getBusinessBySlug("agro-real-estate");

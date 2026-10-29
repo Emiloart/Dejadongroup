@@ -53,8 +53,24 @@ test("protected product publishing, uploads, persistence, and draft isolation", 
   }
   let cookie;
   const request = (url, options = {}) => fetch(`${origin}${url}`, { ...options, headers: { Origin: origin, ...(cookie ? { Cookie: cookie } : {}), ...options.headers } });
+  async function sitemapPaths() {
+    const response = await request("/sitemap.xml");
+    assert.equal(response.status, 200);
+    assert.match(response.headers.get("content-type"), /xml/);
+    const xml = await response.text();
+    const urls = [...xml.matchAll(/<loc>(.*?)<\/loc>/g)].map((match) => new URL(match[1]));
+    assert.ok(urls.length > 20, "the sitemap includes public business pages");
+    assert.equal(new Set(urls.map((url) => url.href)).size, urls.length, "canonical URLs are unique");
+    for (const url of urls) {
+      assert.equal(url.search, "");
+      assert.equal(url.hash, "");
+      assert.doesNotMatch(url.pathname, /^\/(?:admin|api|dashboard|login|partner-programme)/);
+    }
+    return urls.map((url) => url.pathname);
+  }
   try {
     await start();
+    assert.ok((await sitemapPaths()).includes("/marketplace/fish-heads"));
     assert.equal((await request("/api/admin/products")).status, 401);
     assert.equal((await request("/api/admin/products", { method: "POST", body: form() })).status, 401);
     assert.match(await (await request("/admin/products")).text(), /Welcome back/);
@@ -81,6 +97,7 @@ test("protected product publishing, uploads, persistence, and draft isolation", 
     assert.equal(product.price, 1500.5);
     assert.match(product.image, /^\/api\/media\/[0-9a-f-]+\.png$/);
     assert.equal((await request(`/marketplace/${product.slug}`)).status, 404);
+    assert.ok(!(await sitemapPaths()).includes(`/marketplace/${product.slug}`), "drafts are excluded from search discovery");
     assert.doesNotMatch(await (await request("/marketplace")).text(), /Test crop pack/);
     const image = await request(product.image);
     assert.equal(image.headers.get("content-type"), "image/png");
@@ -91,6 +108,7 @@ test("protected product publishing, uploads, persistence, and draft isolation", 
     const published = await request(`/api/admin/products/${product.slug}`, { method: "PUT", body: form({ status: "published" }) });
     assert.equal(published.status, 200);
     assert.equal((await published.json()).product.image, product.image);
+    assert.ok((await sitemapPaths()).includes(`/marketplace/${product.slug}`), "newly published products appear without rebuilding");
     const publicPage = await request(`/marketplace/${product.slug}`);
     assert.equal(publicPage.status, 200);
     const html = await publicPage.text();
@@ -124,10 +142,12 @@ test("protected product publishing, uploads, persistence, and draft isolation", 
     assert.equal(updated.price, 0);
     assert.equal(updated.image, null);
     assert.equal((await request(`/marketplace/${product.slug}`)).status, 404);
+    assert.ok(!(await sitemapPaths()).includes(`/marketplace/${product.slug}`), "unpublished products leave the sitemap immediately");
     assert.doesNotMatch(await (await request("/marketplace")).text(), /Test crop pack/);
     assert.equal((await request(`/api/admin/products/${product.slug}`, { method: "DELETE" })).status, 200);
     assert.equal((await request(`/api/admin/products/${product.slug}`, { method: "DELETE" })).status, 200, "archiving is idempotent");
     assert.equal((await (await request("/api/admin/products")).json()).products.find((item) => item.slug === product.slug).status, "archived", "archived records retain their history");
+    assert.ok(!(await sitemapPaths()).includes(`/marketplace/${product.slug}`), "archived products remain excluded");
     assert.equal((await request("/api/admin/products", { headers: { Cookie: "dejadon-admin=invalid" } })).status, 401);
     const signedOut = await request("/api/admin/session", { method: "DELETE" });
     assert.equal(signedOut.status, 200);

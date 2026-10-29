@@ -1,14 +1,13 @@
 import { ButtonLink } from "@/components/button-link";
+import { FaqSection } from "@/components/faq-section";
 import { PageHero } from "@/components/page-hero";
 import { PageSection } from "@/components/page-section";
 import { SectionHeader } from "@/components/section-header";
 import { SiteLayout } from "@/components/site-layout";
 import { heroMedia } from "@/lib/hero-media";
+import { publicPageMetadata } from "@/lib/seo";
 
-export const metadata = {
-  title: "Flexisave",
-  description: "De Jadon Group’s structured savings solution, designed to encourage disciplined financial planning and help people work towards specific financial goals."
-};
+export const metadata = publicPageMetadata("/businesses/flexisave", "Flexisave", "De Jadon Group’s structured savings solution, designed to encourage disciplined financial planning and help people work towards specific financial goals.");
 
 export default function FlexisavePage() {
   return (
@@ -26,6 +25,11 @@ export default function FlexisavePage() {
           </div>
         </div>
       </PageSection>
+      <FaqSection accent="green" items={[
+        { question: "What is Flexisave?", answer: "Flexisave is De Jadon Group’s structured savings solution, designed to encourage disciplined financial planning and help people work towards specific financial goals." },
+        { question: "Where can I find the current savings options and terms?", answer: "Contact our team for the current options, how to participate and the applicable terms." },
+        { question: "How do I enquire about Flexisave?", answer: "Use the enquiry button on this page or email dejadongroup@gmail.com with your Flexisave questions." }
+      ]} />
     </SiteLayout>
   );
 }

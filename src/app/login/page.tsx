@@ -6,6 +6,8 @@ import type { DashboardRole } from "@/types/site";
 
 type LoginPageProps = { searchParams?: { role?: string; next?: string; mode?: string; ref?: string } };
 
+export const metadata = { title: "Your portal", robots: { index: false, follow: false } };
+
 export default function LoginPage({ searchParams }: LoginPageProps) {
   const initialRole: DashboardRole = searchParams?.role === "client" ? "client" : "partner";
 

@@ -1,7 +1,9 @@
+import { publicPageMetadata } from "@/lib/seo";
 import { companyContact, companyMapHref, companySocialProfiles } from "@/lib/site-data";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { ButtonLink } from "@/components/button-link";
+import { FaqSection } from "@/components/faq-section";
 import { PageHero } from "@/components/page-hero";
 import { PageSection } from "@/components/page-section";
 import { SectionHeader } from "@/components/section-header";
@@ -9,6 +11,8 @@ import { SiteLayout } from "@/components/site-layout";
 
 const inquiryOptions = ["Agriculture", "Agro-Real Estate", "Flexisave", "Partner Program"];
 const emailAddress = "dejadongroup@gmail.com";
+
+export const metadata = publicPageMetadata("/contact", "Contact us", "Contact De Jadon Group for business enquiries. Find our phone number, email, office address and working hours.");
 
 export default function ContactPage() {
   return (
@@ -72,6 +76,12 @@ export default function ContactPage() {
           </div>
         </div>
       </PageSection>
+      <FaqSection items={[
+        { question: "How can I contact De Jadon Group?", answer: `Call 08070458759 or email ${emailAddress}. You can also use the enquiry links above to start an email about a particular business.` },
+        { question: "Where is your office?", answer: companyContact.office },
+        { question: "What are your working hours?", answer: companyContact.workingHours },
+        { question: "What can I enquire about?", answer: "Our team handles enquiries about Agriculture, Agro-Real Estate, Flexisave, the Partner Programme and general company information." }
+      ]} />
     </SiteLayout>
   );
 }

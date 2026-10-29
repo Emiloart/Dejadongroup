@@ -7,10 +7,12 @@ import { SectionHeader } from "@/components/section-header";
 import { SiteLayout } from "@/components/site-layout";
 import { marketplaceCategories } from "@/lib/marketplace-data";
 import { getPublishedProducts } from "@/lib/marketplace-store";
+import { siteUrl } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
+  alternates: { canonical: siteUrl("/marketplace") },
   title: "Marketplace",
   description: "Browse De Jadon Group products, view prices and availability, and enquire directly with our team."
 };
