@@ -18,7 +18,7 @@ export type MarketplaceProduct = {
   unit?: string;
   image?: string | null;
   imageAlt?: string;
-  status?: "draft" | "published";
+  status?: "draft" | "published" | "archived";
   availability?: "in-stock" | "out-of-stock" | "on-request";
 };
 

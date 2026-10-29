@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { createHash, timingSafeEqual } from "node:crypto";
-import { adminCookieOptions, isAdminAuthenticated, isSameOrigin, isSuperAdminAuthenticated } from "@/lib/admin-auth";
+import { adminCookieOptions, isSameOrigin } from "@/lib/admin-auth";
 import { ContentError } from "@/lib/content-api";
 import { readLimitedBody } from "@/lib/request-body";
 import { getPartnerView, partnerSessionSeconds } from "@/lib/partner-store";
@@ -13,7 +13,7 @@ export function partnerCookie(response: NextResponse, token: string) {
   response.cookies.set(partnerCookieName, token, { ...adminCookieOptions, maxAge: partnerSessionSeconds });
   return response;
 }
-export const partnerJson = (body: unknown, status = 200) => NextResponse.json(body, { status, headers: { "Cache-Control": "no-store" } });
+export const partnerJson = (body: unknown, status = 200) => NextResponse.json(JSON.parse(JSON.stringify(body, (key, value) => key === "tierSnapshot" || key === "snapshotOrigin" ? undefined : value)), { status, headers: { "Cache-Control": "no-store" } });
 export async function readPartnerBody(request: Request, profile = false): Promise<Record<string, unknown>> {
   try {
     const body: unknown = JSON.parse((await readLimitedBody(request, profile ? 2 * 1024 * 1024 : 256 * 1024)).toString("utf8"));
@@ -29,12 +29,6 @@ export function partnerWriteGuard(request: Request, scope: string, limit = 20) {
   const entry = attempts.get(key) || { count: 0, reset: now + 15 * 60 * 1000 };
   if (entry.count >= limit || attempts.size >= 10000 && !attempts.has(key)) return NextResponse.json({ error: "Too many attempts. Please try again later." }, { status: 429, headers: { "Retry-After": String(Math.ceil((entry.reset - now) / 1000)), "Cache-Control": "no-store" } });
   entry.count++; attempts.set(key, entry); return null;
-}
-export function requireProgrammeSuperAdmin(request: Request, write = false) {
-  if (!isAdminAuthenticated()) return partnerJson({ error: "Sign in to the admin workspace." }, 401);
-  if (!isSuperAdminAuthenticated()) return partnerJson({ error: "Only the Super Admin can manage the Partner Programme, tiers and promo codes." }, 403);
-  if (write && !isSameOrigin(request)) return partnerJson({ error: "Refresh the page and try again." }, 403);
-  return null;
 }
 export function authorizedReconciliation(request: Request) {
   const secret = process.env.PARTNER_RECONCILE_SECRET;

@@ -1,12 +1,14 @@
+import { appendAudit } from "@/lib/admin-audit";
 import { createHash, randomBytes, randomInt, randomUUID, scrypt, timingSafeEqual } from "node:crypto";
 import { ContentError } from "@/lib/content-api";
 import { readCollection, updateCollection } from "@/lib/site-storage";
 import { otpDigest, sendPartnerOtp, serviceConfiguration } from "@/lib/partner-services";
 import { emailField, integerField, isoField, moneyField, passwordField, textField } from "@/lib/partner-validation";
+import { publicPartnerPayment } from "@/lib/partner-types";
 import type { PartnerAccount, PartnerPayment, PartnerProfile, PartnerPromo, PartnerQuote, PartnerTier, PartnerView, TierPreview } from "@/lib/partner-types";
 
 export type PartnerRecord = PartnerAccount & {
-  aliases: string[]; referrerId: string | null; entitlementPaymentRef: string | null;
+  suspendedAt?: string | null; aliases: string[]; referrerId: string | null; entitlementPaymentRef: string | null;
   passwordSalt: string; passwordHash: string; sessions: { hash: string; expiresAt: number }[];
   otpHash: string | null; otpExpiresAt: number; otpAttempts: number; otpSentAt: number;
 };
@@ -19,13 +21,20 @@ export const readProgramme = async () => (await readCollection<ProgrammeState>("
 export function mutateProgramme<T>(update: (state: ProgrammeState) => T | Promise<T>) {
   return updateCollection<ProgrammeState, T>("partner-programme", async (items) => {
     const state = items[0] || emptyState();
+    // Freeze legacy purchased entitlements before any tier configuration can change.
+    for (const payment of state.payments) if (payment.entitledAt && !payment.tierSnapshot) {
+      const tier = state.tiers.find((tier) => tier.id === payment.tierId);
+      if (tier) { payment.tierSnapshot = structuredClone(tier); payment.snapshotOrigin = "legacy-migration"; }
+    }
+    const auditStart = state.audit.length;
     const result = await update(state);
+    for (const event of state.audit.slice(auditStart)) await appendAudit({ action: event.action, resource: "partner-programme", resourceId: event.subject });
+    state.audit = state.audit.slice(-2000);
     return { items: [state], result };
   });
 }
 export function audit(state: ProgrammeState, action: string, subject: string) {
   state.audit.push({ at: new Date().toISOString(), action, subject });
-  state.audit = state.audit.slice(-2000);
 }
 export const partnerSessionSeconds = 8 * 60 * 60;
 export const digest = (value: string) => createHash("sha256").update(value).digest("hex");
@@ -43,7 +52,7 @@ async function passwordMatches(record: PartnerRecord, password: unknown) {
 export function findPartner(state: ProgrammeState, token: string | undefined) {
   if (!token || token.length > 100) return undefined;
   const hash = digest(token);
-  return state.partners.find((partner) => partner.sessions.some((item) => item.hash === hash && item.expiresAt > Date.now()));
+  return state.partners.find((partner) => !partner.suspendedAt && partner.sessions.some((item) => item.hash === hash && item.expiresAt > Date.now()));
 }
 export function requirePartner(state: ProgrammeState, token: string) {
   const partner = findPartner(state, token);
@@ -59,7 +68,7 @@ export function accountDetails(record: PartnerRecord): PartnerAccount {
 }
 export function activePartner(state: ProgrammeState, record: PartnerRecord) {
   const mode = process.env.PAYSTACK_SECRET_KEY?.startsWith("sk_live_") ? "live" : process.env.PAYSTACK_SECRET_KEY?.startsWith("sk_test_") ? "test" : null;
-  return Boolean(record.emailVerifiedAt && record.profileCompletedAt && record.registeredAt && record.currentTierId && state.tiers.some((tier) => tier.id === record.currentTierId) && state.payments.some((payment) => payment.reference === record.entitlementPaymentRef && payment.partnerId === record.id && payment.tierId === record.currentTierId && payment.status === "paid" && payment.entitledAt && (!mode || payment.providerMode === "free" || payment.providerMode === mode)));
+  return Boolean(!record.suspendedAt && record.emailVerifiedAt && record.profileCompletedAt && record.registeredAt && record.currentTierId && state.tiers.some((tier) => tier.id === record.currentTierId) && state.payments.some((payment) => payment.reference === record.entitlementPaymentRef && payment.partnerId === record.id && payment.tierId === record.currentTierId && payment.status === "paid" && payment.entitledAt && (!mode || payment.providerMode === "free" || payment.providerMode === mode)));
 }
 export function tierPreview(tier: PartnerTier): TierPreview {
   return { ...tier, benefits: tier.benefits.map(({ id, title, summary }) => ({ id, title, summary })) };
@@ -73,9 +82,9 @@ export async function getPartnerView(token: string | undefined): Promise<Partner
   const network = state.partners.filter((item) => item.referrerId === partner.id);
   return {
     partner: accountDetails(partner), active,
-    currentTier: active ? state.tiers.find((tier) => tier.id === partner.currentTierId)! : null,
+    currentTier: active ? state.payments.find((payment) => payment.reference === partner.entitlementPaymentRef)?.tierSnapshot || state.tiers.find((tier) => tier.id === partner.currentTierId)! : null,
     tiers: state.tiers.filter((tier) => tier.active).sort((a, b) => a.rank - b.rank).map(tierPreview),
-    payments: state.payments.filter((payment) => payment.partnerId === partner.id).slice().reverse(),
+    payments: state.payments.filter((payment) => payment.partnerId === partner.id).slice().reverse().map(publicPartnerPayment),
     network: { introduced: network.length, verified: network.filter((item) => item.emailVerifiedAt).length, registered: network.filter((item) => activePartner(state, item)).length }
   };
 }
@@ -123,7 +132,7 @@ export async function signInPartner(input: Record<string, unknown>) {
   if (!found || !matches) throw new ContentError("The email or password is incorrect.", 401);
   return mutateProgramme((state) => {
     const partner = state.partners.find((item) => item.id === found.id);
-    if (!partner || partner.passwordHash !== found.passwordHash) throw new ContentError("Sign in again with your current password.", 401);
+    if (!partner || partner.suspendedAt || partner.passwordHash !== found.passwordHash) throw new ContentError("Sign in again with your current password.", 401);
     const current = session(); partner.sessions = [...partner.sessions.filter((item) => item.expiresAt > Date.now()).slice(-4), current.stored];
     return { token: current.token, partner: accountDetails(partner) };
   });
@@ -222,7 +231,7 @@ export function buildPartnerQuote(state: ProgrammeState, partner: PartnerRecord,
     if (promo.maxUses && usage.uses + usage.reserved >= promo.maxUses) throw new ContentError("This promo code has reached its usage limit.");
     if (state.payments.filter((item) => item.promoId === promo.id && item.partnerId === partner.id && (item.entitledAt || paymentReserved(item))).length >= promo.perPartnerLimit) throw new ContentError("You have reached the usage limit for this promo code.");
   }
-  const discountKobo = promo ? Math.min(baseKobo, promo.type === "percent" ? Math.floor(baseKobo * promo.value / 100) : promo.value) : 0;
+  const discountKobo = promo ? Math.min(baseKobo, promo.type === "percent" ? Number(BigInt(baseKobo) * BigInt(Math.round(promo.value * 100)) / BigInt(10000)) : promo.value) : 0;
   const verificationFeeKobo = kind === "registration" && promo && discountKobo === baseKobo ? 10000 : 0;
   const quote = { tierId: tier.id, tierName: tier.name, fromTierId: currentTier?.id || null, kind, baseKobo, discountKobo, verificationFeeKobo, amountKobo: baseKobo - discountKobo + verificationFeeKobo, promoCode: code } as Omit<PartnerQuote, "fingerprint">;
   const fingerprint = digest(JSON.stringify({ ...quote, tierUpdated: tier.updatedAt, currentUpdated: currentTier?.updatedAt, promoUpdated: promo?.updatedAt }));
@@ -282,7 +291,7 @@ export async function getAdminPartnerProgramme() {
   const state = await readProgramme();
   return {
     tiers: state.tiers.slice().sort((a, b) => a.rank - b.rank), promos: state.promos.map((promo) => ({ ...promo, ...promoUsage(state, promo.id) })),
-    partners: state.partners.map(({ id, fullName, email, emailVerifiedAt, profileCompletedAt, registeredAt, currentTierId }) => ({ id, fullName, email, emailVerifiedAt, profileCompletedAt, registeredAt, currentTierId })),
-    payments: state.payments.slice().reverse(), audit: state.audit.slice(-100).reverse()
+    partners: state.partners.map((member) => ({ id: member.id, fullName: member.fullName, email: member.email, emailVerifiedAt: member.emailVerifiedAt, profileCompletedAt: member.profileCompletedAt, registeredAt: member.registeredAt, currentTierId: member.currentTierId, suspendedAt: member.suspendedAt || null, referrerId: member.referrerId, phone: member.phone, location: member.location, occupation: member.occupation, nationality: member.nationality, accountNumber: member.accountNumber ? `******${member.accountNumber.slice(-4)}` : "", introductions: state.partners.filter((item) => item.referrerId === member.id).length })),
+    payments: state.payments.slice().reverse().map(publicPartnerPayment), audit: state.audit.slice(-100).reverse()
   };
 }

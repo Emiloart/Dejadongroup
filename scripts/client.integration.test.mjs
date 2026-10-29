@@ -61,7 +61,7 @@ test("verified token activation, private client records, profile security and wi
   const admin = (url, options = {}) => request(url, { ...options, cookie: adminCookie });
   const activate = (token, email = "client-one@gmail.com", extra = {}) => request("/api/client/register", { method: "POST", body: { token, email, password }, ...extra });
   const issue = async (id, action = "issue") => json(await admin(`/api/admin/clients/${id}/token`, { method: "POST", body: { action } }));
-  const create = async (overrides = {}) => (await json(await admin("/api/admin/clients", { method: "POST", body: { fullName: "Verified Client One", email: "client-one@gmail.com", verified: true, ...overrides } }), 201)).client;
+  const create = async (overrides = {}) => (await json(await admin("/api/admin/clients", { method: "POST", body: { withdrawals: [], fullName: "Verified Client One", email: "client-one@gmail.com", verified: true, ...overrides } }), 201)).client;
   const update = async (record, overrides) => (await json(await admin(`/api/admin/clients/${record.id}`, { method: "PUT", body: { ...record, ...overrides } }))).client;
   const signin = (email, suppliedPassword = password) => request("/api/client/session", { method: "POST", body: { email, password: suppliedPassword } });
   const profile = (cookie, body, headers) => request("/api/client/profile", { method: "PUT", cookie, body, headers });
@@ -84,15 +84,23 @@ test("verified token activation, private client records, profile security and wi
     assert.equal((await admin("/api/admin/clients", { method: "POST", body: { fullName: "Bad data", balance: -1 } })).status, 400);
     let first = await create({ verified: false });
     const adminOverview = await (await admin("/admin")).text();
-    assert.match(adminOverview, /Manage clients/); assert.match(adminOverview, /Saved client records/);
+    assert.match(adminOverview, /Client &amp; Agro-Real Estate|Client &amp; Agro|Client &/);
     assert.equal((await admin(`/api/admin/clients/${first.id}/token`, { method: "POST", body: { action: "issue" } })).status, 400);
     first = await update(first, {
       verified: true, propertyName: "Palm Grove", propertyLocation: "Achalla, Anambra, Nigeria", propertyReference: "DJ-PLOT-42",
       investmentName: "Managed Palm Plan", investmentDetails: "Cultivation and maintenance details.", investmentProgress: 35,
-      actualDateLabel: "Allocation confirmed", actualDate: "2026-10-25", balance: "125000.50",
+      actualDateLabel: "Allocation confirmed", actualDate: "2026-10-25",
       processes: [{ title: "Land allocation", detail: "Your plot has been assigned.", status: "completed" }, { title: "Survey", detail: "Survey is underway.", status: "processing" }],
-      withdrawals: ["pending", "processing", "successful"].map((status, index) => ({ amount: 1000 + index, date: "2026-10-26", status, reference: `REQ-${index}`, note: `${status} request` }))
+      withdrawals: ["pending", "processing", "successful"].map((status, index) => ({ amount: 1000 + index, date: "2026-10-26", status: "pending", reference: `REQ-${index}`, note: `${status} request` }))
     });
+    // Legacy balances/statuses are retained at cutover. Seed a synthetic pre-upgrade
+    // record on the isolated disk; the new API must refuse to fabricate settlement.
+    const legacy = JSON.parse(await readFile(path.join(directory, "clients.json"), "utf8"));
+    const legacyFirst = legacy.items.find((item) => item.id === first.id);
+    legacyFirst.balance = 125000.5;
+    legacyFirst.withdrawals.forEach((item, index) => { item.status = ["pending", "processing", "successful"][index]; });
+    await writeFile(path.join(directory, "clients.json"), JSON.stringify(legacy));
+    first = (await json(await admin("/api/admin/clients"))).clients.find((item) => item.id === first.id);
     assert.equal(first.balance, 125000.5); noSecrets(first);
     const oldToken = (await issue(first.id)).token;
     const issued = await issue(first.id);
@@ -137,19 +145,20 @@ test("verified token activation, private client records, profile security and wi
     assert.equal((await signin(first.email)).status, 401);
     assert.equal((await signin("changed@gmail.com", password)).status, 401);
     await json(await signin("changed@gmail.com", "new-valid-password"));
-    const second = await create({ fullName: "Private Client Two", email: "", propertyLocation: "Private second location", balance: 88 });
+    const second = await create({ fullName: "Private Client Two", email: "", propertyLocation: "Private second location" });
     const secondToken = (await issue(second.id)).token;
     const races = await Promise.all([1, 2].map(() => activate(secondToken, "client-two@gmail.com")));
     assert.deepEqual(races.map((response) => response.status).sort(), [201, 400], "only one simultaneous token use succeeds");
     const secondCookie = sessionCookie(races.find((response) => response.status === 201));
     const own = (await json(await request(`/api/client/session?id=${first.id}`, { cookie: secondCookie }))).client;
-    assert.equal(own.id, second.id); assert.equal(own.balance, 88); noSecrets(own);
+    assert.equal(own.id, second.id); assert.equal(own.balance, null); noSecrets(own);
     const ownHtml = await (await request("/dashboard/client", { cookie: secondCookie })).text();
     assert.doesNotMatch(ownHtml, /Palm Grove|125,000.50|Allocation confirmed|changed@gmail.com/);
     first = (await json(await admin("/api/admin/clients"))).clients.find((item) => item.id === first.id);
-    first = await update(first, { investmentProgress: 80, withdrawals: first.withdrawals.map((item) => ({ ...item, status: "successful" })) });
+    assert.equal((await admin(`/api/admin/clients/${first.id}`, { method: "PUT", body: { ...first, withdrawals: first.withdrawals.map((item) => ({ ...item, status: "successful" })) } })).status, 400);
+    first = await update(first, { investmentProgress: 80 });
     const refreshed = (await json(await request("/api/client/session", { cookie: updatedCookie }))).client;
-    assert.equal(refreshed.investmentProgress, 80); assert.ok(refreshed.withdrawals.every((item) => item.status === "successful"));
+    assert.equal(refreshed.investmentProgress, 80); assert.deepEqual(refreshed.withdrawals.map((item) => item.status), ["pending", "processing", "successful"]);
     assert.equal((await admin(`/api/admin/clients/${first.id}`, { method: "PUT", body: { ...first, email: "admin-change@gmail.com" } })).status, 400);
     const third = await create({ fullName: "Client Three", email: "third@gmail.com" });
     const revoked = (await issue(third.id)).token; await issue(third.id, "revoke");

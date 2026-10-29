@@ -132,7 +132,7 @@ function session() {
 }
 
 function usableToken(record: ClientRecord, tokenHash: string) {
-  return record.verified && !record.activatedAt && record.tokenHash === tokenHash && Date.parse(record.tokenExpiresAt || "") > Date.now();
+  return (!record.accessStatus || record.accessStatus === "active") && record.verified && !record.activatedAt && record.tokenHash === tokenHash && Date.parse(record.tokenExpiresAt || "") > Date.now();
 }
 
 export async function activateClient(input: Record<string, unknown>) {
@@ -158,12 +158,12 @@ export async function activateClient(input: Record<string, unknown>) {
 
 export async function signInClient(input: Record<string, unknown>) {
   const address = email(input.email);
-  const found = (await readClients()).find((item) => item.email === address && item.activatedAt && item.verified);
+  const found = (await readClients()).find((item) => item.email === address && item.activatedAt && item.verified && (!item.accessStatus || item.accessStatus === "active"));
   const matches = found ? await passwordMatches(found, input.password) : (await derive(typeof input.password === "string" ? input.password.slice(0, 128) : "", "dejadon-client-signin"), false);
   if (!found || !matches) throw new ContentError("The email or password is incorrect.", 401);
   return updateCollection<ClientRecord, { client: ClientDetails; token: string }>("clients", (items) => {
     const record = items.find((item) => item.id === found.id);
-    if (!record?.verified || record.passwordHash !== found.passwordHash) throw new ContentError("Sign in again with your current password.", 401);
+    if (!record?.verified || record.accessStatus && record.accessStatus !== "active" || record.passwordHash !== found.passwordHash) throw new ContentError("Sign in again with your current password.", 401);
     const current = session();
     record.sessions = [...record.sessions.filter((item) => item.expiresAt > Date.now()).slice(-4), current.stored];
     return { items, result: { client: safeDetails(record), token: current.token } };
@@ -173,7 +173,7 @@ export async function signInClient(input: Record<string, unknown>) {
 export async function getClientForSession(token: string | undefined) {
   if (!token || token.length > 100) return null;
   const tokenHash = hash(token);
-  const found = (await readClients()).find((item) => item.verified && item.activatedAt && item.sessions.some((current) => current.hash === tokenHash && current.expiresAt > Date.now()));
+  const found = (await readClients()).find((item) => item.verified && (!item.accessStatus || item.accessStatus === "active") && item.activatedAt && item.sessions.some((current) => current.hash === tokenHash && current.expiresAt > Date.now()));
   return found ? safeDetails(found) : null;
 }
 

@@ -25,6 +25,7 @@ export async function createPartnerCheckout(token: string, input: Record<string,
     const now = new Date().toISOString();
     const expires = Math.min(Date.now() + 30 * 60 * 1000, promo?.endsAt ? Date.parse(promo.endsAt) : Infinity);
     const payment: PartnerPayment = {
+      tierSnapshot: structuredClone(state.tiers.find((tier) => tier.id === quote.tierId)!), snapshotOrigin: "checkout",
       ...quote, reference: `DJ-PAY-${randomUUID()}`, partnerId: partner.id, promoId: promo?.id || null,
       providerMode: quote.amountKobo === 0 ? "free" : process.env.PAYSTACK_SECRET_KEY?.startsWith("sk_live_") ? "live" : "test",
       status: quote.amountKobo ? "initializing" : "paid", checkoutUrl: null, expiresAt: new Date(expires).toISOString(), createdAt: now,
@@ -108,6 +109,8 @@ export async function processPartnerRefund(reference: string, allowRetry = false
   const claim = await mutateProgramme((state) => {
     const payment = state.payments.find((item) => item.reference === reference);
     if (!payment || !payment.refundKobo || !payment.transactionId || payment.refundStatus === "processed") return null;
+    const providerMode = process.env.PAYSTACK_SECRET_KEY?.startsWith("sk_live_") ? "live" : process.env.PAYSTACK_SECRET_KEY?.startsWith("sk_test_") ? "test" : null;
+    if (!providerMode || payment.providerMode !== providerMode) throw new ContentError("This refund requires the original payment environment.", 409);
     if (payment.refundStatus === "submitting" && Date.now() - Date.parse(payment.refundAttemptedAt || "") < 120000) return null;
     const previous = payment.refundStatus;
     payment.refundStatus = "submitting"; payment.refundAttemptedAt = new Date().toISOString();
@@ -121,6 +124,8 @@ export async function processPartnerRefund(reference: string, allowRetry = false
     if (!claim.payment.refundId || refund?.status === "failed" && allowRetry) {
       const refunds = await findExistingRefund(claim.payment);
       refund = refunds.find((item) => item.amount === claim.payment.refundKobo && item.currency === "NGN" && item.status !== "failed");
+      const existingKobo = refunds.filter((item) => item.currency === "NGN" && item.status !== "failed" && Number.isSafeInteger(item.amount) && item.amount > 0).reduce((sum, item) => sum + item.amount, 0);
+      if (!refund && existingKobo + claim.payment.refundKobo > (claim.payment.receivedKobo ?? 0)) throw new ContentError("Existing provider refunds leave insufficient refundable funds.", 409);
       if (!refund && (claim.previous === "queued" || allowRetry && ["failed", "uncertain"].includes(claim.previous))) {
         submitted = true;
         refund = await paystack<Refund>("/refund", { transaction: claim.payment.transactionId, amount: claim.payment.refundKobo, currency: "NGN", customer_note: "Immediate refund of your De Jadon Group verification payment.", merchant_note: `De Jadon Group refund ${reference}` });

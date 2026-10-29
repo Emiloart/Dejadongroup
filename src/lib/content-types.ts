@@ -7,6 +7,7 @@ export type NewsArticle = {
   siteName: string;
   kind: "blog" | "news";
   published: boolean;
+  archived?: boolean;
   createdAt: string;
 };
 

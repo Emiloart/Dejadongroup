@@ -1,3 +1,5 @@
+import { managedContent } from "@/lib/managed-content";
+import { ManagedPublicContent } from "@/components/managed-public-content";
 import { ButtonLink } from "@/components/button-link";
 import { BusinessCarousel } from "@/components/business-carousel";
 import { HomeHeroCarousel } from "@/components/home-hero-carousel";
@@ -14,14 +16,15 @@ export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const articles = await getPublishedNews();
+  const about = (await managedContent()).find((item) => item.kind === "homepage" && item.slug === "about" && item.status === "published");
   return (
     <SiteLayout>
       <HomeHeroCarousel slides={homeHeroSlides} />
       <PageSection tinted>
         <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
-          <SectionHeader title="About De Jadon Group" eyebrow="Who we are" />
+          <SectionHeader title={about?.title || "About De Jadon Group"} eyebrow="Who we are" />
           <div>
-            <p className="max-w-2xl text-lg leading-8 text-stone-600">De Jadon Group brings together agriculture, real estate and Flexisave to help individuals, families and businesses build and preserve wealth.</p>
+            <p className="max-w-2xl text-lg leading-8 text-stone-600">{about?.body || "De Jadon Group brings together agriculture, real estate and Flexisave to help individuals, families and businesses build and preserve wealth."}</p>
             <div className="mt-5"><ButtonLink href="/about" variant="outline">Get to know us</ButtonLink></div>
           </div>
         </div>
@@ -75,6 +78,7 @@ export default async function HomePage() {
           </dl>
         </div>
       </PageSection>
+      <ManagedPublicContent />
       <NewsCarousel articles={articles} />
       <NewsletterSection />
     </SiteLayout>

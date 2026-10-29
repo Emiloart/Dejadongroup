@@ -22,6 +22,7 @@ export type PartnerQuote = {
 };
 export type RefundStatus = "none" | "queued" | "submitting" | "pending" | "processing" | "processed" | "failed" | "needs-attention" | "uncertain";
 export type PartnerPayment = PartnerQuote & {
+  tierSnapshot?: PartnerTier; snapshotOrigin?: "checkout" | "legacy-migration";
   reference: string; partnerId: string; promoId: string | null;
   providerMode: "live" | "test" | "free";
   status: "initializing" | "pending" | "paid" | "failed" | "cancelled" | "rejected";
@@ -37,3 +38,5 @@ export type PartnerView = {
 export function partnerMoney(kobo: number) {
   return new Intl.NumberFormat("en-NG", { style: "currency", currency: "NGN" }).format(kobo / 100);
 }
+
+export function publicPartnerPayment(payment: PartnerPayment): PartnerPayment { const { tierSnapshot: _snapshot, snapshotOrigin: _origin, ...safe } = payment; return safe; }

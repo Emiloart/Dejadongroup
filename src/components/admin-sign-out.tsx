@@ -17,5 +17,5 @@ export function AdminSignOut() {
       setBusy(false);
     }
   }
-  return <div><button type="button" disabled={busy} onClick={signOut} className="min-h-9 rounded-card px-3 text-xs font-semibold text-stone-600 hover:bg-ink/5 hover:text-ink disabled:opacity-60">{busy ? "Signing out…" : "Sign out"}</button>{error ? <p role="alert" className="text-xs text-red-700">{error}</p> : null}</div>;
+  return <div><button type="button" disabled={busy} onClick={signOut} className="min-h-9 rounded-card px-3 text-xs font-semibold text-stone-200 hover:bg-white/10 hover:text-white disabled:opacity-60">{busy ? "Signing out…" : "Sign out"}</button>{error ? <p role="alert" className="text-xs text-red-700">{error}</p> : null}</div>;
 }

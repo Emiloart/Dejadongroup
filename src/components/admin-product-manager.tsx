@@ -19,7 +19,7 @@ type ProductForm = {
   availability: "in-stock" | "out-of-stock" | "on-request";
 };
 
-type Filter = "all" | "published" | "draft";
+type Filter = "all" | "published" | "draft" | "archived";
 type FieldErrors = Partial<Record<keyof ProductForm | "image", string>>;
 
 const inputClass = "mt-2 w-full rounded-card border border-stone-300 bg-white px-3.5 py-3 text-base text-ink placeholder:text-stone-400 focus:border-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-700/20 disabled:bg-stone-50 sm:text-sm";
@@ -36,7 +36,7 @@ function toForm(product?: MarketplaceProduct): ProductForm {
     price: product?.price == null ? "" : String(product.price),
     unit: product?.unit ?? "",
     imageAlt: product?.imageAlt ?? "",
-    status: product?.status ?? "draft",
+    status: product?.status === "archived" ? "draft" : product?.status ?? "draft",
     availability: product?.availability ?? "in-stock"
   };
 }
@@ -183,6 +183,12 @@ export function AdminProductManager({ initialProducts }: { initialProducts: Mark
     }
   }
 
+  async function archive(product: MarketplaceProduct) {
+    if (pending || !window.confirm(`Archive ${product.name} and hide it from the marketplace?`)) return;
+    setPending(product.slug); setError(""); setNotice("");
+    try { const response = await fetch(`/api/admin/products/${encodeURIComponent(product.slug)}`, { method: "DELETE" }); const result = await response.json(); if (!response.ok) throw new Error(result.error || "Unable to archive this product."); updateList({ ...product, status: "archived" }); setNotice(`${product.name} has been archived. Its history is retained.`); router.refresh(); } catch (failure) { setError(failure instanceof Error ? failure.message : "Unable to archive this product."); } finally { setPending(null); }
+  }
+
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     void saveProduct();
@@ -310,7 +316,7 @@ export function AdminProductManager({ initialProducts }: { initialProducts: Mark
         <section aria-label="Product list" className="mt-8">
           <div className="flex flex-wrap items-center justify-between gap-5 border-b border-ink/10 pb-5">
             <div className="flex flex-wrap gap-1 rounded-card border border-ink/10 bg-white p-1" aria-label="Filter products by visibility">
-              {(["all", "published", "draft"] as const).map((value) => <button key={value} type="button" aria-pressed={filter === value} onClick={() => setFilter(value)} className={`min-h-10 rounded px-3 text-sm font-semibold ${filter === value ? "bg-ink text-white" : "text-stone-600 hover:bg-stone-50"}`}>{value === "all" ? "All products" : value === "draft" ? "Drafts" : "Published"}<span className="ml-2 text-xs opacity-75">{products.filter((product) => value === "all" || product.status === value).length}</span></button>)}
+              {(["all", "published", "draft", "archived"] as const).map((value) => <button key={value} type="button" aria-pressed={filter === value} onClick={() => setFilter(value)} className={`min-h-10 rounded px-3 text-sm font-semibold ${filter === value ? "bg-ink text-white" : "text-stone-600 hover:bg-stone-50"}`}>{value === "all" ? "All products" : value === "draft" ? "Drafts" : value === "archived" ? "Archived" : "Published"}<span className="ml-2 text-xs opacity-75">{products.filter((product) => value === "all" || product.status === value).length}</span></button>)}
             </div>
             <div className="relative w-full sm:w-72">
               <label htmlFor="product-search" className="sr-only">Search products</label>
@@ -327,7 +333,7 @@ export function AdminProductManager({ initialProducts }: { initialProducts: Mark
                     {product.image ? <Image src={product.image} alt={product.imageAlt || product.name} fill sizes="112px" unoptimized className="object-cover" /> : <Package aria-hidden="true" className="h-8 w-8 text-stone-400" />}
                   </div>
                   <div className="min-w-0">
-                    <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold ${product.status === "published" ? "bg-green-50 text-green-800" : "bg-stone-100 text-stone-600"}`}>{product.status === "published" ? "Published" : "Draft"}</span>
+                    <span className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-semibold ${product.status === "published" ? "bg-green-50 text-green-800" : "bg-stone-100 text-stone-600"}`}>{product.status === "published" ? "Published" : product.status === "archived" ? "Archived" : "Draft"}</span>
                     <h2 className="mt-2 break-words text-xl font-medium">{product.name}</h2>
                     <p className="mt-1 text-xs text-stone-500">{getMarketplaceCategoryName(product.category)}</p>
                   </div>
@@ -336,6 +342,7 @@ export function AdminProductManager({ initialProducts }: { initialProducts: Mark
                 <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-sm"><p className="font-semibold text-ink">{formatProductPrice(product)}{typeof product.price === "number" && product.unit ? ` / ${product.unit}` : ""}</p><p className="text-xs text-stone-500">{availabilityLabels[product.availability ?? "on-request"]}</p></div>
                 <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-ink/10 pt-3">
                   <button type="button" disabled={!!pending} onClick={() => openEditor(product)} className="inline-flex min-h-10 items-center gap-2 text-sm font-semibold text-orange-700 hover:text-orange-800 disabled:opacity-50"><Pencil aria-hidden="true" className="h-3.5 w-3.5" /> Edit product</button>
+                  {product.status !== "archived" ? <button type="button" disabled={!!pending} onClick={() => void archive(product)} className="min-h-10 text-xs font-semibold text-red-700">Archive listing</button> : null}
                   {product.status === "published" && <><Link href={`/marketplace/${product.slug}`} className="inline-flex min-h-10 items-center gap-1 text-sm font-semibold text-stone-600 hover:text-ink">View <ArrowUpRight aria-hidden="true" className="h-3.5 w-3.5" /></Link><button type="button" disabled={!!pending} onClick={() => void moveToDraft(product)} className="ml-auto inline-flex min-h-10 items-center gap-1 text-xs font-semibold text-stone-500 hover:text-ink disabled:opacity-50">{pending === product.slug && <Loader2 aria-hidden="true" className="h-3.5 w-3.5 animate-spin" />}Move to drafts</button></>}
                 </div>
               </article>

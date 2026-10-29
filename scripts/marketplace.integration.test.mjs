@@ -68,7 +68,7 @@ test("protected product publishing, uploads, persistence, and draft isolation", 
     assert.match(setCookie, /HttpOnly/i);
     assert.match(setCookie, /SameSite=Lax/i);
     cookie = setCookie.split(";")[0];
-    assert.match(await (await request("/admin")).text(), /Your marketplace/);
+    assert.match(await (await request("/admin")).text(), /Sales &amp; Marketplace/);
     const initial = await (await request("/api/admin/products")).json();
     assert.equal(initial.products.length, 4);
 
@@ -126,7 +126,8 @@ test("protected product publishing, uploads, persistence, and draft isolation", 
     assert.equal((await request(`/marketplace/${product.slug}`)).status, 404);
     assert.doesNotMatch(await (await request("/marketplace")).text(), /Test crop pack/);
     assert.equal((await request(`/api/admin/products/${product.slug}`, { method: "DELETE" })).status, 200);
-    assert.equal((await request(`/api/admin/products/${product.slug}`, { method: "DELETE" })).status, 404);
+    assert.equal((await request(`/api/admin/products/${product.slug}`, { method: "DELETE" })).status, 200, "archiving is idempotent");
+    assert.equal((await (await request("/api/admin/products")).json()).products.find((item) => item.slug === product.slug).status, "archived", "archived records retain their history");
     assert.equal((await request("/api/admin/products", { headers: { Cookie: "dejadon-admin=invalid" } })).status, 401);
     const signedOut = await request("/api/admin/session", { method: "DELETE" });
     assert.equal(signedOut.status, 200);

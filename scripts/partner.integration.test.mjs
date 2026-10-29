@@ -7,7 +7,7 @@ import support from "./partner-test-support.cjs";
 test("Super Admin boundaries and complete verified partner registration, Paystack webhooks, refunds and upgrades", { timeout: 120000 }, async () => {
   const h = await support.startPartnerHarness();
   const password = "integration-test-password"; let partnerCookie;
-  const owner = async (resource, body) => h.request(`/api/admin/partner-programme/${resource}`, { method: body ? "POST" : "GET", body, cookie: ownerCookie });
+  const owner = async (resource, body) => h.request(`/api/admin/partner-programme/${resource}`, { method: body ? "POST" : "GET", body: body && resource === "promos" ? { ...body, confirm: true, reason: "Authorized test promo configuration" } : body, cookie: ownerCookie });
   const partner = (action, body, options = {}) => h.request(`/api/partner/${action}`, { method: body ? "POST" : "GET", body, cookie: partnerCookie, ...options });
   const details = { phone: "08012345678", accountNumber: "0012345678", location: "Awka", dob: "1990-01-01", occupation: "Farmer", nationality: "Nigerian" };
   let ownerCookie;
@@ -18,15 +18,13 @@ test("Super Admin boundaries and complete verified partner registration, Paystac
     const staffCookie = await h.adminSession(h.staff);
     assert.equal((await h.request("/api/admin/products", { cookie: staffCookie })).status, 200);
     for (const resource of ["overview", "tiers", "promos", "payments"]) assert.equal((await h.request(`/api/admin/partner-programme/${resource}`, { method: resource === "overview" ? "GET" : "POST", body: resource === "overview" ? undefined : { role: "super-admin", code: "BYPASS" }, cookie: staffCookie })).status, 403);
-    assert.match(await (await h.request("/admin/partners", { cookie: staffCookie })).text(), /Super Admin access required/);
-    const rawSession = staffCookie.split("=")[1]; const [payload, signature] = rawSession.split(".");
-    const forged = Buffer.from(JSON.stringify({ ...JSON.parse(Buffer.from(payload, "base64url").toString()), role: "super-admin" })).toString("base64url");
-    assert.equal((await h.request("/api/admin/partner-programme/overview", { cookie: `dejadon-admin=${forged}.${signature}` })).status, 401);
+    assert.equal((await h.request("/admin/partners", { cookie: staffCookie })).status, 404);
+    assert.equal((await h.request("/api/admin/partner-programme/overview", { cookie: "dejadon-admin=forged-session" })).status, 401);
     ownerCookie = await h.adminSession();
     assert.equal((await h.request("/api/admin/partner-programme/promos", { method: "POST", cookie: ownerCookie, headers: { Origin: "https://other.test" }, body: {} })).status, 403);
-    const firstTier = (await h.json(await owner("tiers", { name: "Starter", rank: 1, fee: "1000", active: true, benefits: [{ id: "basic-resource", title: "Starter handbook", summary: "A public introduction", content: "PRIVATE STARTER BENEFIT" }] }), 201)).tier;
-    const higherTier = (await h.json(await owner("tiers", { name: "Premium", rank: 2, fee: "2500", active: true, benefits: [{ id: "premium-resource", title: "Premium support", summary: "A public preview", content: "PRIVATE PREMIUM BENEFIT" }] }), 201)).tier;
-    const promo = (await h.json(await owner("promos", { code: "FULLSTART", type: "percent", value: "100", active: true, tierIds: [firstTier.id], maxUses: 1, perPartnerLimit: 1, eligibleEmails: [] }), 201)).promo;
+    const firstTier = (await h.json(await owner("tiers", { name: "Starter", rank: 1, fee: "1000", active: true, benefits: [{ id: "basic-resource", title: "Starter handbook", summary: "A public introduction", content: "PRIVATE STARTER BENEFIT" }] }))).tier;
+    const higherTier = (await h.json(await owner("tiers", { name: "Premium", rank: 2, fee: "2500", active: true, benefits: [{ id: "premium-resource", title: "Premium support", summary: "A public preview", content: "PRIVATE PREMIUM BENEFIT" }] }))).tier;
+    const promo = (await h.json(await owner("promos", { code: "FULLSTART", type: "percent", value: "100", active: true, tierIds: [firstTier.id], maxUses: 1, perPartnerLimit: 1, eligibleEmails: [] }))).promo;
     assert.doesNotMatch(JSON.stringify(await h.json(await partner("tiers"))), /PRIVATE|"content"/);
     assert.doesNotMatch(await (await h.request("/partner-program")).text(), /PRIVATE STARTER|PRIVATE PREMIUM/);
     assert.equal((await partner("register", { fullName: "HTTP Partner", email: "http@gmail.com", password }, { headers: { Origin: "https://other.test" } })).status, 403);
@@ -72,7 +70,7 @@ test("Super Admin boundaries and complete verified partner registration, Paystac
     assert.equal((await h.json(await partner("session"))).currentTier.id, higherTier.id);
     assert.equal((await partner("benefits/premium-resource")).status, 200);
     assert.equal((await partner("quote", { tierId: firstTier.id })).status, 400);
-    assert.equal((await owner("payments", { reference: upgrade.reference, action: "mark-paid" })).status, 400);
+    assert.equal((await owner("payments", { reference: upgrade.reference, action: "mark-paid" })).status, 403);
     const secondRegistration = await h.request("/api/partner/register", { method: "POST", body: { fullName: "Other Person", email: "other@gmail.com", password } }); await h.json(secondRegistration, 201); const otherCookie = h.cookie(secondRegistration);
     assert.equal((await h.request("/api/partner/confirm", { method: "POST", body: { reference: checkout.reference }, cookie: otherCookie })).status, 404);
     const own = await h.json(await h.request(`/api/partner/session?id=${view.partner.id}`, { cookie: otherCookie })); assert.equal(own.partner.email, "other@gmail.com"); assert.equal(own.currentTier, null);

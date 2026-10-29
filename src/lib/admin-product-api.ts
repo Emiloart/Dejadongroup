@@ -1,12 +1,11 @@
 import { NextResponse } from "next/server";
-import { isAdminAuthenticated, isSameOrigin } from "@/lib/admin-auth";
+import { adminGuard } from "@/lib/admin-access";
+import { AdminError } from "@/lib/admin-store";
 import { CatalogError, maxProductImageBytes } from "@/lib/marketplace-store";
 import { readLimitedBody, RequestBodyTooLarge } from "@/lib/request-body";
 
-export function checkProductAccess(request: Request, write = false) {
-  if (!isAdminAuthenticated()) return NextResponse.json({ error: "Sign in again to manage products." }, { status: 401 });
-  if (write && !isSameOrigin(request)) return NextResponse.json({ error: "This request could not be verified. Refresh and try again." }, { status: 403 });
-  return null;
+export async function checkProductAccess(request: Request, write = false) {
+  return adminGuard(request, write ? "marketplace.products.manage" : "marketplace.products.read", write);
 }
 
 export async function readProductForm(request: Request) {
@@ -21,7 +20,7 @@ export async function readProductForm(request: Request) {
 }
 
 export function productApiError(error: unknown) {
-  if (error instanceof CatalogError) return NextResponse.json({ error: error.message }, { status: error.status });
+  if (error instanceof CatalogError || error instanceof AdminError) return NextResponse.json({ error: error.message }, { status: error.status });
   console.error("Marketplace operation failed", error instanceof Error ? error.message : "Unknown error");
   return NextResponse.json({ error: "The product could not be saved. Please try again." }, { status: 500 });
 }

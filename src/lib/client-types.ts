@@ -19,6 +19,7 @@ export type ClientWithdrawal = {
 
 export type ClientDetails = {
   id: string;
+  accessStatus?: "active" | "suspended" | "revoked";
   fullName: string;
   email: string;
   phone: string;

@@ -10,6 +10,6 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false }
 };
 
-export default function AdminLayout({ children }: { children: ReactNode }) {
-  return isAdminAuthenticated() ? <>{children}</> : <AdminSignIn configured={isAdminConfigured()} />;
+export default async function AdminLayout({ children }: { children: ReactNode }) {
+  return await isAdminAuthenticated() ? <>{children}</> : <AdminSignIn configured={await isAdminConfigured()} />;
 }

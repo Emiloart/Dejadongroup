@@ -1,5 +1,6 @@
+import { readDocument, writeDocument, storageTransaction } from "@/lib/site-storage";
 import { randomUUID } from "node:crypto";
-import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { marketplaceCategories, marketplaceProducts, type MarketplaceProduct } from "@/lib/marketplace-data";
 
@@ -9,7 +10,7 @@ export class CatalogError extends Error {
 
 export const maxProductImageBytes = 5 * 1024 * 1024;
 export const marketplaceDataDirectory = () => path.resolve(process.env.DEJADON_DATA_DIR || path.join(process.cwd(), ".data"));
-const catalogFile = () => path.join(marketplaceDataDirectory(), "products.json");
+
 const uploadDirectory = () => path.join(marketplaceDataDirectory(), "uploads");
 
 function defaults(product: MarketplaceProduct): MarketplaceProduct {
@@ -17,14 +18,9 @@ function defaults(product: MarketplaceProduct): MarketplaceProduct {
 }
 
 export async function getAdminProducts(): Promise<MarketplaceProduct[]> {
-  try {
-    const catalog: unknown = JSON.parse(await readFile(catalogFile(), "utf8"));
-    if (!catalog || typeof catalog !== "object" || !("products" in catalog) || !Array.isArray(catalog.products)) throw new Error("Invalid catalogue file");
-    return (catalog.products as MarketplaceProduct[]).map(defaults);
-  } catch (error) {
-    if (error && typeof error === "object" && "code" in error && error.code === "ENOENT") return marketplaceProducts.map(defaults);
-    throw error;
-  }
+  const catalog = await readDocument<{ version: number; products: MarketplaceProduct[] }>("products.json", { version: 1, products: marketplaceProducts });
+  if (!Array.isArray(catalog.products)) throw new Error("Invalid catalogue file");
+  return catalog.products.map(defaults);
 }
 
 export async function getPublishedProducts() {
@@ -35,20 +31,8 @@ export async function getPublishedProduct(slug: string) {
   return (await getPublishedProducts()).find((product) => product.slug === slug);
 }
 
-type CatalogGlobal = typeof globalThis & { dejadonCatalogQueue?: Promise<unknown> };
-function mutate<T>(operation: () => Promise<T>): Promise<T> {
-  const shared = globalThis as CatalogGlobal;
-  const result = (shared.dejadonCatalogQueue || Promise.resolve()).then(operation);
-  shared.dejadonCatalogQueue = result.catch(() => undefined);
-  return result;
-}
-
-async function persist(products: MarketplaceProduct[]) {
-  await mkdir(marketplaceDataDirectory(), { recursive: true });
-  const temporary = path.join(marketplaceDataDirectory(), `products-${randomUUID()}.tmp`);
-  await writeFile(temporary, JSON.stringify({ version: 1, products }, null, 2), { mode: 0o600 });
-  await rename(temporary, catalogFile());
-}
+const mutate = storageTransaction;
+const persist = (products: MarketplaceProduct[]) => writeDocument("products.json", { version: 1, products });
 
 function field(form: FormData, key: string, maxLength: number, required = false) {
   const raw = form.get(key);
@@ -121,7 +105,7 @@ export async function deleteMarketplaceProduct(slug: string) {
   return mutate(async () => {
     const products = await getAdminProducts();
     if (!products.some((product) => product.slug === slug)) throw new CatalogError("Product not found.", 404);
-    await persist(products.filter((product) => product.slug !== slug));
+    await persist(products.map((product) => product.slug === slug ? { ...product, status: "archived" } : product));
   });
 }
 

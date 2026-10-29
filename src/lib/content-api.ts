@@ -1,15 +1,17 @@
 import { NextResponse } from "next/server";
-import { isAdminAuthenticated, isSameOrigin } from "@/lib/admin-auth";
+import { adminGuard } from "@/lib/admin-access";
+import { AdminError } from "@/lib/admin-store";
+import type { Permission } from "@/lib/admin-permissions";
 import { readLimitedBody, RequestBodyTooLarge } from "@/lib/request-body";
 
 export class ContentError extends Error {
   constructor(message: string, public status = 400) { super(message); }
 }
 
-export function requireContentAdmin(request: Request, write = false) {
-  if (!isAdminAuthenticated()) return NextResponse.json({ error: "Sign in again to manage website content." }, { status: 401 });
-  if (write && !isSameOrigin(request)) return NextResponse.json({ error: "Refresh the page and try again." }, { status: 403 });
-  return null;
+export async function requireContentAdmin(request: Request, write = false) {
+  const url = new URL(request.url);
+  const permission: Permission = url.pathname.includes("/clients") ? write ? url.pathname.endsWith("/token") ? "agro.clients.activate" : "agro.clients.manage" : "agro.clients.read" : url.pathname.includes("/newsletter") ? write ? "newsletter.manage" : url.searchParams.get("format") === "csv" ? "newsletter.export" : "newsletter.read" : write ? "content.update" : "content.read";
+  return adminGuard(request, permission, write);
 }
 
 export async function readContentBody(request: Request): Promise<Record<string, unknown>> {
@@ -23,7 +25,7 @@ export async function readContentBody(request: Request): Promise<Record<string, 
 }
 
 export function contentApiError(error: unknown) {
-  if (error instanceof ContentError) return NextResponse.json({ error: error.message }, { status: error.status });
+  if (error instanceof ContentError || error instanceof AdminError) return NextResponse.json({ error: error.message }, { status: error.status });
   console.error("Website content operation failed", error instanceof Error ? error.message : "Unknown error");
   return NextResponse.json({ error: "We couldn’t save this change. Please try again." }, { status: 500 });
 }
