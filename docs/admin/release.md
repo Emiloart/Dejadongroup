@@ -135,3 +135,63 @@ src/lib/site-storage.ts
 ```
 
 Release documentation: `README.md`, `.env.example`, `docs/website-and-portals.md`, `docs/admin/{audit,architecture,financial-workflows,operations,release}.md`; CI: `.github/workflows/verify.yml`.
+
+# Shared client services and savings release — 31 October 2026
+
+Implementation commit: `0dd772d` on the existing `main` branch. The repository audit and compatibility decisions are recorded in [audit](audit.md#client-savings-extension-audit-31-october-2026). No separate application or client authentication was introduced.
+
+## Result and important files
+
+| Files | Purpose |
+| --- | --- |
+| `src/lib/client-services.ts`, `savings-types.ts` | Stable scoped service access/history, migration 3, compatible initial Agro access and shared typed contracts |
+| `src/lib/admin-migrations.ts`, `site-storage.ts`, `admin-client-service.ts` | Existing migration/transaction adapter integration and new-client compatibility without credential/session mutation |
+| `src/lib/savings-store.ts` | Approved plan/offer validation, immutable agreements, representative enrollment, consent/review/approval/activation, derived schedule/progress and configured fulfillment |
+| `src/lib/savings-payments.ts` | Durable server-priced test intents, existing Paystack adapter verification, reference/transaction-ID idempotency, compensating reversals and observed refunds |
+| `src/lib/finance-store.ts` | Shared Finance savings views, confirmed-only balance source, eligibility/reservations and separate withdrawal review/approval; execution remains unavailable |
+| `src/lib/admin-permissions.ts`, `admin-data.ts` | Explicit savings/service permissions, minimal field-representative role and existing workspace navigation |
+| `src/components/client-dashboard-layout.tsx`, `client-services-overview.tsx`, `client-savings.tsx` | Assigned-service navigation, overview summaries and actual savings/enrollment/payment/fulfillment screens |
+| `src/components/savings-options.tsx`, `savings-plan-terms.tsx` | Actual product previews, contribution options, agreement review and accessible client/representative forms |
+| `src/app/dashboard/[role]/{page.tsx,[section]/page.tsx,profile/page.tsx}` | Existing authenticated overview/profile plus private per-service routes |
+| `src/components/admin-client-manager.tsx`, `admin-service-assignments.tsx`, `admin-savings.tsx`, `admin-finance.tsx` | Existing client workflow integration, assignment history, staff configuration/enrollment/fulfillment and Finance review/reconciliation interfaces |
+| `src/app/admin/{[section],clients}/page.tsx` | Existing permission-aware admin shell integration |
+| `src/app/api/admin/clients/[id]/services/route.ts`, `api/admin/savings/route.ts`, `api/admin/governance/[resource]/route.ts` | Central authorization, scoped mutations, configuration and Finance operations |
+| `src/app/api/client/services/{route.ts,[service]/route.ts}`, `api/client/{session,register,profile}/route.ts` | Session-derived ownership/service checks and safe identity/profile responses |
+| Existing `api/paystack/webhook/route.ts`, `api/internal/partner-payments/reconcile/route.ts` | Signature-authenticated event dispatch and shared scheduler integration |
+| `scripts/savings.test.cjs`, `savings.integration.test.mjs`, `partner-test-support.cjs` | Domain and isolated HTTP/provider regression fixtures |
+| `package.json`, `.github/workflows/verify.yml`, `.env.example` | Savings test command, CI inclusion and disabled-by-default test-only collection configuration |
+
+## Data, security and financial boundary
+
+Migration 3 creates a restricted pre-migration JSON backup, backfills existing Agro service access exactly once and retains all existing client IDs, hashes, activation-token behavior and sessions. New records use `client-services.json`, `savings-config.json`, `savings-accounts.json`, `finance-payments.json` and the append-only `finance-ledger.json`; savings withdrawal requests use existing `finance.json`. Coordinated writes/audit use the current transaction queue/journal. Back up the entire data directory, including catalogue/photos and migration/journal files.
+
+Client identity comes from the current server session. Direct private service routes, account IDs and API actions enforce assignment and ownership. Staff use explicit central permissions, transaction-time identity revalidation, client record scopes and actor-linked audit events. Read/client-edit privileges do not grant assignment, approval, activation or financial execution. Browser amounts, targets, success flags and fulfillment changes have no authority. Duplicate verified callbacks/refunds cannot duplicate allocations or debit a receipt twice.
+
+Live savings collection and withdrawal execution are disabled. Only explicit `SAVINGS_PAYMENTS_MODE=test` with a test Paystack key enables test contributions. No fake offers/terms/prices/contents or manual confirmed-cash path are seeded. One open plan per client per savings service is enforced. An agreed package retains its product image/details/target and selected terms. Savings progress does not imply fulfillment. Outstanding withdrawals must be resolved before fulfillment; cancellation/decline retains request history.
+
+Required before a future live release: approved custody/provider authorization and settlement route; actual plan/consent/withdrawal terms and required enrollment information; approved food products/contents/targets and fulfillment stages; concurrent-package policy; verified payout recipients, settlement/refund/dispute operations and operational responsibilities. A configuration flag cannot bypass this boundary. See [financial workflows](financial-workflows.md#mandatory-real-money-boundary).
+
+## Verification commands and results
+
+The following passed after the final production source changes:
+
+```sh
+npm run lint
+npx tsc --noEmit --incremental false
+npm run build
+npm run test:content
+npm run test:marketplace
+npm run test:clients
+npm run test:partners
+npm run test:admin
+npm run test:savings
+git diff --check
+```
+
+Automated totals: **14 passed, 0 failed** (4 content, 1 marketplace, 1 client, 2 partner, 3 admin/storage, 3 savings). Existing client activation/token expiry/replacement/single-use behavior, login/profile/withdrawal history and partner/admin flows passed unchanged. New checks cover additive backfill, unchanged identity files/sessions after assignment, denied direct URLs/scopes/permissions, consent and separate account activation, published offers only, snapshot preservation, one open plan, fixed-precision schedules/progress, forged amounts/ownership, concurrent webhook idempotency, pending/failed/cancelled states, partial refunds/reversals, reserved withdrawals, independent approval and blocked execution, actual fulfillment and restart persistence.
+
+The public migration CLI `node scripts/migrate-admin.cjs` ran twice with an isolated temporary `DEJADON_DATA_DIR`: first application succeeded, repeat applied nothing, both version markers were present, and the original credential/token document was byte-for-byte unchanged. Production data was not migrated during development.
+
+Browser QA uses the existing external Playwright/Chromium installation and isolated temporary accounts/catalogue, with local screenshots outside tracked source. Client overview, Agro, FlexiSave, Food Package Savings and Profile were checked at 375px and 1440px without page overflow. The package review/consent/submission flow, staff activation and subsequent customer display were exercised. The admin savings workspace/client selection and configuration forms were also checked at both widths. The complete browser run reported no page errors. No browser dependency, real service credential, real charge, email, payout or production fixture was added.
+
+Documentation extended: `README.md`, `.env.example`, `docs/website-and-portals.md` and the existing `docs/admin/{audit,architecture,financial-workflows,operations,release}.md`. Hosted CI/deployment results are separate from these local checks. The unrelated existing `NUL`, `scripts/__pycache__/` and `tsconfig.tsbuildinfo` remain excluded.
