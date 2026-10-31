@@ -1,4 +1,4 @@
-"""Prepare supplied photographs for the website (development only; requires Pillow)."""
+"""Prepare supplied photos and editorial artwork (development only; requires Pillow)."""
 from pathlib import Path
 from PIL import Image, ImageOps
 
@@ -25,3 +25,12 @@ for name, (filename, limit) in sources.items():
             target = output / f"{name}-{width}.webp"
             image.resize(size, Image.Resampling.LANCZOS).save(target, "WEBP", quality=80, method=6)
             print(f"{target.name}: {target.stat().st_size:,} bytes; source {source.stat().st_size:,}")
+
+# Keep the generated original alongside its derivatives, outside the real-photo gallery.
+editorial = root / "src" / "assets" / "editorial"
+with Image.open(editorial / "agriculture-food-systems-source.png") as original:
+    image = ImageOps.exif_transpose(original).convert("RGB")
+    for width in (640, 960, min(1440, image.width)):
+        target = editorial / f"agriculture-food-systems-{width}.webp"
+        image.resize((width, round(image.height * width / image.width)), Image.Resampling.LANCZOS).save(target, "WEBP", quality=80, method=6)
+        print(f"{target.name}: {target.stat().st_size:,} bytes")

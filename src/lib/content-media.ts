@@ -15,8 +15,12 @@ import estateVisit640 from "@/assets/photos/alaoma-estate-visit-640.webp";
 import estateVisit960 from "@/assets/photos/alaoma-estate-visit-960.webp";
 import teamOutreach640 from "@/assets/photos/team-outreach-640.webp";
 import teamOutreach960 from "@/assets/photos/team-outreach-960.webp";
+import agricultureEditorial640 from "@/assets/editorial/agriculture-food-systems-640.webp";
+import agricultureEditorial960 from "@/assets/editorial/agriculture-food-systems-960.webp";
+import agricultureEditorial1440 from "@/assets/editorial/agriculture-food-systems-1440.webp";
 
 export const contentPhotos = {
+  agricultureEditorial: { image: { small: agricultureEditorial640, medium: agricultureEditorial960, full: agricultureEditorial1440 }, alt: "Editorial illustration of pepper crops, oil palms, a fish pond and poultry in a tropical agricultural landscape" },
   ceo: { image: { small: ceo640, medium: ceo960, full: ceo960 }, alt: "Ifeanyi Luke Ananwude, Founder and Managing Director of De Jadon Group" },
   broiler: { image: { small: broiler640, medium: broiler960, full: broiler1280 }, alt: "Broiler chickens" },
   catfish: { image: { small: catfish572, medium: catfish572, full: catfish572 }, alt: "Fresh catfish" },
