@@ -1,5 +1,6 @@
 import { publicPageMetadata } from "@/lib/seo";
-import { companyContact, companySocialProfiles } from "@/lib/site-data";
+import { companyContact, salesWhatsapp, socialLinks } from "@/lib/site-data";
+import { SocialIcon } from "@/components/social-icon";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { ButtonLink } from "@/components/button-link";
@@ -58,6 +59,10 @@ export default function ContactPage() {
                 <dd><a className="text-lg text-ink underline decoration-ink/20 underline-offset-4 hover:text-orangeAction" href="tel:+2348070458759">08070458759</a></dd>
               </div>
               <div>
+                <dt className="mb-1 text-xs font-semibold uppercase tracking-[0.16em] text-stone-500">WhatsApp marketplace / sales support</dt>
+                <dd><a href={salesWhatsapp.href} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-lg text-ink underline decoration-ink/20 underline-offset-4 hover:text-orangeAction"><SocialIcon platform="whatsapp" className="h-5 w-5 shrink-0" />{salesWhatsapp.phone}</a></dd>
+              </div>
+              <div>
                 <dt className="mb-1 text-xs font-semibold uppercase tracking-[0.16em] text-stone-500">Email</dt>
                 <dd><a className="break-words text-lg text-ink underline decoration-ink/20 underline-offset-4 hover:text-orangeAction" href={`mailto:${emailAddress}`}>{emailAddress}</a></dd>
               </div>
@@ -73,7 +78,7 @@ export default function ContactPage() {
             <OfficeMapPreview className="mt-7" />
             <section className="mt-9 border-t border-ink/10 pt-7" aria-label="Company social profiles">
               <h2 className="text-xl">Find us on social media</h2>
-              <dl className="mt-4 space-y-4">{companySocialProfiles.map((profile) => <div key={profile.platform}><dt className="text-xs font-semibold uppercase tracking-widest text-stone-500">{profile.platform}</dt><dd className="mt-1 text-sm text-stone-700">{profile.names}</dd></div>)}</dl>
+              <ul className="mt-4 grid gap-2 sm:grid-cols-2">{socialLinks.map((profile) => <li key={profile.platform}><a href={profile.href} target="_blank" rel="noreferrer" aria-label={profile.label} className="flex min-h-11 items-center gap-3 rounded-card px-2 py-2 text-sm text-stone-700 hover:bg-orange-50 hover:text-orange-700"><SocialIcon platform={profile.platform} className="h-5 w-5 shrink-0" /><span>{profile.handle}</span></a></li>)}</ul>
             </section>
           </div>
         </div>

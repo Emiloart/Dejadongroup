@@ -1,3 +1,6 @@
+import { HeroText } from "@/components/hero-text";
+import { ContentPhoto } from "@/components/content-photo";
+import { SocialIcon } from "@/components/social-icon";
 import { publicPageMetadata } from "@/lib/seo";
 import { managedContent } from "@/lib/managed-content";
 import { ManagedPublicContent } from "@/components/managed-public-content";
@@ -12,7 +15,7 @@ import { NewsletterSection } from "@/components/newsletter-section";
 import { PageSection } from "@/components/page-section";
 import { SectionHeader } from "@/components/section-header";
 import { SiteLayout } from "@/components/site-layout";
-import { businesses, companyContact, founderMessage, homeFaqSections, homeHeroSlides } from "@/lib/site-data";
+import { businesses, companyContact, founderMessage, homeFaqSections, homeHeroSlides, salesWhatsapp } from "@/lib/site-data";
 import { heroMedia } from "@/lib/hero-media";
 import { getPublishedNews } from "@/lib/news-store";
 
@@ -46,9 +49,9 @@ export default async function HomePage() {
         <HeroBackground image={heroMedia.partner} />
         <div className="mx-auto flex min-h-[360px] max-w-7xl items-center px-5 py-14 sm:px-6 sm:py-16 lg:min-h-[400px] lg:px-8 lg:py-20">
           <div className="max-w-xl [text-shadow:0_1px_6px_rgb(0_0_0_/_0.25)]">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-white/80">Partner Programme</p>
-            <h2 id="partner-promo-heading" className="mt-4 text-3xl font-medium leading-[1.12] tracking-tight sm:text-4xl">Grow with us.</h2>
-            <p className="mt-5 text-base leading-8 text-white/90 sm:text-lg">The Partner Program allows individuals to introduce De Jadon Group to prospective customers and earn a 10% commission when a referred prospect becomes a paying client.</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-white/80"><HeroText>Partner Programme</HeroText></p>
+            <h2 id="partner-promo-heading" className="mt-4 text-3xl font-medium leading-[1.12] tracking-tight sm:text-4xl"><HeroText>Grow with us.</HeroText></h2>
+            <p className="mt-5 text-base leading-8 text-white/90 sm:text-lg"><HeroText>The Partner Program allows individuals to introduce De Jadon Group to prospective customers and earn a 10% commission when a referred prospect becomes a paying client.</HeroText></p>
             <div className="mt-7 flex flex-wrap items-center gap-4">
               <ButtonLink href="/partner-program">Explore the program</ButtonLink>
               <ButtonLink href="/login?role=partner" variant="inverse">Partner login</ButtonLink>
@@ -58,7 +61,10 @@ export default async function HomePage() {
       </section>
       <PageSection tinted>
         <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
-          <SectionHeader title="Meet our founder" eyebrow="Leadership" />
+          <div>
+            <SectionHeader title="Meet our founder" eyebrow="Leadership" />
+            <ContentPhoto name="ceo" aspectRatio={4 / 5} className="mt-6 max-w-[320px]" imageClassName="object-[50%_20%]" sizes="(min-width: 640px) 320px, 85vw" />
+          </div>
           <div className="max-w-2xl">
             <h3 className="text-2xl text-ink">Ifeanyi Luke Ananwude</h3>
             <p className="mt-2 text-sm text-stone-500">Managing Director and founder of De Jadon Group.</p>
@@ -83,6 +89,7 @@ export default async function HomePage() {
             <ButtonLink href="/contact" className="mt-6">Contact our team</ButtonLink>
           </div>
           <dl className="grid gap-x-8 gap-y-6 sm:grid-cols-2">
+            <div><dt className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">WhatsApp sales support</dt><dd className="mt-2"><a href={salesWhatsapp.href} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-base font-semibold hover:text-orangeAction"><SocialIcon platform="whatsapp" className="h-5 w-5 shrink-0" />{salesWhatsapp.phone}</a></dd></div>
             <div><dt className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">Call us</dt><dd className="mt-2"><a href="tel:+2348070458759" className="break-words text-base font-semibold hover:text-orangeAction">08070458759</a></dd></div>
             <div><dt className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">Email us</dt><dd className="mt-2"><a href="mailto:dejadongroup@gmail.com" className="break-all text-base font-semibold hover:text-orangeAction">dejadongroup@gmail.com</a></dd></div>
             <div><dt className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-500">Visit our office</dt><dd className="mt-2 text-sm leading-7 text-stone-600"><p className="max-w-sm">{companyContact.office}</p><OfficeMapPreview className="mt-4" /></dd></div>

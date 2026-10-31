@@ -15,7 +15,6 @@ export function HeroBackground({ image, priority = false, ...imageProps }: HeroB
   return (
     <div aria-hidden="true" className="pointer-events-none absolute inset-0 -z-10">
       <ResponsiveHeroImage asset={image} priority={priority} className="object-cover" {...imageProps} />
-      <div className="hero-scrim absolute inset-0" />
     </div>
   );
 }

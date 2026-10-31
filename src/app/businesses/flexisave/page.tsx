@@ -1,3 +1,4 @@
+import { HeroText } from "@/components/hero-text";
 import { ButtonLink } from "@/components/button-link";
 import { FaqSection } from "@/components/faq-section";
 import { PageHero } from "@/components/page-hero";
@@ -13,7 +14,7 @@ export default function FlexisavePage() {
   return (
     <SiteLayout>
       <PageHero title="Flexisave" eyebrow="Structured savings" image={heroMedia.flexisave} accent="green" actions={<ButtonLink href="/contact">Ask about Flexisave</ButtonLink>}>
-        <p>A structured savings solution designed to encourage disciplined financial planning and help you work towards specific financial goals.</p>
+        <p><HeroText>A structured savings solution designed to encourage disciplined financial planning and help you work towards specific financial goals.</HeroText></p>
       </PageHero>
       <PageSection>
         <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">

@@ -22,7 +22,7 @@ export function PageHero({ title, eyebrow, canvasLabel, image, accent = "orange"
         <HeroBackground image={image} priority />
         <div className="mx-auto flex min-h-[560px] max-w-7xl items-center px-5 py-16 sm:px-6 sm:py-20 lg:min-h-[640px] lg:px-8 lg:py-24">
           <div className="max-w-2xl [text-shadow:0_1px_6px_rgb(0_0_0_/_0.25)]">
-            <SectionHeader title={title} eyebrow={eyebrow} accent={accent} as="h1" inverse>
+            <SectionHeader title={title} eyebrow={eyebrow} accent={accent} as="h1" inverse textBackdrop>
               {children}
             </SectionHeader>
             {actions ? <div className="mt-8 flex flex-wrap items-center gap-3 sm:gap-5">{actions}</div> : null}

@@ -15,7 +15,7 @@ export function ButtonLink({ href, children, variant = "solid", className = "", 
     variant === "solid"
       ? "bg-orangeAction text-white hover:bg-orange-600"
       : variant === "inverse"
-      ? "border border-white/40 bg-white/10 text-white hover:bg-white/20 focus-visible:outline-white"
+      ? "border border-white/40 bg-black/40 text-white backdrop-blur-sm hover:bg-black/60 focus-visible:outline-white"
       : "text-ink hover:bg-orangeAction/5 hover:text-orangeAction";
 
   return (

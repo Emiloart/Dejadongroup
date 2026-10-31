@@ -1,3 +1,4 @@
+import { HeroText } from "@/components/hero-text";
 import { publicPageMetadata } from "@/lib/seo";
 import { ButtonLink } from "@/components/button-link";
 import { heroMedia } from "@/lib/hero-media";
@@ -33,8 +34,8 @@ export default function AgroRealEstatePage() {
         }
       >
         <div className="space-y-4">
-          <p>Making life easier through land, agriculture and opportunity.</p>
-          <p>We bring together real estate, food solutions and productive assets to create lasting value for individuals, families, businesses and communities. Whether you want to own land or explore agricultural opportunities, our team is here to guide you.</p>
+          <p><HeroText>Making life easier through land, agriculture and opportunity.</HeroText></p>
+          <p><HeroText>We bring together real estate, food solutions and productive assets to create lasting value for individuals, families, businesses and communities. Whether you want to own land or explore agricultural opportunities, our team is here to guide you.</HeroText></p>
         </div>
       </PageHero>
       <PageSection>

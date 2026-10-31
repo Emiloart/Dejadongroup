@@ -8,6 +8,8 @@ import { SiteLayout } from "@/components/site-layout";
 import { marketplaceCategories } from "@/lib/marketplace-data";
 import { getPublishedProducts } from "@/lib/marketplace-store";
 import { siteUrl } from "@/lib/seo";
+import { salesWhatsapp } from "@/lib/site-data";
+import { SocialIcon } from "@/components/social-icon";
 
 export const dynamic = "force-dynamic";
 
@@ -50,6 +52,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
               return <Link key={filter.href} href={filter.href} aria-current={selected ? "page" : undefined} className={`rounded-full px-4 py-2.5 text-sm font-semibold transition-colors ${selected ? "bg-agriculture text-white" : "bg-stone-100 text-stone-600 hover:bg-agriculture/10 hover:text-agriculture"}`}>{filter.label}</Link>;
             })}
           </nav>
+          <a href={salesWhatsapp.href} target="_blank" rel="noreferrer" className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-agriculture hover:text-orange-700"><SocialIcon platform="whatsapp" className="h-5 w-5" />WhatsApp sales support</a>
           <span className="text-sm text-stone-500">{products.length} {products.length === 1 ? "product" : "products"}{category ? ` in ${marketplaceCategories.find((item) => item.slug === category)?.name.toLowerCase()}` : ""}</span>
         </div>
         {products.length ? <div className="mt-7 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

@@ -1,3 +1,4 @@
+import { HeroText } from "@/components/hero-text";
 import { publicPageMetadata } from "@/lib/seo";
 import { ButtonLink } from "@/components/button-link";
 import { FaqSection } from "@/components/faq-section";
@@ -35,7 +36,7 @@ export default function AgriculturePage() {
           </>
         }
       >
-        <p>We are involved in agricultural activities aimed at producing food and other agricultural products. This includes crop farming and livestock/fish farming. De Jadon Group is not just about farming; it is about connecting land ownership, investment and food supply into one business model. The services currently provided include real estate services, agricultural services, food packages and investment opportunities.</p>
+        <p><HeroText>We are involved in agricultural activities aimed at producing food and other agricultural products. This includes crop farming and livestock/fish farming. De Jadon Group is not just about farming; it is about connecting land ownership, investment and food supply into one business model. The services currently provided include real estate services, agricultural services, food packages and investment opportunities.</HeroText></p>
       </PageHero>
       <PageSection tinted>
         <div className="mb-10">

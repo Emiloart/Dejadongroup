@@ -9,10 +9,12 @@ import { SiteLayout } from "@/components/site-layout";
 import { agricultureProducts, getSectionByPath } from "@/lib/site-data";
 import { getGalleryImages } from "@/lib/media-library";
 import { publicPageMetadata } from "@/lib/seo";
+import { ContentPhoto } from "@/components/content-photo";
+import type { ContentPhotoName } from "@/lib/content-media";
 
-const cropDescriptions = [
-  { name: "Palm", description: "The oil palm is a tropical tree. Its outer flesh contains palm oil, while the seed can be processed to produce palm kernel oil." },
-  { name: "Pepper", description: "Pepper grows as a bushy plant with a soft green stem that becomes stronger as it matures." },
+const cropDescriptions: { name: string; description: string; photo?: ContentPhotoName }[] = [
+  { name: "Palm", photo: "palmFruit", description: "The oil palm is a tropical tree. Its outer flesh contains palm oil, while the seed can be processed to produce palm kernel oil." },
+  { name: "Pepper", photo: "greenPeppers", description: "Pepper grows as a bushy plant with a soft green stem that becomes stronger as it matures." },
   { name: "Cassava", description: "Cassava is a perennial shrub commonly grown as an annual or biennial crop. It has an upright, branching stem and can grow to approximately 1–3 metres depending on the variety and growing conditions." }
 ];
 
@@ -46,6 +48,7 @@ export default function AgricultureSectionPage({ params }: AgricultureSectionPag
 
   const category = params.slug[0];
   const detail = params.slug[1];
+  const detailPhoto = detail === "poultry" ? "broiler" : detail === "fishery" ? "catfish" : undefined;
   const intro = category === "crop-farming"
     ? "Explore the crops cultivated as part of De Jadon Group's agriculture work."
     : category === "livestock" && detail
@@ -59,9 +62,12 @@ export default function AgricultureSectionPage({ params }: AgricultureSectionPag
   return (
     <SiteLayout>
       <PageSection>
+        <div className={detailPhoto ? "grid items-center gap-8 lg:grid-cols-2 lg:gap-16" : undefined}>
         <PageHero title={match.section.name} eyebrow="Agriculture" accent="green" actions={<ButtonLink href="/businesses/agriculture" variant="outline">Back to agriculture</ButtonLink>}>
           <p>{intro}</p>
         </PageHero>
+        {detailPhoto ? <ContentPhoto name={detailPhoto} className={`mx-auto w-full ${detailPhoto === "catfish" ? "max-w-[280px]" : "max-w-lg"}`} sizes={detailPhoto === "catfish" ? "280px" : "(min-width: 1024px) 512px, 100vw"} /> : null}
+        </div>
       </PageSection>
       {category === "crop-farming" ? (
         <PageSection tinted>
@@ -70,6 +76,7 @@ export default function AgricultureSectionPage({ params }: AgricultureSectionPag
             <div className="grid gap-8 sm:grid-cols-2">
               {cropDescriptions.map((crop) => (
                 <article key={crop.name} className="border-t border-ink/10 pt-5">
+                  {crop.photo ? <ContentPhoto name={crop.photo} className="mb-5" sizes="(min-width: 640px) 360px, 100vw" /> : null}
                   <h2 className="text-xl text-ink">{crop.name}</h2>
                   <p className="mt-3 text-sm leading-7 text-stone-600">{crop.description}</p>
                 </article>

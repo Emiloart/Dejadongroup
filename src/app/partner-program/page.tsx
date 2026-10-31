@@ -1,3 +1,4 @@
+import { HeroText } from "@/components/hero-text";
 import { publicPageMetadata } from "@/lib/seo";
 import { heroMedia } from "@/lib/hero-media";
 import { FaqSection } from "@/components/faq-section";
@@ -18,7 +19,7 @@ export default async function PartnerProgramPage({ searchParams }: { searchParam
   return (
     <SiteLayout>
       <PageHero image={heroMedia.partner} title="Partner Programme" eyebrow="De Jadon Group" actions={<ButtonLink href={register}>Become a partner</ButtonLink>}>
-          <p>Introduce De Jadon Group to a prospective customer. When that person becomes a paying client, the partner receives a 10% commission from the company.</p>
+          <p><HeroText>Introduce De Jadon Group to a prospective customer. When that person becomes a paying client, the partner receives a 10% commission from the company.</HeroText></p>
       </PageHero>
       <PageSection tinted>
         <div className="grid gap-8 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { ImageIcon } from "lucide-react";
 import type { GalleryImage } from "@/lib/media-library";
+import { ResponsiveHeroImage } from "@/components/responsive-hero-image";
 
 const categoryLabels = {
   agriculture: "Agriculture",
@@ -24,11 +25,11 @@ export function GalleryGrid({ images, emptyTitle = "Photography is being added" 
   }
 
   return (
-    <div className="grid gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="columns-1 gap-6 sm:columns-2 lg:columns-3">
       {images.map((image) => (
-        <figure key={`${image.category}/${image.filename}`} className="min-w-0">
-          <a href={image.src} target="_blank" rel="noopener noreferrer" aria-label={`Open ${image.alt} image`} className="group relative block aspect-[4/3] overflow-hidden rounded-card bg-ink/[0.045] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orangeAction">
-            <Image src={image.src} alt={image.alt} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover transition-transform duration-300 group-hover:scale-[1.03]" />
+        <figure key={`${image.category}/${image.filename}`} className="mb-10 min-w-0 break-inside-avoid">
+          <a href={image.src} target="_blank" rel="noopener noreferrer" aria-label={`Open ${image.alt} image`} style={{ aspectRatio: image.asset ? image.asset.full.width / image.asset.full.height : 4 / 3 }} className="group relative block overflow-hidden rounded-card bg-ink/[0.045] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orangeAction">
+            {image.asset ? <ResponsiveHeroImage asset={image.asset} alt={image.alt} sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover" /> : <Image src={image.src} alt={image.alt} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover" />}
           </a>
           <figcaption className="mt-4 flex flex-wrap items-baseline justify-between gap-2 border-b border-ink/10 pb-4">
             <span className="font-medium text-ink">{image.alt}</span>

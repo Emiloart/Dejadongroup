@@ -88,7 +88,16 @@ export const foodPackageSections: FoodPackageSection[] = [
 ];
 
 // Add only verified official accounts. Empty or invalid links are not rendered.
-export const socialLinks: SocialLink[] = [];
+export const salesWhatsapp = {
+  phone: "+234 902 270 0780",
+  href: "https://wa.me/2349022700780"
+};
+export const socialLinks: SocialLink[] = [
+  { platform: "facebook", label: "De Jadon Group on Facebook", handle: "De Jadon Group", href: "https://www.facebook.com/share/1Dvoeb7jJd" },
+  { platform: "instagram", label: "De Jadon Group on Instagram", handle: "@dejadongroup", href: "https://www.instagram.com/dejadongroup/" },
+  { platform: "tiktok", label: "De Jadon Group on TikTok", handle: "@de.jadon.group", href: "https://www.tiktok.com/@de.jadon.group" },
+  { platform: "whatsapp", label: "WhatsApp marketplace and sales support", handle: salesWhatsapp.phone, href: salesWhatsapp.href }
+];
 
 export const partnerProgramSections = [
   "Overview",
@@ -284,7 +293,7 @@ export function getSectionByPath(path: string) {
   return undefined;
 }
 
-// Supplied contact information. Profile URLs and WhatsApp were not supplied.
+// Supplied company contact information; sales WhatsApp is listed separately above.
 export const companyContact = {
   phone: "08070458759",
   telephoneHref: "tel:+2348070458759",
@@ -295,9 +304,4 @@ export const companyContact = {
 export const companyMapHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(companyContact.office)}`;
 // Search the supplied mall and road; the unit number does not have a verified map pin.
 export const companyMapEmbedHref = `https://www.google.com/maps?q=${encodeURIComponent("Ebube Dike Shopping Mall, Umuodu Road, Okpuno, Awka, Anambra State")}&output=embed`;
-export const companySocialProfiles = [
-  { platform: "Facebook", names: "De Jadon Group · De Jadon Properties" },
-  { platform: "Instagram", names: "De Jadon Group" },
-  { platform: "TikTok", names: "De Jadon Group" }
-];
 export const founderMessage = "Discover practical knowledge, innovative farming methods and valuable insights from our experience in agriculture and agro-real estate. Explore our journey, learn from what we do, and discover new opportunities to grow with us.";

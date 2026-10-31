@@ -12,6 +12,8 @@ import { getMarketplaceImage } from "@/lib/media-library";
 import { formatProductPrice, getMarketplaceCategoryName, getProductInquiryHref } from "@/lib/marketplace-data";
 import { getPublishedProduct, getPublishedProducts } from "@/lib/marketplace-store";
 import { publicPageMetadata } from "@/lib/seo";
+import { salesWhatsapp } from "@/lib/site-data";
+import { SocialIcon } from "@/components/social-icon";
 
 type ProductPageProps = { params: { slug: string } };
 
@@ -60,6 +62,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             </div> : null}
             <div className="mt-7 flex flex-wrap gap-3">
               <ButtonLink href={getProductInquiryHref(product)}>{availability === "out-of-stock" ? "Ask about restocking" : "Enquire about this product"}</ButtonLink>
+              <ButtonLink href={`${salesWhatsapp.href}?text=${encodeURIComponent(`Hello De Jadon Group, I would like to enquire about ${product.name}.`)}`} variant="outline" target="_blank" rel="noreferrer"><SocialIcon platform="whatsapp" className="h-5 w-5" />WhatsApp sales support</ButtonLink>
               <ButtonLink href="/contact" variant="outline">Contact our team</ButtonLink>
             </div>
             <p className="mt-4 max-w-lg text-sm leading-6 text-stone-500">{availability === "out-of-stock" ? "This product is currently out of stock. Contact our team to ask when it will be available again." : "Include your quantity and location. Our team will confirm availability, the total price and delivery or collection arrangements."}</p>

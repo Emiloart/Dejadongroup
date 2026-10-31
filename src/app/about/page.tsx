@@ -1,4 +1,5 @@
 import { publicPageMetadata } from "@/lib/seo";
+import { ContentPhoto } from "@/components/content-photo";
 import { ButtonLink } from "@/components/button-link";
 import { PageHero } from "@/components/page-hero";
 import { PageSection } from "@/components/page-section";
@@ -59,6 +60,10 @@ export default function AboutPage() {
       </PageSection>
 
       <PageSection tinted>
+        <div className="mb-12 grid items-center gap-8 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
+          <div><SectionHeader title="Out in our community" eyebrow="Our people" /><p className="mt-5 max-w-md leading-7 text-stone-600">Meet the people behind De Jadon Group and see our team connecting with the community.</p></div>
+          <ContentPhoto name="teamOutreach" className="mx-auto w-full max-w-[360px]" sizes="(min-width: 640px) 360px, 100vw" />
+        </div>
         <div className="grid gap-x-12 gap-y-10 lg:grid-cols-3">
           {aboutSections.slice(1).map((section) => (
             <article key={section.title} className="border-t border-ink/10 pt-6">
@@ -96,7 +101,7 @@ export default function AboutPage() {
 
       <PageSection tinted>
         <div className="grid gap-10 border-t border-ink/10 pt-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
-          <SectionHeader title="Our leadership" eyebrow="Founder & Managing Director" />
+          <div><SectionHeader title="Our leadership" eyebrow="Founder & Managing Director" /><ContentPhoto name="ceo" aspectRatio={4 / 5} className="mt-6 max-w-[320px]" imageClassName="object-[50%_20%]" sizes="(min-width: 640px) 320px, 85vw" /></div>
           <div className="space-y-4 text-stone-700">
               <h3 className="text-3xl font-medium text-ink">Ifeanyi Luke Ananwude</h3>
               <p className="leading-7">
