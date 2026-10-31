@@ -1,6 +1,6 @@
 import { notFound, redirect } from "next/navigation";
 import { ClientDashboardLayout } from "@/components/client-dashboard-layout";
-import { ClientOverview } from "@/components/client-overview";
+import { ClientServicesOverview } from "@/components/client-services-overview";
 import { PartnerDashboardLayout } from "@/components/partner-dashboard-layout";
 import { PartnerOverview } from "@/components/partner-overview";
 import { getCurrentClient } from "@/lib/client-auth";
@@ -11,7 +11,7 @@ export default async function DashboardPage({ params }: { params: { role: string
   if (params.role === "client") {
     const client = await getCurrentClient();
     if (!client) redirect("/login?role=client&next=/dashboard/client");
-    return <ClientDashboardLayout page="overview"><ClientOverview client={client} /></ClientDashboardLayout>;
+    return <ClientDashboardLayout page="overview"><ClientServicesOverview client={client} /></ClientDashboardLayout>;
   }
   if (params.role !== "partner") notFound();
   const view = await getCurrentPartnerView();

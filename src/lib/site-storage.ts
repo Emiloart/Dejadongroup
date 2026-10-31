@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import { mkdir, open, readFile, rename, unlink } from "node:fs/promises";
 import path from "node:path";
 
-export type CollectionName = "news" | "newsletter" | "clients" | "partner-programme" | "administration" | "audit" | "finance" | "managed-content" | "assets" | "client-notes" | "migrations";
+export type CollectionName = "news" | "newsletter" | "clients" | "partner-programme" | "administration" | "audit" | "finance" | "managed-content" | "assets" | "client-notes" | "migrations" | "client-services" | "savings-config" | "savings-accounts" | "finance-payments" | "finance-ledger";
 export const dataDirectory = () => path.resolve(process.env.DEJADON_DATA_DIR || path.join(process.cwd(), ".data"));
 type Transaction = { directory: string; writes: Map<string, unknown> };
 type Shared = typeof globalThis & { dejadonTransactions?: AsyncLocalStorage<Transaction>; dejadonStorageQueues?: Map<string, Promise<unknown>> };

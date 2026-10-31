@@ -7,5 +7,5 @@ export const dynamic = "force-dynamic";
 
 export default async function AdminClientsPage() {
   const admin = await adminPage("agro.clients.read"); if (!admin) return null;
-  return <AdminShell section="clients"><AdminClientManager initialClients={await scopedClients(admin)} /></AdminShell>;
+  return <AdminShell section="clients"><AdminClientManager initialClients={await scopedClients(admin)} permissions={admin.permissions} /></AdminShell>;
 }

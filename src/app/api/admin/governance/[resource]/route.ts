@@ -11,6 +11,9 @@ import { assets, uploadAsset, archiveAsset } from "@/lib/admin-assets";
 import { managedContent, saveManagedContent } from "@/lib/managed-content";
 import { financeOperations, financeView, initiateFinance, actOnFinance } from "@/lib/finance-store";
 import { readProgramme } from "@/lib/partner-store";
+import { confirmSavingsPayment, processSavingsRefunds, isSavingsReference } from "@/lib/savings-payments";
+import { readCollection } from "@/lib/site-storage";
+import type { SavingsPayment } from "@/lib/savings-types";
 import { confirmPartnerPayment } from "@/lib/partner-payments";
 import { serviceConfiguration } from "@/lib/partner-services";
 import { readLimitedBody } from "@/lib/request-body";
@@ -53,7 +56,7 @@ export async function GET(request: Request, { params }: Context) {
         return new Response([fields.join(","), ...payments.map((payment) => fields.map((field) => cell(payment[field])).join(","))].join("\r\n"), { headers: { "Content-Type": "text/csv; charset=utf-8", "Content-Disposition": 'attachment; filename="partner-transactions.csv"', "Cache-Control": "no-store" } });
       }
       const clients = can(admin, "finance.balances.manage") || can(admin, "finance.withdrawals.approve") ? await scopedClients(admin) : [];
-      return json({ ...paginate(payments), operations: data.operations, entries: data.entries.filter((entry) => payments.some((payment) => payment.reference === entry.reference)), clients: clients.map((client) => ({ id: client.id, fullName: client.fullName, balance: client.balance, withdrawals: client.withdrawals })), payoutExecutionAvailable: false, commissionLedgerAvailable: false, requireSecondApproval: (await readAdministration()).requireSecondApproval, services: serviceConfiguration() });
+      return json({ ...paginate(payments), savingsPayments: data.savingsPayments, savingsEntries: data.savingsEntries, operations: data.operations, entries: data.entries.filter((entry) => payments.some((payment) => payment.reference === entry.reference)), clients: clients.map((client) => ({ id: client.id, fullName: client.fullName, balance: client.balance, withdrawals: client.withdrawals })), payoutExecutionAvailable: false, commissionLedgerAvailable: false, requireSecondApproval: (await readAdministration()).requireSecondApproval, services: serviceConfiguration() });
     }
     const state = await readAdministration(); return json({ requireSecondApproval: state.requireSecondApproval, services: serviceConfiguration(), storage: "Single process with persistent disk", payoutExecutionAvailable: false });
   } catch (error) { return contentApiError(error); }
@@ -85,7 +88,7 @@ export async function POST(request: Request, { params }: Context) {
     if (params.resource === "finance") {
       if (input.action === "reconcile") actionPermission = "finance.transactions.reconcile";
       else if (input.action === "initiate") actionPermission = input.kind === "withdrawal" ? "agro.withdrawals.review" : input.kind === "balance" ? "finance.balances.manage" : "finance.refunds.review";
-      else { const operation = (await financeOperations()).find((operation) => operation.id === input.id); actionPermission = operation?.kind === "balance" ? "finance.balances.manage" : operation?.kind === "withdrawal" ? input.action === "execute" ? "finance.withdrawals.execute" : "finance.withdrawals.approve" : input.action === "execute" ? "finance.refunds.execute" : "finance.refunds.review"; }
+      else { const operation = (await financeOperations()).find((operation) => operation.id === input.id); actionPermission = operation?.kind === "balance" ? "finance.balances.manage" : (operation?.kind === "withdrawal" || operation?.kind === "savings-withdrawal") ? (input.action === "review" || input.action === "reject" && operation?.kind === "savings-withdrawal" && operation.state === "requested") ? "savings.withdrawals.review" : input.action === "execute" ? "finance.withdrawals.execute" : "finance.withdrawals.approve" : input.action === "execute" ? "finance.refunds.execute" : "finance.refunds.review"; }
     }
     const result = await adminOperation(request, actionPermission, async (actor) => {
       if (params.resource === "users") return manageAdmin(actor, input);
@@ -98,6 +101,11 @@ export async function POST(request: Request, { params }: Context) {
       }
       if (input.action === "initiate") return initiateFinance(actor, input);
       if (input.action === "reconcile") {
+        if (typeof input.reference === "string" && isSavingsReference(input.reference)) {
+          const saved = (await readCollection<SavingsPayment>("finance-payments")).find((payment) => payment.reference === input.reference && inScope(actor, "clients", payment.clientId));
+          if (!saved) throw new AdminError("Payment not found.", 404);
+          const result = await confirmSavingsPayment(saved.reference); await processSavingsRefunds(saved.reference); return result;
+        }
         const payment = (await readProgramme()).payments.find((payment) => payment.reference === input.reference && inScope(actor, "partners", payment.partnerId));
         if (!payment) throw new AdminError("Payment not found.", 404);
         const result = await confirmPartnerPayment(payment.reference);

@@ -1,3 +1,4 @@
+import { visibleClientDetails } from "@/lib/client-services";
 import { NextResponse } from "next/server";
 import { checkClientAuthRequest, readClientBody, setClientCookie } from "@/lib/client-auth";
 import { activateClient } from "@/lib/client-store";
@@ -10,6 +11,6 @@ export async function POST(request: Request) {
   if (denied) return denied;
   try {
     const result = await activateClient(await readClientBody(request));
-    return setClientCookie(NextResponse.json({ client: result.client }, { status: 201 }), result.token);
+    return setClientCookie(NextResponse.json({ client: await visibleClientDetails(result.client) }, { status: 201 }), result.token);
   } catch (error) { return contentApiError(error); }
 }

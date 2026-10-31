@@ -3,7 +3,8 @@ import path from "node:path";
 import { dataDirectory, readCollection, updateCollection, storageTransaction } from "@/lib/site-storage";
 import type { ProgrammeState } from "@/lib/partner-store";
 import { appendAudit } from "@/lib/admin-audit";
-export async function migrateAdministration() {
+import { migrateClientServices } from "@/lib/client-services";
+async function migrateAdministrationV2() {
   return storageTransaction(async () => {
     if ((await readCollection<{ version: number }>("migrations")).some((item) => item.version === 2)) return { applied: false, backup: null };
     const directory = dataDirectory();
@@ -23,5 +24,12 @@ export async function migrateAdministration() {
     await updateCollection<{ version: number; appliedAt: string; snapshots: number }, void>("migrations", (items) => ({ items: [...items, { version: 2, appliedAt: new Date().toISOString(), snapshots }], result: undefined }));
     await appendAudit({ action: "migration.admin-v2", resource: "migration", resourceId: "2", after: { snapshots }, reason: "Additive migration; legacy benefit snapshots reflect the configuration available at cutover." });
     return { applied: true, backup };
+  });
+}
+export async function migrateAdministration() {
+  return storageTransaction(async () => {
+    const previous = await migrateAdministrationV2();
+    const services = await migrateClientServices();
+    return { applied: previous.applied || services.applied, backup: previous.backup || services.backup };
   });
 }

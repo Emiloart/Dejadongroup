@@ -31,3 +31,9 @@ Retain JSON file shapes and public APIs where possible. Add an additive versione
 Implement identity/permission boundaries first, then shared navigation and department tools, then finance/governance. Never infer paid outcomes from browser flags. Preserve the established published-price difference upgrade rule and immediate ₦100 refund-request trigger. Keep public design and client/partner dashboards intact.
 
 Baseline validation: TypeScript, lint and five content/partner domain tests pass. Existing HTTP suites will also run against a production build before release.
+
+## Client savings extension audit (31 October 2026)
+
+Reviewed the actual current `main` branch before editing: repository/Next/TypeScript/test configuration; existing client token/session/profile/dashboard flows; scoped named staff identities, central permissions and audit; JSON queue/journal and additive migration; Finance review/approval and partner verification/refund/reconciliation; marketplace product publication/media and food-package promotion. No applicable `AGENTS.md` was present. Baseline content, marketplace, client, partner and admin suites all passed (11 tests) against the pre-change production build.
+
+Reusable boundaries were the existing client identity and dashboard shell, administrative guards/scopes/actor audit context, serialized coordinated JSON transactions, Finance approval policy, immutable marketplace uploads and Paystack adapter/webhook/scheduler. The repository had no savings ledger, approved savings financial configuration, package savings offers or live savings custody/settlement authorization. The implementation therefore adds the first authoritative savings records within Finance, preserves the independent manual Agro balance and keeps live savings/payouts disabled. No second authentication provider, dashboard application, database or payment provider was introduced.

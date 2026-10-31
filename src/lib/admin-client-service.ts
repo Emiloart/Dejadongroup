@@ -2,6 +2,7 @@ import { getAdminClients, issueClientToken, saveClientRecord } from "@/lib/clien
 import { can, inScope, type AdminPrincipal } from "@/lib/admin-permissions";
 import { AdminError } from "@/lib/admin-store";
 import { audited } from "@/lib/admin-audit";
+import { assignInitialAgro, migrateClientServices } from "@/lib/client-services";
 export async function scopedClients(admin: AdminPrincipal) { return (await getAdminClients()).filter((client) => inScope(admin, "clients", client.id)); }
 export async function saveAdminClient(admin: AdminPrincipal, input: Record<string, unknown>, id?: string) {
   if (!can(admin, id ? "agro.clients.manage" : "agro.clients.create")) throw new AdminError("Client management permission is required.", 403);
@@ -25,6 +26,9 @@ export async function saveAdminClient(admin: AdminPrincipal, input: Record<strin
   // Once reviewed, amount/reference changes must go through a new request.
   const { withdrawalHasReview } = await import("@/lib/finance-store");
   for (const withdrawal of withdrawals) { const prior = before?.withdrawals.find((item) => item.id === withdrawal.id); if (prior && await withdrawalHasReview(id!, prior.id) && !sameWithdrawal(prior, withdrawal)) throw new AdminError("A reviewed withdrawal cannot be edited. Record a new request.", 409); }
-  return audited(id ? "client.updated" : "client.created", "client", id || "new", () => saveClientRecord(input, id), before);
+  await migrateClientServices();
+  const client = await audited(id ? "client.updated" : "client.created", "client", id || "new", () => saveClientRecord(input, id), before);
+  if (!id) await assignInitialAgro(client.id, admin.id);
+  return client;
 }
 export const adminClientToken = (id: string, revoke: boolean) => audited(revoke ? "client.token.revoked" : "client.token.issued", "client", id, () => issueClientToken(id, revoke));

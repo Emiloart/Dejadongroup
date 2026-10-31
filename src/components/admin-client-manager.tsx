@@ -3,6 +3,8 @@
 import { useState, type FormEvent, type ReactNode } from "react";
 import { Plus, Copy, KeyRound, Save, Trash2 } from "lucide-react";
 import { clientDate, processStatuses, withdrawalStatuses, type AdminClient, type ClientDetails, type ClientWithdrawal } from "@/lib/client-types";
+import type { Permission } from "@/lib/admin-permissions";
+import { AdminServiceAssignments } from "@/components/admin-service-assignments";
 
 type Draft = Omit<ClientDetails, "id" | "balance" | "withdrawals" | "createdAt" | "updatedAt" | "activatedAt"> & {
   balance: string;
@@ -30,7 +32,7 @@ function FormSection({ title, children, description }: { title: string; children
   return <section className="border-t border-ink/10 pt-7"><h3 className="text-xl">{title}</h3>{description ? <p className="mt-2 text-sm leading-7 text-stone-600">{description}</p> : null}<div className="mt-5 space-y-5">{children}</div></section>;
 }
 
-export function AdminClientManager({ initialClients }: { initialClients: AdminClient[] }) {
+export function AdminClientManager({ initialClients, permissions = [] }: { initialClients: AdminClient[]; permissions?: Permission[] }) {
   const [clients, setClients] = useState(initialClients);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [draft, setDraft] = useState<Draft>(() => draftFor());
@@ -127,6 +129,7 @@ export function AdminClientManager({ initialClients }: { initialClients: AdminCl
             <div className="border-t border-ink/10 pt-6"><button type="submit" className="inline-flex min-h-12 items-center gap-2 rounded-card bg-ink px-6 text-sm font-semibold text-white hover:bg-stone-700 disabled:opacity-50"><Save aria-hidden="true" className="h-4 w-4" />{busy ? "Saving…" : "Save client record"}</button></div>
           </fieldset>
         </form>
+        {selected && permissions.includes("clients.services.read") ? <AdminServiceAssignments key={selected.id} clientId={selected.id} permissions={permissions} /> : null}
         <section aria-labelledby="client-token-heading" className="mt-8 border-t border-ink/10 pt-7"><h3 id="client-token-heading" className="flex items-center gap-3 text-xl"><KeyRound aria-hidden="true" className="h-5 w-5 text-orange-700" /> Account activation token</h3>
           {selected?.activatedAt ? <p className="mt-4 text-sm leading-7 text-stone-600">Account activated on {clientDate(selected.activatedAt)}. This client signs in with their email and password.</p> : <><p className="mt-3 text-sm leading-7 text-stone-600">Tokens are single-use and expire after seven days. Issue a token after saving the verified record, then provide it directly to the client. Issuing another token invalidates the previous one.</p><p className="mt-3 text-xs text-stone-500">Status: {selected?.tokenStatus.replace(/-/g, " ") || "Save a client record first"}{selected?.tokenExpiresAt ? ` · Expires ${clientDate(selected.tokenExpiresAt)}` : ""}</p>{dirty ? <p className="mt-3 text-sm text-orange-800">Save your changes before managing the token.</p> : null}<div className="mt-5 flex flex-wrap gap-3"><button type="button" disabled={busy || dirty || !selected?.verified} onClick={() => tokenAction("issue")} className={buttonClass}><KeyRound aria-hidden="true" className="h-4 w-4" />{selected?.tokenStatus === "issued" || selected?.tokenStatus === "expired" ? "Issue replacement token" : "Issue activation token"}</button>{selected?.tokenStatus === "issued" ? <button type="button" disabled={busy || dirty} onClick={() => tokenAction("revoke")} className={buttonClass}>Revoke token</button> : null}</div></>}
           {issuedToken ? <div className="mt-5 rounded-card border border-orange-200 bg-orange-50 p-4"><label className="block text-xs font-semibold">Copy this token now — it will not be shown again<input readOnly value={issuedToken} onFocus={(event) => event.target.select()} className={`${inputClass} font-mono text-sm`} /></label><button type="button" onClick={copyToken} className={`${buttonClass} mt-4`}><Copy aria-hidden="true" className="h-4 w-4" /> Copy token</button></div> : null}

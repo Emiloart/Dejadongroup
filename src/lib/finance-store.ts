@@ -1,5 +1,5 @@
 import { createHash, randomUUID } from "node:crypto";
-import { readCollection, updateCollection } from "@/lib/site-storage";
+import { readCollection, updateCollection, storageTransaction } from "@/lib/site-storage";
 import { appendAudit } from "@/lib/admin-audit";
 import { AdminError, refreshActiveAdmin } from "@/lib/admin-store";
 import { can, inScope, type AdminPrincipal, type Permission } from "@/lib/admin-permissions";
@@ -7,7 +7,8 @@ import { readAdministration } from "@/lib/admin-store";
 import { readProgramme } from "@/lib/partner-store";
 import { publicPartnerPayment } from "@/lib/partner-types";
 import type { ClientDetails } from "@/lib/client-types";
-export type FinanceOperation = { id: string; kind: "balance" | "withdrawal" | "refund-retry"; clientId: string; withdrawalId: string; reference: string; amountKobo: number; previousKobo: number | null; fingerprint: string; reason: string; initiatorId: string; reviewerId: string | null; approvedBy: string | null; state: "review" | "approved" | "rejected" | "executing" | "executed" | "failed"; createdAt: string; updatedAt: string; result: string };
+import type { FinanceLedgerEntry, SavingsAccount, SavingsPayment } from "@/lib/savings-types";
+export type FinanceOperation = { id: string; kind: "balance" | "withdrawal" | "savings-withdrawal" | "refund-retry"; clientId: string; withdrawalId: string; reference: string; amountKobo: number; previousKobo: number | null; fingerprint: string; reason: string; initiatorId: string; requestedById?: string; reviewerId: string | null; approvedBy: string | null; state: "requested" | "review" | "approved" | "rejected" | "cancelled" | "executing" | "executed" | "failed"; createdAt: string; updatedAt: string; result: string };
 export const financeOperations = () => readCollection<FinanceOperation>("finance");
 export const withdrawalHasReview = async (clientId: string, withdrawalId: string) => (await financeOperations()).some((item) => item.kind === "withdrawal" && item.clientId === clientId && item.withdrawalId === withdrawalId);
 export function kobo(value: unknown) { const text = String(value ?? ""); if (!/^(?:0|[1-9]\d{0,9})(?:\.\d{1,2})?$/.test(text)) throw new AdminError("Enter an NGN amount with up to two decimal places."); const [whole, fraction = ""] = text.split("."); return Number(whole) * 100 + Number(fraction.padEnd(2, "0")); }
@@ -94,19 +95,29 @@ export async function actOnFinance(admin: AdminPrincipal, input: Record<string, 
     if (operation.kind === "refund-retry") { const payment = (await readProgramme()).payments.find((item) => item.reference === operation.reference); if (!payment || !inScope(admin, "partners", payment.partnerId)) throw new AdminError("Operation not found.", 404); }
     const before = { ...operation };
     const action = input.action;
-    const approvalPermission = operation.kind === "withdrawal" ? "finance.withdrawals.approve" : operation.kind === "balance" ? "finance.balances.manage" : "finance.refunds.review";
-    if (action === "approve" || action === "reject") {
+    const isWithdrawal = operation.kind === "withdrawal" || operation.kind === "savings-withdrawal";
+    const approvalPermission = isWithdrawal ? "finance.withdrawals.approve" : operation.kind === "balance" ? "finance.balances.manage" : "finance.refunds.review";
+    if (action === "reject" && operation.kind === "savings-withdrawal" && operation.state === "requested") {
+      requirePermission(admin, "savings.withdrawals.review");
+      operation.state = "rejected"; operation.reviewerId = admin.id; operation.result = justification;
+    } else if (action === "review" && operation.kind === "savings-withdrawal") {
+      requirePermission(admin, "savings.withdrawals.review");
+      if (operation.state !== "requested") throw new AdminError("Only a new withdrawal request can enter review.", 409);
+      await validateSavingsWithdrawal(operation);
+      operation.initiatorId = admin.id; operation.state = "review"; operation.result = justification;
+    } else if (action === "approve" || action === "reject") {
       requirePermission(admin, approvalPermission);
       if (operation.state !== "review") throw new AdminError("This operation has already been reviewed.", 409);
       if ((await readAdministration()).requireSecondApproval && operation.initiatorId === admin.id) throw new AdminError("A different authorized administrator must review this request.", 403);
+      if (operation.kind === "savings-withdrawal" && action === "approve") await validateSavingsWithdrawal(operation);
       operation.reviewerId = admin.id; operation.approvedBy = action === "approve" ? admin.id : null; operation.state = action === "approve" ? "approved" : "rejected";
       operation.result = justification;
     } else if (action === "execute") {
-      requirePermission(admin, operation.kind === "withdrawal" ? "finance.withdrawals.execute" : operation.kind === "balance" ? "finance.balances.manage" : "finance.refunds.execute");
+      requirePermission(admin, isWithdrawal ? "finance.withdrawals.execute" : operation.kind === "balance" ? "finance.balances.manage" : "finance.refunds.execute");
       if (operation.state === "executed") return { items, result: operation };
       if (operation.state !== "approved" || !operation.approvedBy) throw new AdminError("Approve this exact operation before execution.", 409);
       if ((await readAdministration()).requireSecondApproval && operation.approvedBy === operation.initiatorId) throw new AdminError("Current policy requires an independent approval.", 409);
-      if (operation.kind === "withdrawal") throw new AdminError("Payout execution is unavailable: no transfer provider, recipient verification or settlement integration is configured. Approval does not mean paid.", 409);
+      if (isWithdrawal) throw new AdminError("Payout execution is unavailable: no transfer provider, recipient verification or settlement integration is configured. Approval does not mean paid.", 409);
       if (operation.kind === "balance") {
         await updateCollection<ClientDetails, void>("clients", (clients) => {
           const client = clients.find((client) => client.id === operation.clientId);
@@ -127,6 +138,8 @@ export async function financeView(admin: AdminPrincipal) {
   requirePermission(admin, "finance.transactions.read");
   const programme = await readProgramme();
   return {
+    savingsPayments: (await readCollection<SavingsPayment>("finance-payments")).filter((payment) => inScope(admin, "clients", payment.clientId)).map(({ payerEmail: _email, checkoutUrl: _url, ...safe }) => safe),
+    savingsEntries: (await readCollection<FinanceLedgerEntry>("finance-ledger")).filter((entry) => inScope(admin, "clients", entry.clientId)),
     payments: programme.payments.filter((payment) => inScope(admin, "partners", payment.partnerId)).slice().reverse().map((payment) => ({ ...publicPartnerPayment(payment), registrationFeeKobo: payment.baseKobo - payment.discountKobo, refundableVerificationFeeKobo: payment.verificationFeeKobo })),
     entries: programme.payments.filter((payment) => inScope(admin, "partners", payment.partnerId)).flatMap((payment) => {
       const common = { reference: payment.reference, currency: "NGN", providerMode: payment.providerMode, createdAt: payment.paidAt || payment.createdAt };
@@ -141,4 +154,46 @@ export async function financeView(admin: AdminPrincipal) {
     operations: (await financeOperations()).filter((item) => (!item.clientId || inScope(admin, "clients", item.clientId)) && (item.kind !== "refund-retry" || programme.payments.some((payment) => payment.reference === item.reference && inScope(admin, "partners", payment.partnerId)))).reverse(),
     payoutExecutionAvailable: false, commissionLedgerAvailable: false
   };
+}
+export async function savingsWithdrawalEligibility(account: SavingsAccount, excludingOperationId?: string) {
+  const { savingsTotals } = await import("@/lib/savings-store");
+  const totals = savingsTotals(account, await readCollection<FinanceLedgerEntry>("finance-ledger"));
+  const reserved = (await financeOperations()).filter((item) => item.kind === "savings-withdrawal" && item.withdrawalId === account.id && item.id !== excludingOperationId && ["requested", "review", "approved", "executing"].includes(item.state)).reduce((sum, item) => sum + item.amountKobo, 0);
+  const availableKobo = Math.max(0, totals.balanceKobo - account.plan.minimumBalanceKobo - reserved);
+  const reasons: string[] = [];
+  if (account.accountStatus !== "active") reasons.push("The savings account must be active.");
+  if (!account.plan.withdrawalsAllowed) reasons.push("Withdrawals are unavailable under the agreed plan.");
+  if (!account.activatedAt || Date.now() < Date.parse(account.activatedAt) + account.plan.withdrawalHoldDays * 86400000) reasons.push("The configured holding period has not been met.");
+  if (account.plan.withdrawalRequiresTarget && totals.remainingKobo !== 0) reasons.push("The agreed target must be reached first.");
+  if (!availableKobo) reasons.push("No confirmed funds are available after the required minimum balance and existing requests.");
+  return { eligible: !reasons.length, availableKobo, reasons };
+}
+async function validateSavingsWithdrawal(operation: FinanceOperation) {
+  const { ownSavingsAccount } = await import("@/lib/savings-store");
+  const account = await ownSavingsAccount(operation.clientId, operation.withdrawalId);
+  const eligible = await savingsWithdrawalEligibility(account, operation.id);
+  if (!eligible.eligible || operation.amountKobo > eligible.availableKobo || fingerprint({ accountId: account.id, plan: account.plan }) !== operation.fingerprint) throw new AdminError("This withdrawal no longer satisfies the agreed eligibility and balance rules.", 409);
+}
+export async function requestSavingsWithdrawal(clientId: string, accountId: string, input: Record<string, unknown>) {
+  return storageTransaction(async () => {
+    const { ownSavingsAccount } = await import("@/lib/savings-store");
+    const account = await ownSavingsAccount(clientId, accountId); const eligible = await savingsWithdrawalEligibility(account);
+    const amountKobo = kobo(input.amount);
+    if (input.confirm !== true || !eligible.eligible || amountKobo < 1 || amountKobo > eligible.availableKobo) throw new AdminError("Confirm an amount within the available balance and agreed withdrawal rules.", 409);
+    const now = new Date().toISOString(); const reference = `DJ-SW-${randomUUID()}`;
+    const operation: FinanceOperation = { id: randomUUID(), kind: "savings-withdrawal", clientId, withdrawalId: accountId, reference, amountKobo, previousKobo: null, fingerprint: fingerprint({ accountId, plan: account.plan }), reason: "Client requested withdrawal under the agreed plan; payout execution is unavailable.", requestedById: `client:${clientId}`, initiatorId: `client:${clientId}`, reviewerId: null, approvedBy: null, state: "requested", createdAt: now, updatedAt: now, result: "Awaiting authorized staff review. No transfer has occurred." };
+    await updateCollection<FinanceOperation, void>("finance", (items) => ({ items: [...items, operation], result: undefined }));
+    await appendAudit({ actorId: `client:${clientId}`, action: "finance.savings-withdrawal.requested", resource: "savings-withdrawal", resourceId: operation.id, after: { accountId, amountKobo, reference } });
+    return { id: operation.id, reference, state: operation.state };
+  });
+}
+export async function cancelSavingsWithdrawal(clientId: string, accountId: string, id: string) {
+  return updateCollection<FinanceOperation, void>("finance", async (items) => {
+    const operation = items.find((item) => item.id === id && item.clientId === clientId && item.withdrawalId === accountId && item.kind === "savings-withdrawal");
+    if (!operation) throw new AdminError("Withdrawal not found.", 404);
+    if (!["requested", "review", "approved"].includes(operation.state)) throw new AdminError("This withdrawal cannot be cancelled.", 409);
+    operation.state = "cancelled"; operation.updatedAt = new Date().toISOString(); operation.result = "Cancelled by the client before execution. No transfer occurred.";
+    await appendAudit({ actorId: `client:${clientId}`, action: "finance.savings-withdrawal.cancelled", resource: "savings-withdrawal", resourceId: id });
+    return { items, result: undefined };
+  });
 }

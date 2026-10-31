@@ -4,6 +4,7 @@ export const permissions = [
   "marketplace.products.read", "marketplace.products.manage", "marketplace.products.publish", "marketplace.orders.read", "marketplace.orders.manage",
   "partners.read", "partners.manage", "partners.tiers.read", "partners.tiers.manage", "partners.promocodes.read", "partners.promocodes.manage", "partners.payments.read",
   "agro.clients.read", "agro.clients.create", "agro.clients.manage", "agro.clients.activate", "agro.properties.manage", "agro.investments.manage", "agro.withdrawals.review", "agro.documents.manage",
+  "clients.services.read", "clients.services.manage", "savings.read", "savings.plans.manage", "savings.offers.manage", "savings.offers.publish", "savings.enrollments.manage", "savings.enrollments.review", "savings.accounts.activate", "savings.fulfillment.manage", "savings.withdrawals.review",
   "finance.transactions.read", "finance.transactions.reconcile", "finance.refunds.review", "finance.refunds.execute", "finance.withdrawals.approve", "finance.withdrawals.execute", "finance.balances.manage", "finance.reports.read"
 ] as const;
 export type Permission = typeof permissions[number];
@@ -14,6 +15,7 @@ export const rolePermissions = {
   partner_programme_admin: ["partners.read", "partners.manage", "partners.tiers.read", "partners.tiers.manage", "partners.payments.read"],
   agro_real_estate_admin: ["agro.clients.read", "agro.clients.create", "agro.clients.manage", "agro.clients.activate", "agro.properties.manage", "agro.investments.manage", "agro.withdrawals.review", "agro.documents.manage"],
   finance_admin: ["finance.transactions.read", "finance.transactions.reconcile", "finance.refunds.review", "finance.withdrawals.approve", "finance.reports.read"],
+  field_representative: ["agro.clients.read", "clients.services.read", "savings.read", "savings.enrollments.manage"],
   content_editor: ["content.read", "content.create", "content.update", "content.media.manage"],
   content_publisher: ["content.read", "content.publish"]
 } satisfies Record<string, Permission[]>;

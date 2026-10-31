@@ -1,3 +1,4 @@
+import { visibleClientDetails } from "@/lib/client-services";
 import { NextResponse } from "next/server";
 import { checkClientAuthRequest, currentClientToken, getCurrentClient, readClientBody, setClientCookie } from "@/lib/client-auth";
 import { updateClientProfile } from "@/lib/client-store";
@@ -11,7 +12,7 @@ export async function PUT(request: Request) {
   if (rejected) return rejected;
   try {
     const result = await updateClientProfile(currentClientToken()!, await readClientBody(request));
-    const response = NextResponse.json({ client: result.client }, { headers: { "Cache-Control": "no-store" } });
+    const response = NextResponse.json({ client: await visibleClientDetails(result.client) }, { headers: { "Cache-Control": "no-store" } });
     return result.token ? setClientCookie(response, result.token) : response;
   } catch (error) { return contentApiError(error); }
 }

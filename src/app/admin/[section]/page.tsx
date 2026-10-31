@@ -6,9 +6,10 @@ import { AdminUsers, AdminAudit, AdminSettings } from "@/components/admin-govern
 import { AdminFinance } from "@/components/admin-finance";
 import { AdminContentWorkspace } from "@/components/admin-content-workspace";
 import { AdminClientRecords } from "@/components/admin-client-records";
+import { AdminSavings } from "@/components/admin-savings";
 export const dynamic = "force-dynamic";
 export default async function AdminSectionPage({ params }: { params: { section: string } }) {
   const section = adminSubsections.find((item) => item.id === params.section); if (!section || !section.permission) notFound();
   const admin = await adminPage(section.permission); if (!admin) return null;
-  return <AdminShell section={section.id}>{section.id === "users" ? <AdminUsers actorId={admin.id} /> : section.id === "audit" ? <AdminAudit /> : section.id === "settings" ? <AdminSettings /> : section.id === "content" ? <AdminContentWorkspace permissions={admin.permissions} /> : section.id === "client-records" ? <AdminClientRecords permissions={admin.permissions} /> : <AdminFinance permissions={admin.permissions} />}</AdminShell>;
+  return <AdminShell section={section.id}>{section.id === "users" ? <AdminUsers actorId={admin.id} /> : section.id === "audit" ? <AdminAudit /> : section.id === "settings" ? <AdminSettings /> : section.id === "content" ? <AdminContentWorkspace permissions={admin.permissions} /> : section.id === "client-records" ? <AdminClientRecords permissions={admin.permissions} /> : section.id === "savings" ? <AdminSavings permissions={admin.permissions} /> : <AdminFinance permissions={admin.permissions} />}</AdminShell>;
 }

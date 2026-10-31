@@ -8,6 +8,7 @@ export const adminSections = [
   { id: "partners", label: "Partner Programme", href: "/admin/partners", department: "Partner Programme", permission: "partners.read", description: "Memberships, tiers, verification and referral attribution." },
   { id: "clients", label: "Client & Agro-Real Estate", href: "/admin/clients", department: "Client & Agro-Real Estate", permission: "agro.clients.read", description: "Assigned clients, property, investments and activation." },
   { id: "client-records", label: "Client records & review", href: "/admin/client-records", department: "Client & Agro-Real Estate", permission: "agro.clients.read", description: "Documents, communications, access lifecycle and withdrawal review." },
+  { id: "savings", label: "Client savings", href: "/admin/savings", department: "Client & Agro-Real Estate", permission: "savings.read", description: "Savings enrollment, approved plans, food-package offers and fulfillment." },
   { id: "finance", label: "Finance & Payments", href: "/admin/finance", department: "Finance & Payments", permission: "finance.transactions.read", description: "Authoritative payments, reconciliation, approvals and manual adjustments." },
   { id: "users", label: "Administrators", href: "/admin/users", department: "Super Admin", permission: "admin.users.read", description: "Provision staff and manage department assignments and sessions." },
   { id: "audit", label: "Audit history", href: "/admin/audit", department: "Super Admin", permission: "audit.read", description: "Search administrative and financial activity." },
@@ -15,4 +16,4 @@ export const adminSections = [
 ] satisfies { id: string; label: string; href: string; department: string; permission: Permission | null; description: string }[];
 export type AdminSectionId = typeof adminSections[number]["id"];
 export type AdminSection = typeof adminSections[number];
-export const adminSubsections = adminSections.filter((section) => ["content", "client-records", "finance", "users", "audit", "settings"].includes(section.id));
+export const adminSubsections = adminSections.filter((section) => ["content", "client-records", "savings", "finance", "users", "audit", "settings"].includes(section.id));

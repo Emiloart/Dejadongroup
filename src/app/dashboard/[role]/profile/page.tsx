@@ -1,3 +1,4 @@
+import { visibleClientDetails } from "@/lib/client-services";
 import { notFound, redirect } from "next/navigation";
 import { ClientDashboardLayout } from "@/components/client-dashboard-layout";
 import { ClientProfileEditor } from "@/components/client-profile-editor";
@@ -11,7 +12,7 @@ export default async function ProfilePage({ params }: { params: { role: string }
   if (params.role === "client") {
     const client = await getCurrentClient();
     if (!client) redirect("/login?role=client&next=/dashboard/client/profile");
-    return <ClientDashboardLayout page="profile"><ClientProfileEditor client={client} /></ClientDashboardLayout>;
+    return <ClientDashboardLayout page="profile"><ClientProfileEditor client={await visibleClientDetails(client)} /></ClientDashboardLayout>;
   }
   if (params.role !== "partner") notFound();
   const view = await getCurrentPartnerView();

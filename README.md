@@ -48,3 +48,7 @@ npm run test:admin
 ```
 
 Integration suites use isolated temporary data and test-only provider interception. They never charge real customers or send real verification email.
+
+Client accounts now support staff-assigned Agro-Real Estate, FlexiSave and Food Package Savings through the existing token activation and dashboard. `/admin/savings` manages approved plan/offer configuration, representative enrollment, review and actual fulfillment. Migration 3 preserves existing Agro access without changing client credentials or sessions. See [client service architecture](docs/admin/architecture.md#shared-client-services-and-savings).
+
+**Live savings collection and payouts are disabled.** Only an explicit, isolated Paystack test configuration can create test contributions. No approved savings offers or financial terms are seeded. See [required business decisions](docs/admin/financial-workflows.md#mandatory-real-money-boundary) and run `npm run test:savings` after `npm run build` to verify the new workflows.

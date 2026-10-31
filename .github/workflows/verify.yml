@@ -17,4 +17,4 @@ jobs:
       - run: npm run lint
       - run: npx tsc --noEmit --incremental false
       - run: npm run build
-      - run: node --test scripts/content.test.cjs scripts/partner.test.cjs scripts/admin-storage.test.cjs scripts/marketplace.integration.test.mjs scripts/client.integration.test.mjs scripts/partner.integration.test.mjs scripts/admin.integration.test.mjs
+      - run: node --test scripts/content.test.cjs scripts/partner.test.cjs scripts/admin-storage.test.cjs scripts/marketplace.integration.test.mjs scripts/client.integration.test.mjs scripts/partner.integration.test.mjs scripts/admin.integration.test.mjs scripts/savings.test.cjs scripts/savings.integration.test.mjs

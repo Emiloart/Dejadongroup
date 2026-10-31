@@ -3,7 +3,7 @@ const { spawn } = require("node:child_process"); const { randomBytes, createHmac
 const { mkdtemp, rm } = require("node:fs/promises"); const { createServer } = require("node:http");
 const os = require("node:os"); const path = require("node:path");
 
-async function startPartnerHarness() {
+async function startPartnerHarness({ savingsPaymentsMode = "" } = {}) {
   const directory = await mkdtemp(path.join(os.tmpdir(), "dejadon-partner-http-"));
   const inbox = new Map(); const transactions = new Map(); const refunds = new Map(); let nextId = 1; let refundPosts = 0;
   const gatewaySecret = `sk_test_${randomBytes(24).toString("hex")}`; const reconcileSecret = randomBytes(32).toString("hex");
@@ -40,7 +40,7 @@ async function startPartnerHarness() {
     server = spawn(process.execPath, ["node_modules/next/dist/bin/next", "start", "--hostname", "127.0.0.1", "--port", String(port)], {
       env: { ...process.env, DEJADON_DATA_DIR: directory, ADMIN_EMAIL: staff.email, ADMIN_PASSWORD: staff.password, SUPER_ADMIN_EMAIL: owner.email, SUPER_ADMIN_PASSWORD: owner.password,
         RESEND_API_KEY: "re_test_fixture_only", RESEND_FROM: "verification@example.test", PAYSTACK_SECRET_KEY: gatewaySecret, APP_BASE_URL: origin, PARTNER_RECONCILE_SECRET: reconcileSecret,
-        DEJADON_TEST_PROVIDER_ORIGIN: providerOrigin, NODE_OPTIONS: `--require "${path.resolve("scripts/partner-provider-preload.cjs").split(path.sep).join("/")}"` },
+        SAVINGS_PAYMENTS_MODE: savingsPaymentsMode, DEJADON_TEST_PROVIDER_ORIGIN: providerOrigin, NODE_OPTIONS: `--require "${path.resolve("scripts/partner-provider-preload.cjs").split(path.sep).join("/")}"` },
       stdio: ["ignore", "pipe", "pipe"]
     });
     server.stdout.on("data", (data) => { output += data; }); server.stderr.on("data", (data) => { output += data; });

@@ -1,3 +1,4 @@
+import { visibleClientDetails } from "@/lib/client-services";
 import { NextResponse } from "next/server";
 import { adminCookieOptions, isSameOrigin } from "@/lib/admin-auth";
 import { checkClientAuthRequest, clientCookieName, currentClientToken, getCurrentClient, readClientBody, setClientCookie } from "@/lib/client-auth";
@@ -9,7 +10,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   const client = await getCurrentClient();
-  return NextResponse.json(client ? { client } : { error: "Sign in to your client account." }, { status: client ? 200 : 401, headers: { "Cache-Control": "no-store" } });
+  return NextResponse.json(client ? { client: await visibleClientDetails(client) } : { error: "Sign in to your client account." }, { status: client ? 200 : 401, headers: { "Cache-Control": "no-store" } });
 }
 
 export async function POST(request: Request) {
@@ -17,7 +18,7 @@ export async function POST(request: Request) {
   if (denied) return denied;
   try {
     const result = await signInClient(await readClientBody(request));
-    return setClientCookie(NextResponse.json({ client: result.client }), result.token);
+    return setClientCookie(NextResponse.json({ client: await visibleClientDetails(result.client) }), result.token);
   } catch (error) { return contentApiError(error); }
 }
 

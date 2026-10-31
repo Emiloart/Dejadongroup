@@ -13,6 +13,7 @@
     "test:clients": "node --test scripts/client.integration.test.mjs",
     "test:partners": "node --test scripts/partner.test.cjs scripts/partner.integration.test.mjs",
     "test:admin": "node --test scripts/admin-storage.test.cjs scripts/admin.integration.test.mjs",
+    "test:savings": "node --test scripts/savings.test.cjs scripts/savings.integration.test.mjs",
     "migrate:admin": "node scripts/migrate-admin.cjs"
   },
   "dependencies": {

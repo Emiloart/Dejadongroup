@@ -55,3 +55,26 @@ The single-process adapter serializes coordinated document writes. A redo journa
 Audit events include stable ID, named actor ID, action, resource, UTC time, outcome, correlation ID, reason and redacted changes. No application route edits/deletes audit events. Events link previous/current SHA-256 hashes. This detects accidental/telltale changes when checked against trusted backups, but a disk administrator can recompute a chain; it is not externally immutable. Passwords, session/activation/invitation tokens, full bank accounts and unnecessary profile fields are redacted. Before/after payloads are bounded. Super Admin filters global history by actor/action/resource/date; departments receive only their relevant history. Histories begin at migration, with earlier partner events retained in their existing legacy list.
 
 In-app operational notifications derive from real scoped records: incomplete registrations, payment exceptions, refunds needing attention, withdrawal reviews, financial approvals and denied privileged operations. No new notification provider or automatic email campaign was introduced.
+
+## Shared client services and savings
+
+The existing `clients.json` identity, scrypt passwords, hashed activation tokens and hashed sessions remain authoritative. There is no second customer authentication system. `/dashboard/client` is the shared overview; `/dashboard/client/agro-real-estate`, `/dashboard/client/flexisave`, `/dashboard/client/food-package-savings` and the existing `/dashboard/client/profile` use the same server layout and session. Navigation reads current server assignments. Unassigned/suspended services return 404 on private routes and APIs. Identity/profile responses redact Agro fields when that service is unavailable.
+
+`client-services.ts` owns stable assignments (`id`, `clientId`, recognized service, enabled/suspended/inactive status, timestamps, responsible actors, append-only transition history). Access is distinct from enrollment and account activation. An inactive assignment must be enabled before it can be suspended; duplicate statuses/unknown services/nonexistent clients fail. The existing Agro client-creation workflow still assigns initial Agro access. Additional services never issue/consume an activation token or reset sessions/passwords.
+
+Migration 3 backs up current JSON to `migration-backups/client-services-v3-*`, then atomically backfills one Agro assignment per existing client, preserving any existing assignment status. Its marker prevents later reads from re-enabling suspended services. Both the existing migration command/admin sign-in and first client service read can run it idempotently. It does not rewrite `clients.json`. New identities continue through the current verified-client/token process.
+
+| Collection | Responsibility |
+| --- | --- |
+| `client-services.json` | Service entitlement and access history |
+| `savings-config.json` | Versioned approved contribution plans and separately published product-linked food offers |
+| `savings-accounts.json` | Enrollment/account state, representative, client consent, frozen plan/package agreement, actual fulfillment history |
+| `finance-payments.json` | Durable server-priced savings payment intents and verified provider state |
+| `finance-ledger.json` | Append-only Finance contributions and linked compensating reversals/refunds; the sole savings balance/allocation source |
+| Existing `finance.json` | Savings withdrawal requests alongside existing review/approval operations |
+
+There is no stored editable savings balance and no parallel provider adapter. Partner registration/refund truth remains in `partner-programme.json`; its existing derived Finance entries are unchanged. The legacy Agro recorded balance remains an explicitly manual administrative value and is never treated as savings funds.
+
+New explicit permissions are `clients.services.read/manage`, `savings.read`, `savings.plans.manage`, `savings.offers.manage/publish`, `savings.enrollments.manage/review`, `savings.accounts.activate`, `savings.fulfillment.manage`, and `savings.withdrawals.review`. Super Admin receives them; existing client editors do not gain them automatically. `field_representative` defaults to scoped client/service/savings read and enrollment management, with no assignment, approval, activation, configuration or financial execution authority. Assign additional grants/scopes deliberately in the existing staff workspace. Finance's existing read/reconcile/withdrawal approval/execution permissions remain separate.
+
+`/api/admin/clients/[id]/services` extends client administration. `/api/admin/savings` uses central admin authorization, transaction-time identity revalidation, scopes and audit context. `/api/client/services` returns only the authenticated client's assignment summaries; `/api/client/services/[service]` resolves client identity from the session and verifies account ownership/service on every action. Request-supplied client IDs, balance, targets, fulfillment states and payment-success flags have no authority. All multi-record mutations share the existing serialized transaction and redo journal.

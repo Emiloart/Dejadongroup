@@ -1,3 +1,4 @@
+import { confirmSavingsPayment, processSavingsRefunds, isSavingsReference } from "@/lib/savings-payments";
 import { contentApiError } from "@/lib/content-api";
 import { partnerJson } from "@/lib/partner-api";
 import { confirmPartnerPayment, processPartnerRefund } from "@/lib/partner-payments";
@@ -11,8 +12,8 @@ export async function POST(request: Request) {
   if (!validPaystackSignature(raw, request.headers.get("x-paystack-signature"))) return partnerJson({ error: "Invalid signature." }, 401);
   try {
     const event = JSON.parse(raw.toString("utf8"));
-    if (event.event === "charge.success" && typeof event.data?.reference === "string") await confirmPartnerPayment(event.data.reference);
-    if (typeof event.event === "string" && event.event.startsWith("refund.") && typeof event.data?.transaction_reference === "string") await processPartnerRefund(event.data.transaction_reference);
+    if (event.event === "charge.success" && typeof event.data?.reference === "string") await (isSavingsReference(event.data.reference) ? confirmSavingsPayment(event.data.reference) : confirmPartnerPayment(event.data.reference));
+    if (typeof event.event === "string" && event.event.startsWith("refund.") && typeof event.data?.transaction_reference === "string") await (isSavingsReference(event.data.transaction_reference) ? processSavingsRefunds(event.data.transaction_reference) : processPartnerRefund(event.data.transaction_reference));
     return partnerJson({ received: true });
   } catch (error) { return contentApiError(error); }
 }
