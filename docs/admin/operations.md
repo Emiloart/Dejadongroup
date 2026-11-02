@@ -48,7 +48,7 @@ There is no configured client-transfer provider, shipping integration, marketpla
 
 ## Journal recovery and backups
 
-Back up the entire directory together while the app is stopped, or use a coordinated filesystem snapshot. Include JSON documents, `uploads`, `managed-assets`, migration backups and any `.transaction.json` journal. No maintenance process may modify the directory while the app is running.
+Back up the entire directory together while the app is stopped, or use a coordinated filesystem snapshot. Include JSON documents, `uploads`, `managed-assets`, migration backups and any `.transaction.json` journal. `support-tickets.json` contains private customer and staff messages; restrict backup access and retention to the support-data policy. No maintenance process may modify the directory while the app is running.
 
 The storage queue recovers a complete redo journal before reading or accepting another mutation. It writes/fsyncs staged file contents and uses rename replacement. A valid leftover journal should be replayed by the application, not deleted to hide an error. An invalid journal fails closed: stop the application, preserve a forensic copy, and restore a consistent trusted directory backup. Power-loss semantics also depend on the operating system and disk; no arbitrary hardware-failure or distributed atomicity guarantee is claimed.
 

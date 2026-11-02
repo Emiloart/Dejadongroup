@@ -9,3 +9,4 @@ These records explain decisions that shape the running product. Current business
 | [0003](0003-partner-resource-access.md) | Keep partner materials private and authorize them against current membership and an explicit tier allowlist. |
 | [0004](0004-financial-state-and-commission-boundary.md) | Treat provider-verified records as money truth and leave unapproved commission/payout accounting unavailable. |
 | [0005](0005-supported-framework-and-request-context.md) | Use a supported, patched Next.js release and await request-bound cookies and route values. |
+| [0006](0006-dashboard-customer-support.md) | Keep ongoing dashboard support tickets bound to existing client/partner sessions and scoped support staff. |

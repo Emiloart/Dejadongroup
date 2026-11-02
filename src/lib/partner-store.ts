@@ -75,6 +75,10 @@ export function tierPreview(tier: PartnerTier): TierPreview {
 }
 export const getPublicPartnerTiers = async () => (await readProgramme()).tiers.filter((tier) => tier.active).sort((a, b) => a.rank - b.rank).map(tierPreview);
 export const getPartnerAccountCount = async () => (await readProgramme()).partners.length;
+export async function getSupportPartnerSummaries(ids: string[]) {
+  const selected = new Set(ids);
+  return (await readProgramme()).partners.filter((partner) => selected.has(partner.id)).map((partner) => ({ id: partner.id, fullName: partner.fullName, email: partner.email }));
+}
 export async function getPartnerView(token: string | undefined): Promise<PartnerView | null> {
   const state = await readProgramme(); const partner = findPartner(state, token);
   if (!partner) return null;

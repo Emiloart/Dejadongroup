@@ -8,7 +8,8 @@ See [the preliminary audit](audit.md) for the actual pre-change implementation. 
 
 | Role | Default workspace / authority |
 | --- | --- |
-| `super_admin` | All six areas, role assignment, security policy, audit and promo modification |
+| `super_admin` | All administration areas, role assignment, security policy, audit and promo modification |
+| `customer_support_admin` | Scoped dashboard support queue, customer replies, assignment, resolution and private internal notes |
 | `media_admin` | Content, original-source news previews, publishing, media, newsletter management/export |
 | `marketplace_admin` | Product listings, prices, photos, availability, publication, archive and history |
 | `partner_programme_admin` | Assigned partner records, membership access, tiers/benefits and registration/upgrade status; no promo access by default |
@@ -27,6 +28,7 @@ Client and partner scopes are independent: `all`, a list of record IDs, or an em
 
 | Area | Pages | Protected APIs |
 | --- | --- | --- |
+| Customer Support | `/admin/support` | `/api/admin/support[/:ticketId]`; checks support permissions and independent client/partner scopes |
 | Media & Content | `/admin/content`, `/admin/news`, `/admin/newsletter` | `/api/admin/governance/content`, `/upload`, `/media`; existing news/newsletter APIs |
 | Sales & Marketplace | `/admin/products` | Existing `/api/admin/products[/:slug]` with permission/publishing checks |
 | Partner Programme | `/admin/partners` | `/api/admin/partner-programme/{overview,tiers,members,promos,payments}` |
@@ -48,13 +50,15 @@ Products support draft, published and archived states. Existing DELETE becomes a
 
 ## Persistence and accountability
 
-Existing `products.json`, `news.json`, `newsletter.json`, `clients.json` and `partner-programme.json` remain authoritative. New collections: `administration.json`, `audit.json`, `finance.json`, `managed-content.json`, `assets.json`, `client-notes.json`, and `migrations.json`. Relationships reference stable record IDs and are validated by services; uniqueness and transitions are enforced under the storage mutex. No SQL foreign keys or RLS are claimed.
+Existing `products.json`, `news.json`, `newsletter.json`, `clients.json` and `partner-programme.json` remain authoritative. New collections: `administration.json`, `audit.json`, `finance.json`, `managed-content.json`, `assets.json`, `client-notes.json`, `migrations.json` and `support-tickets.json`. Relationships reference stable record IDs and are validated by services; uniqueness and transitions are enforced under the storage mutex. No SQL foreign keys or RLS are claimed.
 
 The single-process adapter serializes coordinated document writes. A redo journal is written before document replacement, file contents are synced, and startup/read recovery replays an incomplete transaction. Ordinary failed callbacks stage nothing. Corrupt journals fail closed and require operator recovery. This protects application-level coordinated writes; it does not provide multi-process locking, arbitrary hardware-failure guarantees or a distributed transaction with Paystack.
 
 Audit events include stable ID, named actor ID, action, resource, UTC time, outcome, correlation ID, reason and redacted changes. No application route edits/deletes audit events. Events link previous/current SHA-256 hashes. This detects accidental/telltale changes when checked against trusted backups, but a disk administrator can recompute a chain; it is not externally immutable. Passwords, session/activation/invitation tokens, full bank accounts and unnecessary profile fields are redacted. Before/after payloads are bounded. Super Admin filters global history by actor/action/resource/date; departments receive only their relevant history. Histories begin at migration, with earlier partner events retained in their existing legacy list.
 
 In-app operational notifications derive from real scoped records: incomplete registrations, payment exceptions, refunds needing attention, withdrawal reviews, financial approvals and denied privileged operations. No new notification provider or automatic email campaign was introduced.
+
+Dashboard customer support is account-bound across two ownership domains: client ID and partner ID. Customer API routes resolve the selected role from its existing cookie and only return the matching account's tickets. The support role receives only name/email context and records allowed by its existing client/partner scopes. Staff action logs omit message and internal-note text. See [ADR 0006](../decisions/0006-dashboard-customer-support.md) for state transitions, limits and production retention requirements.
 
 ## Shared client services and savings
 

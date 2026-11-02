@@ -15,6 +15,7 @@
     "test:admin": "node --test scripts/admin-storage.test.cjs scripts/admin.integration.test.mjs",
     "test:savings": "node --test scripts/savings.test.cjs scripts/savings.integration.test.mjs",
     "test:partner-resources": "node --test scripts/partner-resources.test.cjs scripts/partner-resources.integration.test.mjs",
+    "test:support": "node --test scripts/support.integration.test.mjs",
     "test:security": "node --test scripts/attempt-limiter.test.cjs",
     "migrate:admin": "node scripts/migrate-admin.cjs"
   },

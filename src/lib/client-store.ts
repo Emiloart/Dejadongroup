@@ -25,6 +25,10 @@ function adminDetails(record: ClientRecord): AdminClient {
 }
 
 export const getAdminClients = async () => (await readClients()).map(adminDetails);
+export async function getSupportClientSummaries(ids: string[]) {
+  const selected = new Set(ids);
+  return (await readClients()).filter((record) => selected.has(record.id)).map((record) => ({ id: record.id, fullName: record.fullName, email: record.email || "" }));
+}
 
 function string(value: unknown, label: string, limit: number, required = false) {
   if (value !== undefined && value !== null && typeof value !== "string") throw new ContentError(`Invalid ${label}.`);

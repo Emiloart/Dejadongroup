@@ -12,7 +12,7 @@ const sections = [{ id: "property", label: "Property" }, { id: "investment-plan"
 export async function ClientDashboardLayout({ page, children }: { page: string; children: ReactNode }) {
   const client = await getCurrentClient();
   const assignments = client ? (await serviceAssignments(client.id)).filter((item) => item.status === "enabled") : [];
-  const navigation = [{ href: "/dashboard/client", label: "Overview", page: "overview" }, ...assignments.map((item) => ({ href: `/dashboard/client/${servicePaths[item.service]}`, label: serviceLabels[item.service], page: item.service })), { href: "/dashboard/client/profile", label: "Profile", page: "profile" }];
+  const navigation = [{ href: "/dashboard/client", label: "Overview", page: "overview" }, ...assignments.map((item) => ({ href: `/dashboard/client/${servicePaths[item.service]}`, label: serviceLabels[item.service], page: item.service })), { href: "/dashboard/client/support", label: "Support", page: "support" }, { href: "/dashboard/client/profile", label: "Profile", page: "profile" }];
   return <div className="min-h-screen bg-warm text-ink lg:grid lg:grid-cols-[248px_minmax(0,1fr)]">
     <a href="#client-main" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-card focus:bg-white focus:px-4 focus:py-3">Skip to client dashboard</a>
     <aside className="bg-ink text-white lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:overflow-y-auto lg:px-6 lg:py-8">

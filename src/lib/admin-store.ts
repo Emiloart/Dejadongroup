@@ -11,6 +11,10 @@ const empty = (): State => ({ version: 2, users: [], sessions: [], requireSecond
 export const adminSessionSeconds = 8 * 60 * 60;
 export const tokenHash = (value: string) => createHash("sha256").update(value).digest("hex");
 export const readAdministration = async () => (await readCollection<State>("administration"))[0] || empty();
+export async function getAdminDisplayNames(ids: string[]) {
+  const selected = new Set(ids);
+  return (await readAdministration()).users.filter((user) => selected.has(user.id)).map((user) => ({ id: user.id, name: user.name }));
+}
 export const mutateAdministration = <T>(operation: (state: State) => T | Promise<T>) => updateCollection<State, T>("administration", async (items) => { const state = items[0] || empty(); const result = await operation(state); return { items: [state], result }; });
 function derive(password: string, salt: string): Promise<string> { return new Promise((resolve, reject) => scrypt(password, salt, 64, { N: 65536, r: 8, p: 1, maxmem: 128 * 1024 * 1024 }, (error, key) => error ? reject(error) : resolve(key.toString("hex")))); }
 const passwordValue = (value: unknown) => { if (typeof value !== "string" || value.length < 12 || value.length > 128) throw new AdminError("Use a password with 12–128 characters."); return value; };

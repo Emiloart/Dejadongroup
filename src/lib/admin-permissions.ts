@@ -1,5 +1,6 @@
 export const permissions = [
   "admin.users.read", "admin.users.manage", "admin.roles.manage", "admin.settings.manage", "audit.read",
+  "support.read", "support.respond", "support.assign", "support.resolve", "support.notes.manage",
   "content.read", "content.create", "content.update", "content.publish", "content.media.manage", "newsletter.read", "newsletter.export", "newsletter.manage",
   "marketplace.products.read", "marketplace.products.manage", "marketplace.products.publish", "marketplace.orders.read", "marketplace.orders.manage",
   "partners.read", "partners.manage", "partners.tiers.read", "partners.tiers.manage", "partners.promocodes.read", "partners.promocodes.manage", "partners.payments.read",
@@ -10,6 +11,7 @@ export const permissions = [
 export type Permission = typeof permissions[number];
 export const rolePermissions = {
   super_admin: [...permissions],
+  customer_support_admin: ["support.read", "support.respond", "support.assign", "support.resolve", "support.notes.manage"],
   media_admin: ["content.read", "content.create", "content.update", "content.publish", "content.media.manage", "newsletter.read", "newsletter.export", "newsletter.manage"],
   marketplace_admin: ["marketplace.products.read", "marketplace.products.manage", "marketplace.products.publish"],
   partner_programme_admin: ["partners.read", "partners.manage", "partners.tiers.read", "partners.tiers.manage", "partners.payments.read"],

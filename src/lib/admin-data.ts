@@ -1,6 +1,7 @@
 import type { Permission } from "@/lib/admin-permissions";
 export const adminSections = [
   { id: "overview", label: "Overview", href: "/admin", department: "Workspace", permission: null, description: "Your authorized departments and operational activity." },
+  { id: "support", label: "Customer Support", href: "/admin/support", department: "Customer Support", permission: "support.read", description: "Receive, assign and answer client and partner support requests." },
   { id: "content", label: "Media & Content", href: "/admin/content", department: "Media & Content", permission: "content.read", description: "Manage announcements, homepage updates, resources and media." },
   { id: "news", label: "Blog & news", href: "/admin/news", department: "Media & Content", permission: "content.read", description: "Import article previews with their original source images." },
   { id: "newsletter", label: "Newsletter", href: "/admin/newsletter", department: "Media & Content", permission: "newsletter.read", description: "Manage consented subscribers and authorized exports." },
@@ -16,4 +17,4 @@ export const adminSections = [
 ] satisfies { id: string; label: string; href: string; department: string; permission: Permission | null; description: string }[];
 export type AdminSectionId = typeof adminSections[number]["id"];
 export type AdminSection = typeof adminSections[number];
-export const adminSubsections = adminSections.filter((section) => ["content", "client-records", "savings", "finance", "users", "audit", "settings"].includes(section.id));
+export const adminSubsections = adminSections.filter((section) => ["support", "content", "client-records", "savings", "finance", "users", "audit", "settings"].includes(section.id));

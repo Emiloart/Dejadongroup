@@ -14,7 +14,7 @@ Configure server-only credentials in `.env.local`; never commit real credentials
 
 ## Administration
 
-Six areas share one permission-aware shell: Media & Content, Sales & Marketplace, Partner Programme, Client & Agro-Real Estate, Finance & Payments, and Super Admin. APIs enforce explicit permissions and client/partner record scopes. Promo modification and staff role assignments are exclusive to Super Admin. Finance reviewers do not receive refund/payout execution permissions by default.
+Seven areas share one permission-aware shell: Customer Support, Media & Content, Sales & Marketplace, Partner Programme, Client & Agro-Real Estate, Finance & Payments, and Super Admin. APIs enforce explicit permissions and client/partner record scopes. Promo modification and staff role assignments are exclusive to Super Admin. Finance reviewers do not receive refund/payout execution permissions by default.
 
 - [Audit and migration plan](docs/admin/audit.md)
 - [Architecture, departments, permissions and API map](docs/admin/architecture.md)
