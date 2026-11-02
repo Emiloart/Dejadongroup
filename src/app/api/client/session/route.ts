@@ -25,7 +25,7 @@ export async function POST(request: Request) {
 export async function DELETE(request: Request) {
   if (!isSameOrigin(request)) return NextResponse.json({ error: "Refresh the page and try again." }, { status: 403 });
   try {
-    await signOutClient(currentClientToken());
+    await signOutClient(await currentClientToken());
     const response = NextResponse.json({ ok: true });
     response.cookies.set(clientCookieName, "", { ...adminCookieOptions, maxAge: 0 });
     return response;

@@ -11,7 +11,7 @@ export async function PUT(request: Request) {
   const rejected = checkClientAuthRequest(request);
   if (rejected) return rejected;
   try {
-    const result = await updateClientProfile(currentClientToken()!, await readClientBody(request));
+    const result = await updateClientProfile((await currentClientToken())!, await readClientBody(request));
     const response = NextResponse.json({ client: await visibleClientDetails(result.client) }, { headers: { "Cache-Control": "no-store" } });
     return result.token ? setClientCookie(response, result.token) : response;
   } catch (error) { return contentApiError(error); }

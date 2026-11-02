@@ -7,5 +7,5 @@ export const dynamic = "force-dynamic";
 
 export default async function AdminNewsletterPage() {
   const admin = await adminPage("newsletter.read"); if (!admin) return null;
-  return <AdminShell section="newsletter"><AdminNewsletterManager initialSubscribers={await getNewsletterSubscribers()} /></AdminShell>;
+  return <AdminShell section="newsletter"><AdminNewsletterManager initialSubscribers={await getNewsletterSubscribers()} canExport={admin.permissions.includes("newsletter.export")} canManage={admin.permissions.includes("newsletter.manage")} /></AdminShell>;
 }

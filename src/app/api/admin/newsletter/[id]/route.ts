@@ -6,7 +6,8 @@ import { removeNewsletterSubscriber } from "@/lib/newsletter-store";
 
 export const runtime = "nodejs";
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, { params: paramsPromise }: { params: Promise<{ id: string }> }) {
+  const params = await paramsPromise;
   const denied = await requireContentAdmin(request, true);
   if (denied) return denied;
   try { await adminOperation(request, "newsletter.manage", () => audited("newsletter.removed", "newsletter", params.id, () => removeNewsletterSubscriber(params.id))); return NextResponse.json({ ok: true }); }

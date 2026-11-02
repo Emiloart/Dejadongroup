@@ -19,9 +19,10 @@ const filters: { label: string; href: string; category?: GalleryCategory }[] = [
   { label: "Agro-Real Estate", href: "/gallery?category=agro-real-estate", category: "agro-real-estate" }
 ];
 
-type GalleryPageProps = { searchParams?: { category?: string } };
+type GalleryPageProps = { searchParams?: Promise<{ category?: string }> };
 
-export default function GalleryPage({ searchParams }: GalleryPageProps) {
+export default async function GalleryPage({ searchParams: searchParamsPromise }: GalleryPageProps) {
+  const searchParams = await searchParamsPromise;
   const category = galleryCategories.find((item) => item === searchParams?.category);
   const images = getGalleryImages(category);
 

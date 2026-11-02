@@ -15,17 +15,19 @@ import { publicPageMetadata } from "@/lib/seo";
 import { salesWhatsapp } from "@/lib/site-data";
 import { SocialIcon } from "@/components/social-icon";
 
-type ProductPageProps = { params: { slug: string } };
+type ProductPageProps = { params: Promise<{ slug: string }> };
 
 export const dynamic = "force-dynamic";
 
-export async function generateMetadata({ params }: ProductPageProps): Promise<Metadata> {
+export async function generateMetadata({ params: paramsPromise }: ProductPageProps): Promise<Metadata> {
+  const params = await paramsPromise;
   const product = await getPublishedProduct(params.slug);
   if (!product) notFound();
   return publicPageMetadata(`/marketplace/${encodeURIComponent(product.slug)}`, product.name, product.summary);
 }
 
-export default async function ProductPage({ params }: ProductPageProps) {
+export default async function ProductPage({ params: paramsPromise }: ProductPageProps) {
+  const params = await paramsPromise;
   const product = await getPublishedProduct(params.slug);
   if (!product) notFound();
   const related = (await getPublishedProducts()).filter((item) => item.category === product.category && item.slug !== product.slug).slice(0, 3);

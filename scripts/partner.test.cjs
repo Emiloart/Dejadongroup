@@ -46,7 +46,7 @@ test("partner stages, tier entitlements, promo restrictions, concurrent payments
   function paid(payment, overrides = {}) { Object.assign(transactions.get(payment.reference), { status: "success", ...overrides }); }
   function noSecrets(value) { assert.doesNotMatch(JSON.stringify(value), /passwordHash|passwordSalt|otpHash|"sessions"|aliases/); }
   try {
-    const starter = await store.savePartnerTier({ name: "Starter", rank: 1, fee: "1000", active: true, benefits: [{ id: "starter-benefit", title: "Starter guide", summary: "Public starter summary", content: "STARTER PRIVATE CONTENT" }] });
+    let starter = await store.savePartnerTier({ name: "Starter", rank: 1, fee: "1000", active: true, benefits: [{ id: "starter-benefit", title: "Starter guide", summary: "Public starter summary", content: "STARTER PRIVATE CONTENT" }] });
     let higher = await store.savePartnerTier({ name: "Premium", rank: 2, fee: "2500", active: true, benefits: [{ id: "premium-benefit", title: "Premium guide", summary: "Public premium summary", content: "PREMIUM PRIVATE CONTENT" }] });
     assert.doesNotMatch(JSON.stringify(await store.getPublicPartnerTiers()), /PRIVATE CONTENT|"content"/);
     const account = await register("partner-one@gmail.com"); assert.equal(account.verificationSent, true); noSecrets(account.partner);
@@ -86,9 +86,15 @@ test("partner stages, tier entitlements, promo restrictions, concurrent payments
     assert.equal((await store.getPartnerView(account.token)).payments[0].refundStatus, "processed"); assert.equal(refundPosts, 1);
     await assert.rejects(store.getPartnerQuote(account.token, { tierId: higher.id, promoCode: "WELCOME" }), /initial registration only/);
     let upgradeQuote = await store.getPartnerQuote(account.token, { tierId: higher.id }); assert.equal(upgradeQuote.amountKobo, 150000);
-    higher = await store.savePartnerTier({ id: higher.id, name: "Premium", rank: 2, fee: "3000", active: true, benefits: higher.benefits }, higher.id);
+    higher = await store.savePartnerTier({ id: higher.id, name: "Premium", rank: 3, fee: "3000", active: true, benefits: higher.benefits }, higher.id);
     await assert.rejects(payments.createPartnerCheckout(account.token, { tierId: higher.id, fingerprint: upgradeQuote.fingerprint }), /updated quote/);
-    const upgrade = await checkout(account.token, higher.id); assert.equal(upgrade.amountKobo, 200000);
+    starter = await store.savePartnerTier({ id: starter.id, name: "Starter", rank: 2, fee: "1500", active: true, benefits: starter.benefits }, starter.id);
+    view = await store.getPartnerView(account.token);
+    assert.equal(view.currentTier.rank, 1, "purchased benefits preserve their historical tier snapshot");
+    assert.equal(view.currentTier.feeKobo, 100000, "the historical purchase price remains frozen with the benefit snapshot");
+    assert.deepEqual(view.upgradeFrom, { id: starter.id, rank: 2, feeKobo: 150000 }, "upgrade pricing and rank use current configuration");
+    upgradeQuote = await store.getPartnerQuote(account.token, { tierId: higher.id }); assert.equal(upgradeQuote.amountKobo, 150000);
+    const upgrade = await checkout(account.token, higher.id); assert.equal(upgrade.amountKobo, 150000);
     assert.equal((await store.getPartnerView(account.token)).currentTier.id, starter.id, "current tier remains until payment confirmation");
     await assert.rejects(store.getPartnerBenefit(account.token, "premium-benefit"), /not included/);
     paid(upgrade); await payments.confirmPartnerPayment(upgrade.reference);
@@ -129,7 +135,7 @@ test("partner stages, tier entitlements, promo restrictions, concurrent payments
     await payments.processPartnerRefund(timeoutPayment.reference, true); assert.equal(refundPosts, beforeRetry + 1, "a confirmed failed refund can be safely retried");
     const fixed = await store.savePartnerPromo(promoInput(starter.id, { code: "FIXED", type: "fixed", value: "250.25" }));
     const unused = holder === second ? third : second;
-    assert.equal((await store.getPartnerQuote(unused.token, { tierId: starter.id, promoCode: fixed.code })).amountKobo, 74975);
+    assert.equal((await store.getPartnerQuote(unused.token, { tierId: starter.id, promoCode: fixed.code })).amountKobo, 124975);
     await store.savePartnerPromo({ ...promoInput(starter.id, { code: "FIXED", type: "fixed", value: "250.25", active: false }) }, fixed.id);
     await assert.rejects(store.getPartnerQuote(unused.token, { tierId: starter.id, promoCode: fixed.code }), /inactive/);
     const expired = await store.savePartnerPromo(promoInput(starter.id, { code: "EXPIRED", endsAt: "2000-01-01T00:00:00Z" }));

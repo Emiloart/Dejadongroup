@@ -6,7 +6,8 @@ import { adminOperation } from "@/lib/admin-access";
 
 export const runtime = "nodejs";
 
-export async function POST(request: Request, { params }: { params: { id: string } }) {
+export async function POST(request: Request, { params: paramsPromise }: { params: Promise<{ id: string }> }) {
+  const params = await paramsPromise;
   const denied = await requireContentAdmin(request, true);
   if (denied) return denied;
   try {

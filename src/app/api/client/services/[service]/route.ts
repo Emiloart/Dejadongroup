@@ -11,18 +11,20 @@ import { readCollection, storageTransaction } from "@/lib/site-storage";
 import type { SavingsPayment, SavingsService } from "@/lib/savings-types";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-type Context = { params: { service: string } };
+type Context = { params: Promise<{ service: string }> };
 const json = (data: unknown) => NextResponse.json(data, { headers: { "Cache-Control": "no-store" } });
 async function access(service: string) {
   const client = await getCurrentClient(); if (!client) throw new AdminError("Sign in to your client account.", 401);
   if (service !== "flexisave" && service !== "food_package_savings") throw new AdminError("Service not found.", 404);
   await requireClientService(client.id, service); return { client, service: service as SavingsService };
 }
-export async function GET(_request: Request, { params }: Context) {
+export async function GET(_request: Request, { params: paramsPromise }: Context) {
+  const params = await paramsPromise;
   try { const { client, service } = await access(params.service); return json(await clientSavingsView(client.id, service)); }
   catch (error) { return contentApiError(error); }
 }
-export async function POST(request: Request, { params }: Context) {
+export async function POST(request: Request, { params: paramsPromise }: Context) {
+  const params = await paramsPromise;
   try {
     if (!isSameOrigin(request)) throw new AdminError("Refresh the page and try again.", 403);
     const input = await readClientBody(request);

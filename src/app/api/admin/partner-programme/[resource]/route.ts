@@ -11,13 +11,15 @@ import { AdminError } from "@/lib/admin-store";
 import type { Permission } from "@/lib/admin-permissions";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-type Context = { params: { resource: string } };
-export async function GET(request: Request, { params }: Context) {
+type Context = { params: Promise<{ resource: string }> };
+export async function GET(request: Request, { params: paramsPromise }: Context) {
+  const params = await paramsPromise;
   const denied = await adminGuard(request, "partners.read"); if (denied) return denied;
   if (params.resource !== "overview") return partnerJson({ error: "Not found." }, 404);
   try { return partnerJson({ ...await scopedProgramme(await requireAdmin("partners.read")), services: serviceConfiguration() }); } catch (error) { return contentApiError(error); }
 }
-export async function POST(request: Request, { params }: Context) {
+export async function POST(request: Request, { params: paramsPromise }: Context) {
+  const params = await paramsPromise;
   const permission: Permission = params.resource === "tiers" ? "partners.tiers.manage" : params.resource === "promos" ? "partners.promocodes.manage" : params.resource === "members" ? "partners.manage" : "finance.transactions.reconcile";
   const denied = await adminGuard(request, permission, true); if (denied) return denied;
   try {

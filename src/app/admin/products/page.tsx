@@ -12,7 +12,7 @@ export default async function AdminProductsPage() {
 
   return (
     <AdminShell section="products">
-      <AdminProductManager initialProducts={products} />
+      <AdminProductManager initialProducts={products} canManage={admin.permissions.includes("marketplace.products.manage")} canPublish={admin.permissions.includes("marketplace.products.publish")} />
     <AdminResourceHistory resource="product" /></AdminShell>
   );
 }

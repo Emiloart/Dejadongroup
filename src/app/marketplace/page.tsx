@@ -24,9 +24,10 @@ const filters = [
   ...marketplaceCategories.map((category) => ({ label: category.name, href: `/marketplace?category=${category.slug}`, category: category.slug }))
 ];
 
-type MarketplacePageProps = { searchParams?: { category?: string } };
+type MarketplacePageProps = { searchParams?: Promise<{ category?: string }> };
 
-export default async function MarketplacePage({ searchParams }: MarketplacePageProps) {
+export default async function MarketplacePage({ searchParams: searchParamsPromise }: MarketplacePageProps) {
+  const searchParams = await searchParamsPromise;
   const category = marketplaceCategories.find((item) => item.slug === searchParams?.category)?.slug;
   const publishedProducts = await getPublishedProducts();
   const products = category ? publishedProducts.filter((product) => product.category === category) : publishedProducts;

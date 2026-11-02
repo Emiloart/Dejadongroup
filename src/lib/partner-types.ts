@@ -32,7 +32,7 @@ export type PartnerPayment = PartnerQuote & {
   refundAttemptedAt: string | null; refundError: string;
 };
 export type PartnerView = {
-  partner: PartnerAccount; currentTier: PartnerTier | null; tiers: TierPreview[]; payments: PartnerPayment[];
+  partner: PartnerAccount; currentTier: PartnerTier | null; upgradeFrom: Pick<PartnerTier, "id" | "rank" | "feeKobo"> | null; tiers: TierPreview[]; payments: PartnerPayment[];
   active: boolean; network: { introduced: number; verified: number; registered: number };
 };
 export function partnerMoney(kobo: number) {

@@ -8,7 +8,8 @@ import { getCurrentClient } from "@/lib/client-auth";
 import { getCurrentPartnerView } from "@/lib/partner-api";
 
 export const dynamic = "force-dynamic";
-export default async function ProfilePage({ params }: { params: { role: string } }) {
+export default async function ProfilePage({ params: paramsPromise }: { params: Promise<{ role: string }> }) {
+  const params = await paramsPromise;
   if (params.role === "client") {
     const client = await getCurrentClient();
     if (!client) redirect("/login?role=client&next=/dashboard/client/profile");

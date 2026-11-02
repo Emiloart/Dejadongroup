@@ -2,7 +2,7 @@ import { HeroText } from "@/components/hero-text";
 import { ContentPhoto } from "@/components/content-photo";
 import { SocialIcon } from "@/components/social-icon";
 import { publicPageMetadata } from "@/lib/seo";
-import { managedContent } from "@/lib/managed-content";
+import { isPublishedPublicContent, managedContent } from "@/lib/managed-content";
 import { ManagedPublicContent } from "@/components/managed-public-content";
 import { ButtonLink } from "@/components/button-link";
 import { BusinessCarousel } from "@/components/business-carousel";
@@ -25,7 +25,7 @@ export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const articles = await getPublishedNews();
-  const about = (await managedContent()).find((item) => item.kind === "homepage" && item.slug === "about" && item.status === "published");
+  const about = (await managedContent()).find((item) => item.kind === "homepage" && item.slug === "about" && isPublishedPublicContent(item));
   return (
     <SiteLayout>
       <HomeHeroCarousel slides={homeHeroSlides} />

@@ -14,27 +14,38 @@
     "test:partners": "node --test scripts/partner.test.cjs scripts/partner.integration.test.mjs",
     "test:admin": "node --test scripts/admin-storage.test.cjs scripts/admin.integration.test.mjs",
     "test:savings": "node --test scripts/savings.test.cjs scripts/savings.integration.test.mjs",
+    "test:partner-resources": "node --test scripts/partner-resources.test.cjs scripts/partner-resources.integration.test.mjs",
+    "test:security": "node --test scripts/attempt-limiter.test.cjs",
     "migrate:admin": "node scripts/migrate-admin.cjs"
   },
   "dependencies": {
     "cheerio": "1.2.0",
     "ipaddr.js": "2.5.0",
     "lucide-react": "^0.468.0",
-    "next": "^14.2.23",
+    "next": "15.5.28",
     "qrcode": "^1.5.4",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "sharp": "0.35.5"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
     "@types/qrcode": "^1.5.5",
-    "@types/react": "^18.3.17",
-    "@types/react-dom": "^18.3.5",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
     "autoprefixer": "^10.4.20",
     "eslint": "^8.57.1",
-    "eslint-config-next": "^14.2.23",
-    "postcss": "^8.4.49",
+    "eslint-config-next": "15.5.28",
+    "postcss": "8.5.32",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.7.2"
+  },
+  "overrides": {
+    "next": {
+      "postcss": "$postcss"
+    },
+    "minimatch@3.1.5": {
+      "brace-expansion": "1.1.21"
+    }
   }
 }

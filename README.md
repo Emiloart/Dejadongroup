@@ -1,6 +1,6 @@
 # De Jadon Group
 
-Public website, marketplace, Agro-Real Estate client portal, verified Partner Programme and department administration for De Jadon Group, Nigeria. Built with Next.js 14, React 18 and TypeScript.
+Public website, marketplace, Agro-Real Estate client portal, verified Partner Programme and department administration for De Jadon Group, Nigeria. Built with Next.js 15, React 19 and TypeScript.
 
 ## Development
 
@@ -18,6 +18,7 @@ Six areas share one permission-aware shell: Media & Content, Sales & Marketplace
 
 - [Audit and migration plan](docs/admin/audit.md)
 - [Architecture, departments, permissions and API map](docs/admin/architecture.md)
+- [Accepted architecture and business decisions](docs/decisions/README.md)
 - [Financial workflows and entitlement policy](docs/admin/financial-workflows.md)
 - [Deployment, bootstrap, migrations, backups and recovery](docs/admin/operations.md)
 - [Business information and portal workflows](docs/website-and-portals.md)
@@ -45,6 +46,8 @@ npm run test:marketplace
 npm run test:clients
 npm run test:partners
 npm run test:admin
+npm run test:security
+npm run test:partner-resources
 ```
 
 Integration suites use isolated temporary data and test-only provider interception. They never charge real customers or send real verification email.

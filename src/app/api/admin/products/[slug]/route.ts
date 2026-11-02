@@ -6,9 +6,10 @@ import { checkProductAccess, productApiError, readProductForm } from "@/lib/admi
 import { getAdminProducts, deleteMarketplaceProduct, saveMarketplaceProduct } from "@/lib/marketplace-store";
 
 export const runtime = "nodejs";
-type Context = { params: { slug: string } };
+type Context = { params: Promise<{ slug: string }> };
 
-export async function PUT(request: Request, { params }: Context) {
+export async function PUT(request: Request, { params: paramsPromise }: Context) {
+  const params = await paramsPromise;
   const denied = await checkProductAccess(request, true);
   if (denied) return denied;
   try {
@@ -16,7 +17,8 @@ export async function PUT(request: Request, { params }: Context) {
   } catch (error) { return productApiError(error); }
 }
 
-export async function DELETE(request: Request, { params }: Context) {
+export async function DELETE(request: Request, { params: paramsPromise }: Context) {
+  const params = await paramsPromise;
   const denied = await checkProductAccess(request, true);
   if (denied) return denied;
   try {

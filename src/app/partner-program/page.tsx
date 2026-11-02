@@ -13,7 +13,8 @@ import { partnerMoney } from "@/lib/partner-types";
 export const metadata = publicPageMetadata("/partner-program", "Partner Programme", "Explore De Jadon Group’s Partner Programme, available tiers, registration process and referral opportunities.");
 
 export const dynamic = "force-dynamic";
-export default async function PartnerProgramPage({ searchParams }: { searchParams?: { ref?: string } }) {
+export default async function PartnerProgramPage({ searchParams: searchParamsPromise }: { searchParams?: Promise<{ ref?: string }> }) {
+  const searchParams = await searchParamsPromise;
   const tiers = await getPublicPartnerTiers();
   const register = `/login?role=partner&mode=signup${searchParams?.ref ? `&ref=${encodeURIComponent(searchParams.ref.slice(0, 40))}` : ""}`;
   return (

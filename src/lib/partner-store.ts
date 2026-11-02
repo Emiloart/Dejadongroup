@@ -83,6 +83,7 @@ export async function getPartnerView(token: string | undefined): Promise<Partner
   return {
     partner: accountDetails(partner), active,
     currentTier: active ? state.payments.find((payment) => payment.reference === partner.entitlementPaymentRef)?.tierSnapshot || state.tiers.find((tier) => tier.id === partner.currentTierId)! : null,
+    upgradeFrom: active ? (() => { const tier = state.tiers.find((item) => item.id === partner.currentTierId); return tier ? { id: tier.id, rank: tier.rank, feeKobo: tier.feeKobo } : null; })() : null,
     tiers: state.tiers.filter((tier) => tier.active).sort((a, b) => a.rank - b.rank).map(tierPreview),
     payments: state.payments.filter((payment) => payment.partnerId === partner.id).slice().reverse().map(publicPartnerPayment),
     network: { introduced: network.length, verified: network.filter((item) => item.emailVerifiedAt).length, registered: network.filter((item) => activePartner(state, item)).length }

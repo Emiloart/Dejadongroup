@@ -20,10 +20,11 @@ import { readLimitedBody } from "@/lib/request-body";
 import { scopedProgramme } from "@/lib/admin-partner-service";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-type Context = { params: { resource: string } };
+type Context = { params: Promise<{ resource: string }> };
 const json = (value: unknown) => NextResponse.json(value, { headers: { "Cache-Control": "no-store" } });
 const readPermissions: Record<string, Permission> = { users: "admin.users.read", audit: "audit.read", finance: "finance.transactions.read", content: "content.read", "client-records": "agro.clients.read", settings: "admin.settings.manage", partners: "partners.read" };
-export async function GET(request: Request, { params }: Context) {
+export async function GET(request: Request, { params: paramsPromise }: Context) {
+  const params = await paramsPromise;
   try {
     const permission = readPermissions[params.resource]; if (!permission) throw new AdminError("Not found.", 404);
     const admin = await requireAdmin(permission); const query = new URL(request.url).searchParams;
@@ -37,7 +38,7 @@ export async function GET(request: Request, { params }: Context) {
     }
     if (params.resource === "content") {
       const history = (await auditHistory()).filter((event) => ["content", "media", "news", "newsletter"].includes(event.resource)).slice(-100).reverse();
-      return json({ ...paginate((await managedContent()).reverse()), assets: (await assets()).filter((asset) => !asset.clientId), history });
+      return json({ ...paginate((await managedContent()).reverse()), assets: (await assets()).filter((asset) => !asset.clientId), tiers: (await readProgramme()).tiers.map(({ id, name, active }) => ({ id, name, active })), history });
     }
     if (params.resource === "client-records") {
       const clients = await scopedClients(admin); const ids = new Set(clients.map((client) => client.id));
@@ -62,7 +63,8 @@ export async function GET(request: Request, { params }: Context) {
   } catch (error) { return contentApiError(error); }
 }
 const reauthAttempts = new Map<string, { count: number; reset: number }>();
-export async function POST(request: Request, { params }: Context) {
+export async function POST(request: Request, { params: paramsPromise }: Context) {
+  const params = await paramsPromise;
   try {
     if (!isSameOrigin(request)) throw new AdminError("Refresh the page and try again.", 403);
     const admin = await currentAdmin(); if (!admin) throw new AdminError("Sign in to the admin workspace.", 401);
@@ -78,7 +80,9 @@ export async function POST(request: Request, { params }: Context) {
       await requireAdmin(permission, clientId ? { kind: "clients", id: clientId } : undefined);
       const body = await readLimitedBody(request, 21 * 1024 * 1024);
       const form = await new Request(request.url, { method: "POST", body: new Uint8Array(body), headers: { "Content-Type": request.headers.get("content-type") || "" } }).formData();
-      return json(await adminOperation(request, permission, async (actor) => { if (clientId && !(await scopedClients(actor)).some((client) => client.id === clientId)) throw new AdminError("Client not found.", 404); return uploadAsset(form.get("file") as File, String(form.get("title") || ""), String(form.get("folder") || ""), actor.id, clientId); }, clientId ? { kind: "clients", id: clientId } : undefined));
+      const audience = form.get("audience") || "public";
+      if (audience !== "public" && audience !== "partners") throw new AdminError("Choose a valid media audience.");
+      return json(await adminOperation(request, permission, async (actor) => { if (clientId && !(await scopedClients(actor)).some((client) => client.id === clientId)) throw new AdminError("Client not found.", 404); return uploadAsset(form.get("file") as File, String(form.get("title") || ""), String(form.get("folder") || ""), actor.id, clientId, audience); }, clientId ? { kind: "clients", id: clientId } : undefined));
     }
     const permission = params.resource === "users" ? "admin.roles.manage" : params.resource === "settings" ? "admin.settings.manage" : params.resource === "content" ? "content.read" : params.resource === "media" ? "content.media.manage" : params.resource === "client-records" ? "agro.clients.read" : params.resource === "finance" ? "finance.transactions.read" : null;
     // Finance initiations by an agro reviewer have an independently checked action permission.

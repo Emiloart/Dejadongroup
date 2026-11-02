@@ -57,7 +57,7 @@ async function readResult(response: Response): Promise<MarketplaceProduct> {
   return result.product;
 }
 
-export function AdminProductManager({ initialProducts }: { initialProducts: MarketplaceProduct[] }) {
+export function AdminProductManager({ initialProducts, canManage, canPublish }: { initialProducts: MarketplaceProduct[]; canManage: boolean; canPublish: boolean }) {
   const router = useRouter();
   const [products, setProducts] = useState(initialProducts);
   const [query, setQuery] = useState("");
@@ -209,7 +209,7 @@ export function AdminProductManager({ initialProducts }: { initialProducts: Mark
           <h1 ref={headingRef} tabIndex={-1} className="mt-3 text-4xl font-medium tracking-tight focus:outline-none sm:text-5xl">{editorOpen ? editing ? "Edit product" : "Add a product" : "Products"}</h1>
           <p className="mt-4 text-sm leading-7 text-stone-600">{editorOpen ? "Add a photo, set your price, and tell customers what’s available." : "Manage the products, photos, and prices customers see in your marketplace."}</p>
         </div>
-        {!editorOpen && <button type="button" className={`${buttonClass} bg-ink text-white hover:bg-stone-700`} onClick={() => openEditor()}><Plus aria-hidden="true" className="h-4 w-4" /> Add product</button>}
+        {!editorOpen && canManage && <button type="button" className={`${buttonClass} bg-ink text-white hover:bg-stone-700`} onClick={() => openEditor()}><Plus aria-hidden="true" className="h-4 w-4" /> Add product</button>}
       </div>
 
       {notice && <p role="status" className="mt-6 flex items-start gap-2 rounded-card border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-900"><Check aria-hidden="true" className="mt-0.5 h-4 w-4 shrink-0" />{notice}</p>}
@@ -294,7 +294,7 @@ export function AdminProductManager({ initialProducts }: { initialProducts: Mark
                 <section aria-labelledby="publishing-heading" className="rounded-card border border-ink/10 bg-white p-5 sm:p-7">
                   <h2 id="publishing-heading" className="text-2xl font-medium">Visibility</h2>
                   <div className="mt-5 space-y-3">
-                    {([{ value: "draft", title: "Draft", help: "Only visible in this admin workspace." }, { value: "published", title: "Published", help: "Visible to customers in the marketplace." }] as const).map((option) => (
+                    {([{ value: "draft", title: "Draft", help: "Only visible in this admin workspace." }, ...(canPublish ? [{ value: "published" as const, title: "Published", help: "Visible to customers in the marketplace." }] : [])] as const).map((option) => (
                       <label key={option.value} className={`flex cursor-pointer items-start gap-3 rounded-card border p-4 ${form.status === option.value ? "border-orange-700 bg-orange-50/50" : "border-stone-200"}`}>
                         <input type="radio" name="status" value={option.value} checked={form.status === option.value} onChange={() => updateField("status", option.value)} className="mt-1 h-4 w-4 accent-orange-700" />
                         <span><span className="block text-sm font-semibold">{option.title}</span><span className="mt-1 block text-xs leading-5 text-stone-600">{option.help}</span></span>
@@ -307,7 +307,7 @@ export function AdminProductManager({ initialProducts }: { initialProducts: Mark
 
             <div className="mt-6 flex flex-wrap items-center justify-end gap-3 rounded-card border border-ink/10 bg-white p-4 sm:p-5">
               <button type="button" onClick={() => { setEditorOpen(false); setError(""); }} className={`${buttonClass} border border-stone-300 text-stone-600 hover:bg-stone-50`}>Cancel</button>
-              {form.status === "published" && <button type="button" onClick={() => void saveProduct("draft")} className={`${buttonClass} border border-stone-300 text-ink hover:bg-stone-50`}>Save as draft</button>}
+              {canPublish && form.status === "published" && <button type="button" onClick={() => void saveProduct("draft")} className={`${buttonClass} border border-stone-300 text-ink hover:bg-stone-50`}>Save as draft</button>}
               <button type="submit" className={`${buttonClass} bg-ink text-white hover:bg-stone-700`}>{pending === "save" ? <Loader2 aria-hidden="true" className="h-4 w-4 animate-spin" /> : <Check aria-hidden="true" className="h-4 w-4" />}{pending === "save" ? "Saving…" : form.status === "published" ? editing?.status === "published" ? "Save changes" : "Publish product" : "Save draft"}</button>
             </div>
           </fieldset>
@@ -341,13 +341,13 @@ export function AdminProductManager({ initialProducts }: { initialProducts: Mark
                 <p className="mt-4 line-clamp-2 text-sm leading-6 text-stone-600">{product.summary}</p>
                 <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-sm"><p className="font-semibold text-ink">{formatProductPrice(product)}{typeof product.price === "number" && product.unit ? ` / ${product.unit}` : ""}</p><p className="text-xs text-stone-500">{availabilityLabels[product.availability ?? "on-request"]}</p></div>
                 <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-ink/10 pt-3">
-                  <button type="button" disabled={!!pending} onClick={() => openEditor(product)} className="inline-flex min-h-10 items-center gap-2 text-sm font-semibold text-orange-700 hover:text-orange-800 disabled:opacity-50"><Pencil aria-hidden="true" className="h-3.5 w-3.5" /> Edit product</button>
-                  {product.status !== "archived" ? <button type="button" disabled={!!pending} onClick={() => void archive(product)} className="min-h-10 text-xs font-semibold text-red-700">Archive listing</button> : null}
-                  {product.status === "published" && <><Link href={`/marketplace/${product.slug}`} className="inline-flex min-h-10 items-center gap-1 text-sm font-semibold text-stone-600 hover:text-ink">View <ArrowUpRight aria-hidden="true" className="h-3.5 w-3.5" /></Link><button type="button" disabled={!!pending} onClick={() => void moveToDraft(product)} className="ml-auto inline-flex min-h-10 items-center gap-1 text-xs font-semibold text-stone-500 hover:text-ink disabled:opacity-50">{pending === product.slug && <Loader2 aria-hidden="true" className="h-3.5 w-3.5 animate-spin" />}Move to drafts</button></>}
+                  {canManage && (product.status !== "published" || canPublish) ? <button type="button" disabled={!!pending} onClick={() => openEditor(product)} className="inline-flex min-h-10 items-center gap-2 text-sm font-semibold text-orange-700 hover:text-orange-800 disabled:opacity-50"><Pencil aria-hidden="true" className="h-3.5 w-3.5" /> Edit product</button> : null}
+                  {canManage && product.status !== "archived" && (product.status !== "published" || canPublish) ? <button type="button" disabled={!!pending} onClick={() => void archive(product)} className="min-h-10 text-xs font-semibold text-red-700">Archive listing</button> : null}
+                  {product.status === "published" && <><Link href={`/marketplace/${product.slug}`} className="inline-flex min-h-10 items-center gap-1 text-sm font-semibold text-stone-600 hover:text-ink">View <ArrowUpRight aria-hidden="true" className="h-3.5 w-3.5" /></Link>{canManage && canPublish ? <button type="button" disabled={!!pending} onClick={() => void moveToDraft(product)} className="ml-auto inline-flex min-h-10 items-center gap-1 text-xs font-semibold text-stone-500 hover:text-ink disabled:opacity-50">{pending === product.slug && <Loader2 aria-hidden="true" className="h-3.5 w-3.5 animate-spin" />}Move to drafts</button> : null}</>}
                 </div>
               </article>
             ))}
-          </div> : <div className="mt-4 rounded-card border border-dashed border-stone-300 px-5 py-16 text-center"><Package aria-hidden="true" className="mx-auto h-9 w-9 text-stone-400" /><h2 className="mt-4 text-2xl font-medium">{query || filter !== "all" ? "No matching products" : "Add your first product"}</h2><p className="mx-auto mt-3 max-w-sm text-sm leading-6 text-stone-600">{query || filter !== "all" ? "Try a different search or visibility filter." : "Start with a product name and photo, then add a price and publish when you’re ready."}</p>{!query && filter === "all" && <button type="button" onClick={() => openEditor()} className={`${buttonClass} mt-5 bg-ink text-white hover:bg-stone-700`}><Plus aria-hidden="true" className="h-4 w-4" /> Add product</button>}</div>}
+          </div> : <div className="mt-4 rounded-card border border-dashed border-stone-300 px-5 py-16 text-center"><Package aria-hidden="true" className="mx-auto h-9 w-9 text-stone-400" /><h2 className="mt-4 text-2xl font-medium">{query || filter !== "all" ? "No matching products" : "Add your first product"}</h2><p className="mx-auto mt-3 max-w-sm text-sm leading-6 text-stone-600">{query || filter !== "all" ? "Try a different search or visibility filter." : canManage ? "Start with a product name and photo, then add a price and publish when you’re ready." : "No products match this filter."}</p>{!query && filter === "all" && canManage && <button type="button" onClick={() => openEditor()} className={`${buttonClass} mt-5 bg-ink text-white hover:bg-stone-700`}><Plus aria-hidden="true" className="h-4 w-4" /> Add product</button>}</div>}
         </section>
       )}
     </div>

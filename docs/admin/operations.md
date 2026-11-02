@@ -1,5 +1,7 @@
 # Deployment and operational runbook
 
+The supported application runtime is pinned in `package.json` and `package-lock.json` (Next.js 15.5.28, React 19.3.1 and sharp 0.35.5). Build against the lockfile with the supported Node.js runtime. See the [framework and request-context decision](../decisions/0005-supported-framework-and-request-context.md).
+
 ## Before rollout
 
 1. Use a persistent restricted directory for `DEJADON_DATA_DIR`, production HTTPS and exactly **one Node application process**. Do not use a PM2 cluster, multiple containers, serverless replicas or a second maintenance writer on this adapter. A multi-process transactional database/object-store adapter is a separate infrastructure project.

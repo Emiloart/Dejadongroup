@@ -240,9 +240,8 @@ export const dashboardModules: Record<DashboardRole, DashboardModule[]> = {
     { label: "Membership", href: "/dashboard/partner/membership", icon: "id" },
     { label: "Network", href: "/dashboard/partner/network", icon: "network" },
     { label: "Finances", href: "/dashboard/partner/finances", icon: "wallet" },
-    { label: "Products", href: "/dashboard/partner/products", icon: "package" },
-    { label: "Marketing Materials", href: "/dashboard/partner/marketing-materials", icon: "image" },
-    { label: "Notifications", href: "/dashboard/partner/notifications", icon: "bell" },
+    { label: "Products", href: "/marketplace", icon: "package" },
+    { label: "Marketing Materials", href: "/dashboard/partner#resources", icon: "image" },
     { label: "Settings", href: "/dashboard/partner/settings", icon: "settings" }
   ],
   client: [

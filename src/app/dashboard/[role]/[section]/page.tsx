@@ -8,7 +8,8 @@ import { clientServices, servicePaths } from "@/lib/savings-types";
 import { clientSavingsView } from "@/lib/savings-store";
 import { AdminError } from "@/lib/admin-store";
 export const dynamic = "force-dynamic";
-export default async function ClientServicePage({ params }: { params: { role: string; section: string } }) {
+export default async function ClientServicePage({ params: paramsPromise }: { params: Promise<{ role: string; section: string }> }) {
+  const params = await paramsPromise;
   if (params.role !== "client") notFound();
   const service = clientServices.find((item) => servicePaths[item] === params.section); if (!service) notFound();
   const client = await getCurrentClient(); if (!client) redirect(`/login?role=client&next=/dashboard/client/${params.section}`);

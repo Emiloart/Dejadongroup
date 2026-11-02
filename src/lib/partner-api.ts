@@ -5,10 +5,11 @@ import { adminCookieOptions, isSameOrigin } from "@/lib/admin-auth";
 import { ContentError } from "@/lib/content-api";
 import { readLimitedBody } from "@/lib/request-body";
 import { getPartnerView, partnerSessionSeconds } from "@/lib/partner-store";
+import { consumeAttempt } from "@/lib/attempt-limiter";
 
 export const partnerCookieName = "dejadon-partner";
-export const currentPartnerToken = () => cookies().get(partnerCookieName)?.value;
-export const getCurrentPartnerView = () => getPartnerView(currentPartnerToken());
+export const currentPartnerToken = async () => (await cookies()).get(partnerCookieName)?.value;
+export const getCurrentPartnerView = async () => getPartnerView(await currentPartnerToken());
 export function partnerCookie(response: NextResponse, token: string) {
   response.cookies.set(partnerCookieName, token, { ...adminCookieOptions, maxAge: partnerSessionSeconds });
   return response;
@@ -24,11 +25,10 @@ export async function readPartnerBody(request: Request, profile = false): Promis
 const attempts = new Map<string, { count: number; reset: number }>();
 export function partnerWriteGuard(request: Request, scope: string, limit = 20) {
   if (!isSameOrigin(request)) return partnerJson({ error: "Refresh the page and try again." }, 403);
-  const now = Date.now(); for (const [key, item] of attempts) if (item.reset <= now) attempts.delete(key);
   const key = `${scope}:${request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "local"}`;
-  const entry = attempts.get(key) || { count: 0, reset: now + 15 * 60 * 1000 };
-  if (entry.count >= limit || attempts.size >= 10000 && !attempts.has(key)) return NextResponse.json({ error: "Too many attempts. Please try again later." }, { status: 429, headers: { "Retry-After": String(Math.ceil((entry.reset - now) / 1000)), "Cache-Control": "no-store" } });
-  entry.count++; attempts.set(key, entry); return null;
+  const attempt = consumeAttempt(attempts, key, limit, 15 * 60 * 1000);
+  if (!attempt.allowed) return NextResponse.json({ error: "Too many attempts. Please try again later." }, { status: 429, headers: { "Retry-After": String(Math.ceil((attempt.reset - Date.now()) / 1000)), "Cache-Control": "no-store" } });
+  return null;
 }
 export function authorizedReconciliation(request: Request) {
   const secret = process.env.PARTNER_RECONCILE_SECRET;

@@ -1,0 +1,76 @@
+require('./admin-test-loader.cjs');
+const assert = require('node:assert/strict');
+const { test } = require('node:test');
+const { mkdtemp, rm, readFile } = require('node:fs/promises');
+const path = require('node:path'); const os = require('node:os');
+const { createHash } = require('node:crypto');
+const { readCollection, updateCollection } = require('../src/lib/site-storage.ts');
+const { saveManagedContent, isPublishedPublicContent } = require('../src/lib/managed-content.ts');
+const { uploadAsset, archiveAsset } = require('../src/lib/admin-assets.ts');
+const { getPartnerResources, getPartnerResourceFile } = require('../src/lib/partner-resources.ts');
+const { permissions } = require('../src/lib/admin-permissions.ts');
+
+const pdf = Buffer.from('%PDF-1.4\n1 0 obj\n<< /Type /Catalog >>\nendobj\n%%EOF\n');
+const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+aZ1cAAAAASUVORK5CYII=', 'base64');
+const owner = { id: 'resource-owner', permissions: [...permissions] };
+const editor = { id: 'resource-editor', permissions: ['content.read', 'content.create', 'content.update', 'content.media.manage'] };
+const publisher = { id: 'resource-publisher', permissions: ['content.read', 'content.publish'] };
+const input = (slug, overrides = {}) => ({ kind: 'resource', title: `Approved ${slug}`, body: 'Use these approved marketing materials when introducing De Jadon Group.', summary: 'A concise partner guide.', slug, href: '', assetId: '', status: 'draft', audience: 'partners', tierIds: [], ...overrides });
+
+test('resource audience, publication, upload validation and current-member entitlements', async () => {
+  const directory = await mkdtemp(path.join(os.tmpdir(), 'dejadon-resources-')); const previous = process.env.DEJADON_DATA_DIR; process.env.DEJADON_DATA_DIR = directory;
+  try {
+    const now = new Date().toISOString();
+    const tiers = ['basic', 'advanced'].map((id, index) => ({ id, name: id, rank: index + 1, feeKobo: index * 100000, active: true, benefits: [], description: '', createdAt: now, updatedAt: now }));
+    const member = (id, tierId, overrides = {}) => ({ id, fullName: id, email: `${id}@example.test`, emailVerifiedAt: now, profileCompletedAt: now, registeredAt: now, currentTierId: tierId, entitlementPaymentRef: `paid-${id}`, createdAt: now, sessions: [{ hash: createHash('sha256').update(`token-${id}`).digest('hex'), expiresAt: Date.now() + 3600000 }], ...overrides });
+    const members = [member('basic-member', 'basic'), member('advanced-member', 'advanced'), member('unverified', 'basic', { emailVerifiedAt: null }), member('unpaid', 'basic', { registeredAt: null }), member('suspended', 'basic', { suspendedAt: now }), member('expired', 'basic', { sessions: [] })];
+    const state = { tiers, promos: [], partners: members, payments: members.map((partner) => ({ reference: partner.entitlementPaymentRef, partnerId: partner.id, tierId: partner.currentTierId, status: 'paid', providerMode: 'free', entitledAt: now, tierSnapshot: tiers.find((tier) => tier.id === partner.currentTierId) })), audit: [] };
+    await updateCollection('partner-programme', () => ({ items: [state], result: undefined }));
+    const protectedPdf = await uploadAsset(new File([pdf], 'guide.pdf', { type: 'application/pdf' }), 'Partner marketing guide', 'Campaigns', owner.id, null, 'partners');
+    const publicImage = await uploadAsset(new File([png], 'preview.png', { type: 'image/png' }), 'Public campaign image', '', owner.id);
+    assert.equal(protectedPdf.audience, 'partners'); assert.equal(publicImage.audience, 'public');
+    await assert.rejects(uploadAsset(new File([png], 'lie.pdf', { type: 'application/pdf' }), 'Wrong MIME', '', owner.id), /valid PDF/);
+    await assert.rejects(uploadAsset(new File(['<svg><script>alert(1)</script></svg>'], 'x.svg', { type: 'image/svg+xml' }), 'SVG', '', owner.id, null, 'partners'), /valid PDF/);
+    await assert.rejects(uploadAsset(new File([Buffer.from([0,0,0,24]), Buffer.from('ftypheic'), Buffer.alloc(20)], 'not-mp4.mp4', { type: 'video/mp4' }), 'Wrong video', '', owner.id), /valid PDF/);
+    await assert.rejects(uploadAsset(new File([pdf], 'client.pdf', { type: 'application/pdf' }), 'Private client record', '', owner.id, 'client-one', 'partners'), /valid media audience/);
+    await assert.rejects(saveManagedContent(owner, input('wrong-public', { audience: 'public', assetId: protectedPdf.id })), /available public/);
+    await assert.rejects(saveManagedContent(owner, input('wrong-partners', { assetId: publicImage.id })), /partner-only/);
+    await assert.rejects(saveManagedContent(owner, input('invalid-tiers', { tierIds: ['unknown'] })), /existing partner tiers/);
+    await assert.rejects(saveManagedContent(owner, input('public-tiers', { audience: 'public', tierIds: ['basic'] })), /only to partner/);
+    await assert.rejects(saveManagedContent(owner, input('hidden-homepage', { kind: 'homepage' })), /resource content type/);
+    await assert.rejects(saveManagedContent(owner, input('missing-file', { status: 'published' })), /file or an HTTPS/);
+    for (const href of ['javascript:alert(1)', '//evil.test/path', '/admin', 'https://user:pass@example.test', 'https://example.test/\npath', 'https://example.test\\evil', 'https://localhost/private']) await assert.rejects(saveManagedContent(owner, input('bad-link', { href })), /HTTPS/);
+    const incomplete = await saveManagedContent(editor, input('not-ready'));
+    await assert.rejects(saveManagedContent(publisher, { id: incomplete.id, action: 'publish' }), /file or an HTTPS/);
+    const draft = await saveManagedContent(editor, input('marketing-guide', { assetId: protectedPdf.id, tierIds: ['basic'] }));
+    await assert.rejects(saveManagedContent(editor, { id: draft.id, action: 'publish' }), /Publishing permission/);
+    await assert.rejects(saveManagedContent(editor, { ...draft, status: 'published' }), /publisher/);
+    const resource = await saveManagedContent(publisher, { id: draft.id, action: 'publish' });
+    assert.equal(isPublishedPublicContent(resource), false);
+    await assert.rejects(saveManagedContent(editor, { ...resource, body: 'Changed without publisher' }), /publisher/);
+    const shared = await saveManagedContent(owner, input('shared-link', { status: 'published', href: 'https://example.test/approved-training' }));
+    await saveManagedContent(owner, input('public-image', { audience: 'public', status: 'published', assetId: publicImage.id }));
+    const legacyPublic = { ...input('legacy-public'), audience: undefined, status: 'published' };
+    assert.equal(isPublishedPublicContent(legacyPublic), true);
+    assert.equal((await getPartnerResources('token-basic-member')).length, 2);
+    assert.deepEqual((await getPartnerResources('token-advanced-member')).map((row) => row.id), [shared.id]);
+    assert.deepEqual((await getPartnerResourceFile('token-basic-member', resource.id)).asset.id, protectedPdf.id);
+    await assert.rejects(getPartnerResourceFile('token-advanced-member', resource.id), /not found/);
+    for (const token of [undefined, 'fake', 'token-unverified', 'token-unpaid', 'token-suspended', 'token-expired']) await assert.rejects(getPartnerResources(token), /Sign in|Complete verification/);
+    const list = await getPartnerResources('token-basic-member'); assert.doesNotMatch(JSON.stringify(list), /managed-assets|createdBy|assetId|filename|password|sessions/);
+    assert.equal(list.find((row) => row.id === resource.id).file.downloadUrl, `/api/partner/resources/${resource.id}/file`);
+    await assert.rejects(archiveAsset(protectedPdf.id), /published content/);
+    const replacement = await uploadAsset(new File([png], 'replacement.png', { type: 'image/png' }), 'New marketing image', '', owner.id, null, 'partners');
+    await saveManagedContent(owner, { ...resource, assetId: replacement.id }); await archiveAsset(protectedPdf.id);
+    assert.equal((await getPartnerResourceFile('token-basic-member', resource.id)).asset.id, replacement.id);
+    await saveManagedContent(publisher, { id: resource.id, action: 'unpublish' }); await archiveAsset(replacement.id);
+    await assert.rejects(saveManagedContent(publisher, { id: resource.id, action: 'publish' }), /available partner-only/);
+    assert.equal((await getPartnerResources('token-basic-member')).length, 1);
+    await assert.rejects(getPartnerResourceFile('token-basic-member', resource.id), /not found/);
+    // A membership's current tier is authoritative on each request, even with an existing session.
+    await updateCollection('partner-programme', (items) => { items[0].partners.find((row) => row.id === 'basic-member').suspendedAt = now; return { items, result: undefined }; });
+    await assert.rejects(getPartnerResources('token-basic-member'), /Sign in/);
+    assert.ok((await readCollection('audit')).some((event) => event.action === 'content.publish'));
+    assert.doesNotMatch(await readFile(path.join(directory, 'managed-content.json'), 'utf8'), /token-basic-member/);
+  } finally { if (previous === undefined) delete process.env.DEJADON_DATA_DIR; else process.env.DEJADON_DATA_DIR = previous; await rm(directory, { recursive: true, force: true }); }
+});

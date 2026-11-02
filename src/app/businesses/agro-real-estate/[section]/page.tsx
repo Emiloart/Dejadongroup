@@ -10,9 +10,10 @@ import { agroRealEstateBuyingProcess, agroRealEstateFaqs, agroRealEstateServices
 import { getGalleryImages } from "@/lib/media-library";
 import { publicPageMetadata } from "@/lib/seo";
 
-type AgroRealEstateSectionPageProps = { params: { section: string } };
+type AgroRealEstateSectionPageProps = { params: Promise<{ section: string }> };
 
-export function generateMetadata({ params }: AgroRealEstateSectionPageProps) {
+export async function generateMetadata({ params: paramsPromise }: AgroRealEstateSectionPageProps) {
+  const params = await paramsPromise;
   const path = `/businesses/agro-real-estate/${params.section}`;
   const match = getSectionByPath(path);
   if (!match || match.business.slug !== "agro-real-estate") notFound();
@@ -26,7 +27,8 @@ export function generateStaticParams() {
   ];
 }
 
-export default function AgroRealEstateSectionPage({ params }: AgroRealEstateSectionPageProps) {
+export default async function AgroRealEstateSectionPage({ params: paramsPromise }: AgroRealEstateSectionPageProps) {
+  const params = await paramsPromise;
   const path = `/businesses/agro-real-estate/${params.section}`;
   const match = getSectionByPath(path);
   if (!match || match.business.slug !== "agro-real-estate") notFound();

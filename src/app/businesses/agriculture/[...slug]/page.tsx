@@ -24,9 +24,10 @@ const livestockDescriptions: Record<string, string> = {
   bsf: "Black Soldier Fly is a non-pest insect containing significant amounts of protein and fat."
 };
 
-type AgricultureSectionPageProps = { params: { slug: string[] } };
+type AgricultureSectionPageProps = { params: Promise<{ slug: string[] }> };
 
-export function generateMetadata({ params }: AgricultureSectionPageProps) {
+export async function generateMetadata({ params: paramsPromise }: AgricultureSectionPageProps) {
+  const params = await paramsPromise;
   const path = `/businesses/agriculture/${params.slug.join("/")}`;
   const match = getSectionByPath(path);
   if (!match || match.business.slug !== "agriculture") notFound();
@@ -41,7 +42,8 @@ export function generateStaticParams() {
   ];
 }
 
-export default function AgricultureSectionPage({ params }: AgricultureSectionPageProps) {
+export default async function AgricultureSectionPage({ params: paramsPromise }: AgricultureSectionPageProps) {
+  const params = await paramsPromise;
   const path = `/businesses/agriculture/${params.slug.join("/")}`;
   const match = getSectionByPath(path);
   if (!match || match.business.slug !== "agriculture") notFound();

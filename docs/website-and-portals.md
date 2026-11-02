@@ -45,6 +45,8 @@ The current confirmed referral rule is:
 
 Partner tiers, fees, benefits and promo codes are configured by the Super Admin at `/admin/partners` (tiers may also be managed by authorized Partner Programme staff). No example tier prices or benefits are seeded into the live programme.
 
+Partner marketing resources are published by authorized content staff in Admin → Media & Content. A resource can be limited to named current tiers; leaving the tier list empty makes it available to every registered partner tier. Private uploads are served only after the partner session and current membership are checked. See the [partner-resource decision](decisions/0003-partner-resource-access.md) for the compatibility and privacy rules.
+
 ## Contact
 
 **Office:** Shop C15 Ebube Dike Shopping Mall, Umuodu Road, Good Will Junction, Nodu, Okpuno, Awka, Anambra State.

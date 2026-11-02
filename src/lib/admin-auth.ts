@@ -2,8 +2,8 @@ import { cookies } from "next/headers";
 import { bootstrapConfigured, readAdministration, resolveAdmin } from "@/lib/admin-store";
 export { adminSessionSeconds } from "@/lib/admin-store";
 export const adminCookieName = "dejadon-admin";
-export const currentAdminToken = () => cookies().get(adminCookieName)?.value;
-export const currentAdmin = () => resolveAdmin(currentAdminToken());
+export const currentAdminToken = async () => (await cookies()).get(adminCookieName)?.value;
+export const currentAdmin = async () => resolveAdmin(await currentAdminToken());
 export const isAdminConfigured = async () => bootstrapConfigured() || (await readAdministration()).bootstrapped;
 export const isAdminAuthenticated = async () => Boolean(await currentAdmin());
 
