@@ -48,10 +48,7 @@ h4 {
 
 .hero-text-backdrop {
   /* Keep contrast close to the letters and preserve the heading's line height. */
-  text-shadow:
-    0 1px 2px rgb(0 0 0 / 95%),
-    0 0 5px rgb(0 0 0 / 85%),
-    0 0 10px rgb(0 0 0 / 55%);
+  text-shadow: 0 1px 2px rgb(0 0 0 / 30%);
 }
 
 @media (prefers-reduced-motion: reduce) {

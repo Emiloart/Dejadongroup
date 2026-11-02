@@ -19,5 +19,18 @@ export function siteUrl(path: string): string {
 }
 
 export function publicPageMetadata(path: string, title: string, description: string): Metadata {
-  return { title: path === "/" ? { absolute: title } : title, description, alternates: { canonical: siteUrl(path) } };
+  return {
+    title: path === "/" ? { absolute: title } : title,
+    description,
+    alternates: { canonical: siteUrl(path) },
+    openGraph: {
+      type: "website",
+      url: siteUrl(path),
+      siteName: "De Jadon Group",
+      title,
+      description,
+      images: [{ url: "/opengraph-image.png", width: 1200, height: 630, alt: "De Jadon Group logo alongside a description of its opportunities in Nigeria." }]
+    },
+    twitter: { card: "summary_large_image", title, description, images: ["/opengraph-image.png"] }
+  };
 }

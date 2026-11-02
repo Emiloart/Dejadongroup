@@ -48,7 +48,7 @@ export default async function HomePage() {
       <section aria-labelledby="partner-promo-heading" className="relative isolate overflow-hidden bg-ink text-white">
         <HeroBackground image={heroMedia.partner} />
         <div className="mx-auto flex min-h-[360px] max-w-7xl items-center px-5 py-14 sm:px-6 sm:py-16 lg:min-h-[400px] lg:px-8 lg:py-20">
-          <div className="max-w-xl [text-shadow:0_1px_6px_rgb(0_0_0_/_0.25)]">
+          <div className="max-w-xl">
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-white/80"><HeroText>Partner Programme</HeroText></p>
             <h2 id="partner-promo-heading" className="mt-4 text-3xl font-medium leading-[1.12] tracking-tight sm:text-4xl"><HeroText>Grow with us.</HeroText></h2>
             <p className="mt-5 text-base leading-8 text-white/90 sm:text-lg"><HeroText>The Partner Program allows individuals to introduce De Jadon Group to prospective customers and earn a 10% commission when a referred prospect becomes a paying client.</HeroText></p>

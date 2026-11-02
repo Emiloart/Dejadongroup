@@ -1,9 +1,10 @@
 import { PortalAuthForm } from "@/components/portal-auth-form";
-import { ContentPhoto } from "@/components/content-photo";
+import { HeroBackground } from "@/components/hero-background";
 import { SiteLayout } from "@/components/site-layout";
 import { ArrowUpRight, KeyRound, MailCheck } from "lucide-react";
 import Link from "next/link";
 import type { DashboardRole } from "@/types/site";
+import { heroMedia } from "@/lib/hero-media";
 
 type LoginPageProps = { searchParams?: Promise<{ role?: string; next?: string; mode?: string; ref?: string }> };
 
@@ -21,9 +22,8 @@ export default async function LoginPage({ searchParams: searchParamsPromise }: L
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-orange-700">Welcome to De Jadon Group</p>
             <h1 className="mt-4 max-w-lg text-3xl leading-tight sm:text-5xl">Your De Jadon workspace.</h1>
             <p className="mt-3 max-w-md text-sm leading-7 text-stone-600 sm:mt-4 sm:text-base">Stay connected to your plans, your partnership and the next step in your journey.</p>
-            <div className="mt-8 hidden overflow-hidden rounded-2xl border border-ink/10 bg-white sm:block">
-              <ContentPhoto name="teamOutreach" aspectRatio={1.65} className="!rounded-none" imageClassName="object-center" sizes="(min-width: 1024px) 42vw, 85vw" />
-              <p className="px-5 py-3 text-xs leading-6 text-stone-600">De Jadon Group, connecting with our community.</p>
+            <div className="relative isolate mt-8 hidden aspect-[1.65] overflow-hidden rounded-2xl border border-ink/10 bg-ink sm:block">
+              <HeroBackground image={heroMedia.main} />
             </div>
             <div className="mt-7 hidden gap-5 sm:grid sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
               <div className="flex gap-3"><KeyRound aria-hidden="true" className="mt-1 h-5 w-5 shrink-0 text-agriculture" /><p className="text-xs leading-6 text-stone-600"><span className="block font-semibold text-ink">Client access</span>Activate with the token supplied by our team.</p></div>

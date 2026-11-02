@@ -171,7 +171,7 @@ export function HomeHeroCarousel({ slides }: { slides: HeroSlide[] }) {
                 }}
               /> : null}
               <div className="mx-auto flex min-h-[600px] w-full max-w-7xl items-center px-5 pb-28 pt-10 sm:min-h-[640px] sm:px-6 lg:min-h-[680px] lg:px-8 lg:pt-16">
-                <div className="max-w-2xl py-8 [text-shadow:0_1px_6px_rgb(0_0_0_/_0.25)]">
+                <div className="max-w-2xl py-8">
                   <p className={`text-xs font-semibold uppercase tracking-[0.2em] ${item.accent === "green" ? "text-green-200" : "text-orange-200"}`}><HeroText>{item.eyebrow}</HeroText></p>
                   <Heading className="hero-title mt-5 max-w-2xl text-4xl font-normal leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-6xl"><HeroText>{item.title}</HeroText></Heading>
                   {item.description ? <p className="mt-6 max-w-xl text-base leading-8 text-white/90 sm:text-lg"><HeroText>{item.description}</HeroText></p> : null}
